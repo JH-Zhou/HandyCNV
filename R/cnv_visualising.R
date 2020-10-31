@@ -1,6 +1,7 @@
-cnv_visual <- function(cnv, max_chr_length = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL) {
+cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, plot_title = NULL) {
   #myAgr <- formals(cnv_visual)
   #prepare for population data
+  cnv <- fread(file = clean_cnv)
   id_coord <- data.frame("Sample_ID" = sort(unique(cnv$Sample_ID))) #extract unique ID prepare coordinate
   id_coord$Order <- seq(1,nrow(id_coord),1)
   id_coord$x <- 160
@@ -53,13 +54,13 @@ cnv_visual <- function(cnv, max_chr_length = NULL, chr_id = NULL, chr_length = N
   cnv_chr_zoom <- filter(cnv_chr, Start >= start_position * 1000000 & End <= end_position * 1000000)
   cnv_chr_zoom$zoom_x <- end_position
   zoom_name <- paste0("Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
-  zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb")
+  zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " - ", plot_title)
   png(res = 300, filename = zoom_name, width = 3500, height = 2000)
   zoom_plot <- ggplot(cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
     geom_rect(aes(fill = as.factor(CNV_Value))) +
-    geom_text(aes(zoom_x, y, label = Sample_ID), size = 1.5) + theme_bw() +
+    geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) + theme_bw() +
     scale_y_continuous(labels = NULL) +
-    scale_x_continuous(breaks = seq(start_position, end_position), limits = c(start_position, end_position + 1)) +
+    scale_x_continuous(breaks = seq(start_position, end_position, by = 0.25), limits = c(start_position, end_position + 1)) +
     labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
   print(zoom_plot)
   dev.off()
@@ -97,3 +98,4 @@ cnv_visual <- function(cnv, max_chr_length = NULL, chr_id = NULL, chr_length = N
            Warning: Please check input parameters carefully!!!")
   }
 }
+

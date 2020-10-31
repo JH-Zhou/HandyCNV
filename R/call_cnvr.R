@@ -1,0 +1,88 @@
+
+#Call CNVR, summary individual CNVR type, report CNVR frequeny and type
+#' Title
+#'
+#' @param clean_cnv
+#' @import data.table, dplyr
+#'
+#' @return
+#' @export
+#'
+#' @examples
+call_cnvr <- function(clean_cnv) {
+
+  clean_cnv <- fread(file = clean_cnv, sep = "\t", header = TRUE)
+
+  merge_cnvr <- function(cnv) {
+    if (nrow(cnv) == 1) {
+      return(cnv)
+    }
+
+    cnv <- cnv[order(cnv$Chr, cnv$Start),]
+    cnvr_union = cnv[1, ]
+
+    for (i in 2:nrow(cnv)) {
+      rest_cnv <- cnv[i, ]
+
+      if (cnvr_union$End[nrow(cnvr_union)] < rest_cnv$Start) {
+        cnvr_union <- bind_rows(cnvr_union, rest_cnv)
+      } else if (cnvr_union$End[nrow(cnvr_union)] == rest_cnv$Start) {
+        cnvr_union$End[nrow(cnvr_union)] <- rest_cnv$End
+      }
+      if (rest_cnv$End > cnvr_union$End[nrow(cnvr_union)]) {
+        cnvr_union$End[nrow(cnvr_union)] <- rest_cnv$End
+      }
+    }
+    return(cnvr_union)
+  }
+
+  cnvr <- data.frame()
+
+  for ( i in 1:29){
+    cnv_chr <- clean_cnv[which(clean_cnv$Chr == i), ]
+    cnvr_chr <- merge_cnvr(cnv = cnv_chr)
+    cnvr <- rbind(cnvr, cnvr_chr)
+  }
+
+  #extraxt CNVR inofrmation, recode for CNVR
+  cnvr_union <- cnvr[, c("Chr", "Start", "End")]
+  cnvr_union$CNVR_ID <- paste0("CNVR_", seq(1, nrow(cnvr_union), 1))
+  setkey(cnvr_union, Chr, Start, End)
+  cnv_cnvr <- foverlaps(clean_cnv, cnvr_union)
+  names(cnv_cnvr)[names(cnv_cnvr) == "i.Start"] <- "CNV_Start"
+  names(cnv_cnvr)[names(cnv_cnvr) == "i.End"] <- "CNV_End"
+
+  #add frequent of CNVR
+  cnvr_frequent <- cnv_cnvr %>% group_by(CNVR_ID) %>% count(CNVR_ID, name = "Frequent")
+  cnvr_union_f <- merge(cnvr_union, cnvr_frequent, by = "CNVR_ID", sort = F)
+
+  #add type of CNVR
+  cnvr_type <- cnv_cnvr %>% group_by(CNVR_ID) %>% count(CNV_Value, name = "Count")
+  cnvr_type2 <- reshape2::dcast(cnvr_type, CNVR_ID ~ CNV_Value, value.var = "Count")
+  cnvr_type2$Type <- NA
+  for (i in 1:nrow(cnvr_type2)) {
+    if (is.na(cnvr_type2[i, c("0")]) & is.na(cnvr_type2[i, c("1")])){
+      cnvr_type2$Type[i] <- "Gain"
+    }
+
+    else if (is.na(cnvr_type2[i, c("3")]) & is.na(cnvr_type2[i, c("4")])) {
+      cnvr_type2$Type[i] <- "Loss"
+    }
+
+    else{cnvr_type2$Type[i] <- "Mixed"}
+  }
+
+  cnvr_f_type <- merge(cnvr_union_f, cnvr_type2, sort = F)
+  cnvr_f_type$Length <- cnvr_f_type$End - cnvr_f_type$Start + 1
+
+
+  fwrite(cnv_cnvr, file = "individual_cnv_cnvr.txt", sep = "\t", quote = FALSE)
+  fwrite(cnvr_f_type, file = "cnvr.txt", sep = "\t", quote = FALSE)
+
+  if(file.exists("cnvr.txt") & file.exists("individual_cnv_cnvr.txt")) {
+    print("Task done, CNVR results saved in your working directory.")
+  } else {print("WARNING, lack of putput file, please check format of your input file!!")}
+
+}
+
+

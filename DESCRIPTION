@@ -2,10 +2,11 @@ Package: HandyCNV
 Type: Package
 Title: Visualising CNV on both population and individual level for SNP chip data
 Version: 0.1.0
-Author: JH ZHou
-Maintainer: The package maintainer <yourself@somewhere.net>
+Author: JH Zhou
+Maintainer: JH Zhou <zjhang027@gmail.com>
 Description: Visualising CNV on both population and individual level for SNP chip data
     Use four spaces when indenting paragraphs within the Description.
-License: MIT
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+
