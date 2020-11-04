@@ -1,0 +1,32 @@
+require(data.table, quietly = TRUE)
+require(dplyr, quietly = TRUE)
+call_gene <- function(refgene = NULL, cnvr= NULL, clean_cnv = NULL){
+  gene <- fread(file = refgene)
+  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  gene$Chr <- as.integer(sub("chr", "", gene$Chr))
+  cnvr <- fread(file = cnvr)
+  setkey(gene, Chr, Start, End)
+  cnvr_gene <- foverlaps(cnvr, gene)
+  fwrite(cnvr_gene, file = "cnvr_annotation.txt", sep = "\t", quote = FALSE)
+  if(file.exists("cnvr_annotation.txt")) {
+    print("Task done, CNVR Annotation file saved in your Working directory.")
+  } else {
+    print("Task failed, please check your input file format carefully!!")
+  }
+
+  cnv <- fread(file = clean_cnv)
+  setkey(gene, Chr, Start, End)
+  cnv_annotation <- foverlaps(cnv, gene)
+  names(cnv_annotation)[c(5, 6, 18, 19)] <- c("g_Start", "g_End", "CNV_Start", "CNV_End")
+
+  fwrite(cnv_annotation, file = "cnv_annotation.txt", sep = "\t", quote = FALSE)
+  if(file.exists("cnv_annotation.txt")) {
+    print("Task done, CNV Annotation file saved in your Working directory.")
+  } else {
+    print("Task failed, please check your input file format carefully!!")
+  }
+}
+
+

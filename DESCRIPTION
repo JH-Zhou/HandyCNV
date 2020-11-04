@@ -6,6 +6,13 @@ Author: JH Zhou
 Maintainer: JH Zhou <zjhang027@gmail.com>
 Description: Visualising CNV on both population and individual level for SNP chip data
     Use four spaces when indenting paragraphs within the Description.
+Imports:
+    data.table,
+    dplyr,
+    ggplot2,
+    reshape2,
+    scales,
+    tidyr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

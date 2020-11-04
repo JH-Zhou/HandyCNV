@@ -1,3 +1,9 @@
+require(data.table, quietly = TRUE)
+require(ggplot2, quietly = TRUE)
+require(dplyr, quietly = TRUE)
+require(scales, quietly = TRUE)
+require(reshape2, quietly = TRUE)
+require(tidyr, quietly = TRUE)
 #3.1.1 Make graphes for CNVs from CNVPartition--------------------------
 cnv_summary <- function(clean_cnv, plot_length = NULL, plot_copynumber =NULL, plot_chr = NULL, plot_individual = NULL, plot_merge = NULL) {
   cnv_input <- fread( file = clean_cnv)
