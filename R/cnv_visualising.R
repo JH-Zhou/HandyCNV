@@ -26,6 +26,7 @@
 #'
 require(ggplot2, quietly = TRUE)
 require(data.table, quietly = TRUE)
+require(ggrepel, quietly = TRUE)
 cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, plot_gene = NULL, plot_title = NULL) {
   #myAgr <- formals(cnv_visual)
   #prepare for population data
@@ -137,13 +138,13 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
     zoom_plot <- ggplot() +
       geom_rect(data = cnv_chr_zoom, aes(xmin = CNV_Start/1000000, xmax = CNV_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3, fill = as.factor(CNV_Value))) +
       geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = "black") +
-      geom_text(data = gene_coord, aes(x = g_Start/1000000, y = (Order-1)*5 + 4, label = name2), position = "dodge") +
-      geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 1, linetype = "dashed") +
+      geom_text_repel(data = gene_coord, aes(x = g_Start/1000000, y = (Order-1)*5 + 4, label = name2)) +
+      geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       #scale_color_manual(values = c("#F8766D", "#A3A500", "#00B0F6", "#E76BF3", "black")) +
       theme_bw() +
       scale_y_continuous(labels = NULL) +
-      scale_x_continuous(breaks = seq(start_position, end_position)) +
+      scale_x_continuous(breaks = seq(round(start_position,2), round(end_position,2), by = 0.2)) +
       labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
     print(zoom_plot)
     dev.off()
