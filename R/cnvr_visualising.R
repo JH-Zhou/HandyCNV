@@ -45,7 +45,7 @@ cnvr_visual <- function(cnvr, cnv = NULL, sample_size = NULL, common_cnv_thresho
     mixed_part <- cnvr_plot_part[cnvr_plot_part$Type == "Mixed", ]
 
     #4.6.2 start make cnvr plot for CNVPartition
-    png(filename = "cnvr_part.png",
+    png(filename = "cnvr_plot.png",
         res = 300,
         width = 3000, height = 2000,
         bg = "transparent"
@@ -82,7 +82,7 @@ cnvr_visual <- function(cnvr, cnv = NULL, sample_size = NULL, common_cnv_thresho
 
     dev.off()
 
-    if (file.exists("cnvr_part.png")) {
+    if (file.exists("cnvr_plot.png")) {
       print("Task done, CNVR Distribution Plot saved in working directory.")
     } else {
       print("Task faild, please check your CNVR input file carefully, the input cnvr file should be the CNVR results generated from call_cnvr function")

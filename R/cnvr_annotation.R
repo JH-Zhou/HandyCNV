@@ -20,10 +20,14 @@ call_gene <- function(refgene = NULL, cnvr= NULL, clean_cnv = NULL){
   setkey(gene, Chr, Start, End)
   cnv_annotation <- foverlaps(cnv, gene)
   names(cnv_annotation)[c(5, 6, 18, 19)] <- c("g_Start", "g_End", "CNV_Start", "CNV_End")
+  gene_freq <- cnv_annotation %>% group_by(name2) %>% count(name2, name = "Frequent", sort = TRUE)
+  print(paste0(nrow(gene_freq)-1, "genes were matched in the CNV and CNVR, top 10 frequent genes as below: "))
+  print(gene_freq[1:11, ])
 
   fwrite(cnv_annotation, file = "cnv_annotation.txt", sep = "\t", quote = FALSE)
-  if(file.exists("cnv_annotation.txt")) {
-    print("Task done, CNV Annotation file saved in your Working directory.")
+  fwrite(gene_freq, file = "gene_freq_cnv.txt", sep = "\t", quote = FALSE)
+  if(file.exists("cnv_annotation.txt") & file.exists("gene_freq_cnv.txt")) {
+    print("Task done, CNV Annotation file and the frequency of gene in CNV region were saved in your Working directory.")
   } else {
     print("Task failed, please check your input file format carefully!!")
   }

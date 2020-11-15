@@ -60,7 +60,7 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
     labs(x = "Physical Position", y = "Individual ID", title = "CNV Distribution on Population Level", fill = "CNV_Num")
   print(popu_plot)
   dev.off()
-  print("Task done, plot was stored in setted directory.")
+  print("Task done, plot was stored in working directory.")
   }
 
   else if(is.null(chr_id) == "FALSE" & is.null(start_position) & is.null(plot_gene)){
@@ -86,7 +86,7 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
     labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "CNV_Num")
   print(chr_plot)
   dev.off()
-  print("Task done, plot was stored in setted directory.")
+  print("Task done, plot was stored in working directory.")
   }
 
   #else if(is.null(start_position & end_position) == "FALSE")
@@ -114,7 +114,7 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
     labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
   print(zoom_plot)
   dev.off()
-  print("Task done, plot was stored in setted directory.")
+  print("Task done, plot was stored in working directory.")
   }
   else if (is.null(start_position) == "FALSE" & is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(plot_gene) == "FALSE") {
     cnv_chr <- cnv[cnv$Chr == chr_id, ]
@@ -126,10 +126,17 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
     cnv_chr_zoom <- merge(cnv_chr_zoom, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
     cnv_chr_zoom$zoom_x <- end_position
     cnv_chr_zoom$gene_order <- max(cnv_chr_zoom$Order) + 3
+
+    #gene_freq <- data.table(gene_freq) #convert it to data.table to set key
+    #setkey(x = gene_freq, name2)
     gene_coord <- group_by(cnv_chr_zoom, name2) %>% slice(1) # generate gene data
     gene_coord$CNV_Start <- gene_coord$g_Start
     gene_coord$Order <- gene_coord$gene_order
     try(gene_coord$CNV_Value <- "5", silent = FALSE)
+
+    gene_freq <- cnv %>% group_by(name2) %>% count(name2, name = "Frequent", sort = TRUE) #gene freq
+    gene_coord_freq <- merge(gene_coord, gene_freq)
+    gene_coord_freq <- gene_coord_freq[c(gene_coord_freq$Frequent >= 5), ]
 
     zoom_name <- paste0("Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
     id_number <- nrow(id_coord)
@@ -138,7 +145,7 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
     zoom_plot <- ggplot() +
       geom_rect(data = cnv_chr_zoom, aes(xmin = CNV_Start/1000000, xmax = CNV_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3, fill = as.factor(CNV_Value))) +
       geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = "black") +
-      geom_text_repel(data = gene_coord, aes(x = g_Start/1000000, y = (Order-1)*5 + 4, label = name2)) +
+      geom_text_repel(data = gene_coord_freq, aes(x = g_Start/1000000, y = (Order-1)*5 + 10, label = name2)) +
       geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       #scale_color_manual(values = c("#F8766D", "#A3A500", "#00B0F6", "#E76BF3", "black")) +
@@ -148,7 +155,7 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
       labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
     print(zoom_plot)
     dev.off()
-    print("Task done, plot was stored in setted directory.")
+    print("Task done, plot was stored in working directory.")
   }
 
   else if (is.null(individual_id) == "FALSE")
@@ -173,7 +180,7 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
     labs(x = "Physical Position (Mb)", y ="Autosome", title = indiv_title,  fill= "CNV_Num")
   print(indiv_plot)
   dev.off()
-  print("Task done, plot was stored in setted directory.")
+  print("Task done, plot was stored in working directory.")
   #return(cnv_coord)
   }
 

@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-call_cnvr <- function(clean_cnv) {
+call_cnvr <- function(clean_cnv, roh = NULL) {
 
   clean_cnv <- fread(file = clean_cnv, sep = "\t", header = TRUE)
 
@@ -56,32 +56,53 @@ call_cnvr <- function(clean_cnv) {
   cnvr_frequent <- cnv_cnvr %>% group_by(CNVR_ID) %>% count(CNVR_ID, name = "Frequent")
   cnvr_union_f <- merge(cnvr_union, cnvr_frequent, by = "CNVR_ID", sort = F)
 
-  #add type of CNVR
-  cnvr_type <- cnv_cnvr %>% group_by(CNVR_ID) %>% count(CNV_Value, name = "Count")
-  cnvr_type2 <- reshape2::dcast(cnvr_type, CNVR_ID ~ CNV_Value, value.var = "Count")
-  cnvr_type2$Type <- NA
-  for (i in 1:nrow(cnvr_type2)) {
-    if (is.na(cnvr_type2[i, c("0")]) & is.na(cnvr_type2[i, c("1")])){
-      cnvr_type2$Type[i] <- "Gain"
+  if (is.null(roh)) {
+
+    #add type of CNVR
+    cnvr_type <- cnv_cnvr %>% group_by(CNVR_ID) %>% count(CNV_Value, name = "Count")
+    cnvr_type2 <- reshape2::dcast(cnvr_type, CNVR_ID ~ CNV_Value, value.var = "Count")
+    cnvr_type2$Type <- NA
+    for (i in 1:nrow(cnvr_type2)) {
+      if (is.na(cnvr_type2[i, c("0")]) & is.na(cnvr_type2[i, c("1")])){
+        cnvr_type2$Type[i] <- "Gain"
+      }
+
+      else if (is.na(cnvr_type2[i, c("3")]) & is.na(cnvr_type2[i, c("4")])) {
+        cnvr_type2$Type[i] <- "Loss"
+      }
+
+      else{cnvr_type2$Type[i] <- "Mixed"}
     }
 
-    else if (is.na(cnvr_type2[i, c("3")]) & is.na(cnvr_type2[i, c("4")])) {
-      cnvr_type2$Type[i] <- "Loss"
-    }
+    cnvr_f_type <- merge(cnvr_union_f, cnvr_type2, sort = F)
+    cnvr_f_type$Length <- cnvr_f_type$End - cnvr_f_type$Start + 1
 
-    else{cnvr_type2$Type[i] <- "Mixed"}
+    print(paste0(nrow(cnvr_f_type), " CNVR generated in total."))
+
+    cnvr_summary <- cnvr_f_type %>%
+      group_by(Type) %>%
+      summarise(N = n(), "Average Length" = mean(Length), "Min Legnth" = min(Length), "Max Length" = max(Length), "Total Length" = sum(Length))
+    print("CNVR summary as following:")
+    print(cnvr_summary)
+
+    fwrite(cnv_cnvr, file = "individual_cnv_cnvr.txt", sep = "\t", quote = FALSE)
+    fwrite(cnvr_f_type, file = "cnvr.txt", sep = "\t", quote = FALSE)
+    fwrite(cnvr_summary, file = "cnvr_summary.txt", sep = "\t", quote = FALSE, col.names = TRUE)
+
+    if(file.exists("cnvr.txt") & file.exists("individual_cnv_cnvr.txt")) {
+      print("Task done, CNVR results saved in your working directory.")
+    } else {print("WARNING, lack of output file, please check format of your input file!!")}
   }
 
-  cnvr_f_type <- merge(cnvr_union_f, cnvr_type2, sort = F)
-  cnvr_f_type$Length <- cnvr_f_type$End - cnvr_f_type$Start + 1
+  else {
+    cnvr_union_f$length <- cnvr_union_f$End - cnvr_union_f$Start + 1
+    fwrite(cnvr_union_f, file = "roh.txt", sep = "\t", quote = FALSE)
 
+    if(file.exists("roh.txt")) {
+      print("Task done, ROH results saved in your working directory.")
+    } else {print("WARNING, lack of output file, please check format of your input file!!")}
+  }
 
-  fwrite(cnv_cnvr, file = "individual_cnv_cnvr.txt", sep = "\t", quote = FALSE)
-  fwrite(cnvr_f_type, file = "cnvr.txt", sep = "\t", quote = FALSE)
-
-  if(file.exists("cnvr.txt") & file.exists("individual_cnv_cnvr.txt")) {
-    print("Task done, CNVR results saved in your working directory.")
-  } else {print("WARNING, lack of putput file, please check format of your input file!!")}
 
 }
 
