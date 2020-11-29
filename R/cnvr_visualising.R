@@ -4,7 +4,7 @@ require(dplyr, quietly = TRUE)
 require(scales, quietly = TRUE)
 require(reshape2, quietly = TRUE)
 require(tidyr, quietly = TRUE)
-cnvr_visual <- function(cnvr, cnv = NULL, sample_size = NULL, common_cnv_threshold = 0.05) {
+cnvr_visual <- function(cnvr, assembly = "ARS",  cnv = NULL, sample_size = NULL, common_cnv_threshold = 0.05) {
   if (is.null(cnv)) {
     #Prepare parameters for CNVR distribution plot
     #prepare the Y axis for each chromosome
@@ -15,20 +15,23 @@ cnvr_visual <- function(cnvr, cnv = NULL, sample_size = NULL, common_cnv_thresho
     class(chr$Chr) #check the type
     chr[,1] = as.character(chr[,1])#convert interger to charactor
 
-    #UMD3.1 Chromsome Length
-    #chr_length <- c(51.505224, 46.312546, 45.407902, 51.681464, 42.90417, 62.71493, 52.530062,
-    #                61.435874, 71.599096, 72.042655, 64.057457,
-    #                66.004023,75.158596, 81.724687, 85.296676, 84.64839, 84.24035, 91.163125,
-    #                107.310763, 104.305016, 105.70825, 113.384836, 112.638659, 119.458736,
-    #                121.1914245, 120.829699, 121.430405, 137.060424, 158.337067)
-
-    # The length of X Chromsome is 139.009144 in ARS reference genome
-    chr_length_ars <- c( 51.098607, 45.94015, 45.612108, 51.992305,
-                         42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
-                         71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
-                         85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
-                         103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
-                         120.089316, 120.000601, 121.005158, 136.231102, 158.53411)
+    if (assembly == "UMD") {
+      #UMD3.1 Chromsome Length
+      chr_length <- c(51.505224, 46.312546, 45.407902, 51.681464, 42.90417, 62.71493, 52.530062,
+                      61.435874, 71.599096, 72.042655, 64.057457,
+                      66.004023,75.158596, 81.724687, 85.296676, 84.64839, 84.24035, 91.163125,
+                      107.310763, 104.305016, 105.70825, 113.384836, 112.638659, 119.458736,
+                      121.1914245, 120.829699, 121.430405, 137.060424, 158.337067)
+    } else {
+      # The length of X Chromsome is 139.009144 in ARS reference genome
+      # ARS assembly
+      chr_length <- c( 51.098607, 45.94015, 45.612108, 51.992305, 42.350435,
+                       62.317253, 52.498615, 60.773035, 69.862954,
+                           71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
+                           85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
+                           103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
+                           120.089316, 120.000601, 121.005158, 136.231102, 158.53411)
+    }
 
     #4.6.1 prepare CNVPartition plot input data-----
     cnvr_plot_part <- fread(file = cnvr)
@@ -55,7 +58,7 @@ cnvr_visual <- function(cnvr, cnv = NULL, sample_size = NULL, common_cnv_thresho
     par(lab=c(29,29,3),las=1,yaxt="s",xaxt="s",mar=c(7,7,4,5))
 
     #draw a bar plot and setup each bar name
-    bar <- barplot(chr_length_ars, horiz=TRUE,width=1.5,space=1,xlim=c(0,160),
+    bar <- barplot(chr_length, horiz=TRUE,width=1.5,space=1,xlim=c(0,160),
                    names.arg=c("chr29","chr28","chr27","chr26","chr25","chr24","chr23","chr22","chr21","chr20","chr19","chr18","chr17","chr16","chr15","chr14","chr13","chr12","chr11","chr10","chr9","chr8","chr7","chr6","chr5","chr4","chr3","chr2","chr1"),
                    col=c("white"),xlab="Physical Position (Mbp)",cex.name=0.8)
 

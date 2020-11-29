@@ -12,11 +12,17 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/")
     cnvpart_roh <- cnvpart[c(grep("2", cnvpart$CNV_Value)),]
     cnvpart_pure <- cnvpart[-c(grep("2", cnvpart$CNV_Value)), ] #delete 2 copy cnv
     cnvpart_pure <- cnvpart_pure[cnvpart_pure$Length <= 5000000, ] #delete CNV larger than 5 Mb
+
+    summary_cnvpart <- cnvpart_pure %>% group_by(CNV_Value) %>% summarise("N" = n(), "Average Length" = mean(Length), "Min Length" = min(Length), "Max Length" = max(Length))
+    print("The basic inofrmation of each CNV type as following:")
+    print(summary_cnvpart)
+    fwrite(summary_cnvpart, file = "cnvpart_summary", sep = "\t", quote = FALSE, col.names = TRUE)
+
     fwrite(cnvpart_pure, file = "cnvpart_clean.cnv", sep = "\t", quote = FALSE)
     fwrite(cnvpart_roh, file = "cnvpart_roh.cnv", sep = "\t", quote = FALSE)
 
     if (file.exists("cnvpart_clean.cnv")){
-       print("Task finished, please check Clean CNV results in your working directory.")
+       print("Task finished, Clean CNV, ROH, CNV Summary results were saved in your working directory.")
      }
 
     else {
