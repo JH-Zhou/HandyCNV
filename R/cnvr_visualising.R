@@ -81,7 +81,7 @@ cnvr_visual <- function(cnvr, assembly = "ARS",  cnv = NULL, sample_size = NULL,
     legend(127, 30,c("Gain","Loss","Mixed"), pch = c(15, 15, 15),
            col =c("red", "green", "blue"), bty = "n")
 
-    title(main = "CNVR Distribution on Population Level")
+    #title(main = "CNVR Distribution on Population Level")
 
     dev.off()
 

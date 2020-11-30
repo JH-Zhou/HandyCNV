@@ -42,6 +42,7 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
     cnv_chr <- clean_cnv[which(clean_cnv$Chr == i), ]
     cnvr_chr <- merge_cnvr(cnv = cnv_chr)
     cnvr <- rbind(cnvr, cnvr_chr)
+    print(paste0("Choromsome ", i, " was processed."))
   }
 
   #extraxt CNVR inofrmation, recode for CNVR
