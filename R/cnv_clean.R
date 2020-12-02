@@ -13,9 +13,14 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/")
     cnvpart_pure <- cnvpart[-c(grep("2", cnvpart$CNV_Value)), ] #delete 2 copy cnv
     cnvpart_pure <- cnvpart_pure[cnvpart_pure$Length <= 5000000, ] #delete CNV larger than 5 Mb
 
+    average_indiv_cnv <- round(nrow(cnvpart_pure)/length(unique(cnvpart_pure$Sample_ID)), 2)
+    print(paste0("There are ", length(unique(cnvpart_pure$Sample_ID))," individuals with ",  nrow(cnvpart_pure), " CNVs in total."))
+    print(paste0("The average number of CNV on each Individual is ", average_indiv_cnv))
+
     summary_cnvpart <- cnvpart_pure %>% group_by(CNV_Value) %>% summarise("N" = n(), "Average Length" = mean(Length), "Min Length" = min(Length), "Max Length" = max(Length))
-    print("The basic inofrmation of each CNV type as following:")
+    print("The basic summary of each CNV type as following:")
     print(summary_cnvpart)
+
     fwrite(summary_cnvpart, file = "cnvpart_summary", sep = "\t", quote = FALSE, col.names = TRUE)
 
     fwrite(cnvpart_pure, file = "cnvpart_clean.cnv", sep = "\t", quote = FALSE)
@@ -51,8 +56,13 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/")
     penn <- penn[, c("Sample_ID", "Chr", "Start", "End", "Num_SNP", "Length", "CNV_Value", "Start_SNP", "End_SNP")] #"Confedence_Score")]
     #penn <- penn[penn$Confedence_Score >= 10] #delete the cnv which confedence lesser than 10
     penn <- penn[penn$Len <= 5000000, ]
+
+    average_indiv_cnv <- round(nrow(penn)/length(unique(penn$Sample_ID)), 2)
+    print(paste0("There are ", length(unique(penn$Sample_ID)), " individuals with ", nrow(penn), " CNVs in total."))
+    print(paste0("The average number of CNVs on each Individual are around ", average_indiv_cnv))
+
     summary_cnv <- penn %>% group_by(CNV_Value) %>% summarise("N" = n(), "Average Length" = mean(Length), "Min Length" = min(Length), "Max Length" = max(Length))
-    print("The basic inofrmation of each CNV type as following:")
+    print("The basic summary of each CNV type as following:")
     print(summary_cnv)
     fwrite(penn, file = "penncnv_clean.cnv", sep ="\t", quote = FALSE)
     fwrite(summary_cnv, file = "penncnv_summary", sep = "\t", quote = FALSE, col.names = TRUE)

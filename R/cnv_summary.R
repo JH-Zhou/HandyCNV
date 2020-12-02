@@ -5,8 +5,8 @@ require(scales, quietly = TRUE)
 require(reshape2, quietly = TRUE)
 require(tidyr, quietly = TRUE)
 #3.1.1 Make graphes for CNVs from CNVPartition--------------------------
-cnv_summary <- function(clean_cnv, plot_sum = NULL, plot_length = NULL, plot_copynumber =NULL, plot_chr = NULL, plot_individual = NULL, plot_merge = NULL) {
-  cnv_input <- fread( file = clean_cnv)
+cnv_summary_plot <- function(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL) {
+  cnv_input <- fread(file = clean_cnv)
   cnv_input$group <- NA  #add a new column to make group of length
   cnv_input$group[cnv_input$Length <= 50000] <- "1-50kb"
   cnv_input$group[cnv_input$Length > 50000 & cnv_input$Length <= 100000] <- "50-100kb"
@@ -21,166 +21,138 @@ cnv_summary <- function(clean_cnv, plot_sum = NULL, plot_length = NULL, plot_cop
   cnv_input$group[cnv_input$Length > 2000000 & cnv_input$Length <= 5000000] <- "2-5Mbp"
   cnv_input$group[cnv_input$Length > 5000000] <- ">5Mbp"
 
-  if(!is.null(plot_sum)) {
-    chr_freq <- cnv_input %>% group_by(Chr) %>% count(CNV_Value, name = "Freq")
-    png(res = 300, filename = "cnv_distribution.png", height = 3500, width = 4000, bg = "transparent")
-    adj_y <- max(cnv_input$Length)/max(chr_freq$Freq)
-    cnv_distri <- ggplot(cnv_input) +
-      geom_boxplot(aes(x = as.factor(Chr), y = Length/adj_y,  fill = as.factor(CNV_Value)), outlier.shape = NA) +
-      geom_line(aes(group = 1, x = as.factor(Chr), color = as.factor(CNV_Value)), stat = 'count') +
-      geom_text(aes(x = as.factor(Chr), label = ..count..), stat = 'count') +
-      scale_y_continuous(name = "Frequency of CNV (N)", sec.axis = sec_axis(~.*adj_y / 1000, name = "Length of CNV (Kb)")) +
-      theme_classic() +
-      theme(legend.position = "top") +
-      labs(x = "Chromosome", fill = "CNV Value", color = "Frequency of CNV") +
-      facet_wrap(~CNV_Value, ncol = 1, scales = "free")
-    print(cnv_distri)
-    dev.off()
-    if(file.exists("cnv_distribution.png")){
-      print("Task done, plot saved in working directory.")
-    } else {
-      print("Task faild, please check your input data format and paramter used!")
-    }
-    }
+  #plot CNV distribution
+  chr_freq <- cnv_input %>% group_by(Chr) %>% count(CNV_Value, name = "Freq")
+  png(res = 300, filename = "cnv_distribution.png", height = 3500, width = 4000, bg = "transparent")
+  adj_y <- max(cnv_input$Length)/max(chr_freq$Freq)
+  cnv_distri <- ggplot(cnv_input) +
+    geom_boxplot(aes(x = as.factor(Chr), y = Length/adj_y,  fill = as.factor(CNV_Value)), outlier.shape = NA) +
+    geom_line(aes(group = 1, x = as.factor(Chr), color = as.factor(CNV_Value)), stat = 'count') +
+    geom_text(aes(x = as.factor(Chr), label = ..count..), stat = 'count') +
+    scale_y_continuous(name = "Frequency of CNV (N)", sec.axis = sec_axis(~.*adj_y / 1000, name = "Length of CNV (Kb)")) +
+    theme_classic() +
+    theme(legend.position = "top", strip.text.x = element_blank()) +
+    labs(x = "Chromosome", fill = "CNV Value", color = "Frequency of CNV") +
+    facet_wrap(~CNV_Value, ncol = 1, scales = "free")
 
-  else if (!is.null(plot_length)){
-    #fig.1a Length group Vs CNV Count
-    cnv_count <- cnv_input %>% group_by(CNV_Value) %>% count(group) #summarise the number of CNVs on each state each length group
-    cnv_count$group <- factor(cnv_count$group, levels = c("1-50kb", "50-100kb", "100-200kb", "200-300kb",
-                                                          "300-400kb", "400-500kb", "500-600kb",
-                                                          "600-700kb", "700-1000kb", "1-2Mbp", "2-5Mbp"))
+  print(cnv_distri)
+  dev.off()
 
-    png(filename = "f1a_length.png", res = 300, width = 3500, height = 2000)
-    f1a_length <- ggplot(cnv_count, aes(fill = as.factor(CNV_Value), x = group, y = n)) +
-      geom_bar(stat = "identity", position = position_dodge()) +
-      theme_classic() +
-      theme(axis.text.x = element_text(angle = 20, vjust = 0.8), legend.position = c(0.9, 0.9)) +
-      labs(y = "Number of CNV", x = "Group of Length", fill = "CNV Value") # col change title of legend
-    print(f1a_length)
+  if(file.exists("cnv_distribution.png")){
+    print("CNV distribution plot was saved in working directory.")
+  } else {
+    print("Task faild, please check your input data format and paramter used!")
+  }
+
+
+  #fig.1a Length group Vs CNV Count
+  cnv_count <- cnv_input %>% group_by(CNV_Value) %>% count(group) #summarise the number of CNVs on each state each length group
+  cnv_count$group <- factor(cnv_count$group, levels = c("1-50kb", "50-100kb", "100-200kb", "200-300kb",
+                                                        "300-400kb", "400-500kb", "500-600kb",
+                                                        "600-700kb", "700-1000kb", "1-2Mbp", "2-5Mbp"))
+
+  png(filename = "f1a_lengthgroup.png", res = 300, width = 3500, height = 2000)
+  f1a_lengthgroup <- ggplot(cnv_count, aes(fill = as.factor(CNV_Value), x = group, y = n)) +
+    geom_bar(stat = "identity", position = position_dodge()) +
+    theme_classic() +
+    theme(axis.text.x = element_text(angle = 20, vjust = 0.8), axis.title.x = element_blank(), legend.position = c(0.9, 0.9)) +
+    labs(y = "Number of CNV", fill = "CNV Value") # col change title of legend
+  print(f1a_lengthgroup)
+  dev.off()
+
+  if(file.exists("f1a_lengthgroup.png")){
+    print("CNV length group plot was saved in working directory.")
+  } else {
+    print("Task faild, please check your input data format and paramter used!")
+  }
+
+  png(filename = "f1b_lengthbox.png", res = 300, width = 3500, height = 2000)
+  #fig.1b CNV Vs Length
+  f1b_lengthbox <- ggplot(cnv_input, aes(x = as.factor(CNV_Value), y = Length, color = as.factor(CNV_Value))) +
+    geom_boxplot() +
+    scale_y_continuous(labels = unit_format(unit = "" ,scale = 1e-3)) +
+    theme_classic() +
+    theme(legend.position = c(0.9, 0.9)) +
+    labs(y = "Length (kb)", x = "Type of copy", col = "CNV Value")
+  print(f1b_lengthbox)
+  dev.off()
+  if(file.exists("f1b_lengthbox.png")){
+    print("Box plot of CNV length was saved in working directory.")
+  } else {
+    print("Task faild, please check your input data format and paramter used!")
+  }
+
+  #fig.1c the count of CNV number distribute on each Chr
+  cnv_chr <- cnv_input %>% group_by(CNV_Value) %>% count(Chr)
+  cnv_chr$Chr <- factor(cnv_chr$Chr, levels = c(1:29))
+  png(filename = "f1c_chr.png", res = 300, width = 3500, height = 2000)
+  f1c_chr<- ggplot(cnv_chr, aes(x = Chr, y = n, group = CNV_Value)) +
+    geom_line(linetype = "dashed", aes(color = as.factor(CNV_Value))) +
+    geom_point(aes(color = as.factor(CNV_Value))) +
+    theme_classic() +
+    theme(legend.position = c(0.9, 0.9)) +
+    labs(y = "Number of CNV", x = "Chr", col = "CNV Value") # col change title of legend
+  print(f1c_chr)
+  dev.off()
+  if(file.exists("f1c_chr.png")){
+    print("Distribution of CNV type on chromosome plot was saved in working directory.")
+  } else {
+    print("Task faild, please check your input data format and paramter used!")
+  }
+
+  #plot individual CNV number
+  png(filename = "f1d_indiv.png", res = 300, width = 3500, height = 2000)
+  cnv_indiv <- cnv_input %>% group_by(Sample_ID) %>% count(Sample_ID, name = "n_CNV")
+  f1d_indiv <- ggplot(cnv_indiv, aes(x = as.factor(n_CNV))) +
+    geom_bar(stat = "count",fill = "lightblue", color = "black") +
+    #geom_text(stat = "count", aes(label = ..count..), vjust = -0.12) +
+    theme_classic() +
+    theme(axis.text.x = element_text(angle = 90)) +
+    labs(x = "The Number of CNV Detected in An Individual", y = "Number of Individual")
+  print(f1d_indiv)
+  dev.off()
+
+  if(file.exists("f1d_indiv.png")){
+    print("The number of CNV in Individual plot was saved in working directory.")
+  } else {
+    print("Task faild, please check your input data format and paramter used!")
+  }
+
+
+  if(!is.null(plot_sum_1)) {
+    a_d <- plot_grid(f1d_indiv, f1a_lengthgroup)
+
+    png(res = 300, filename = "cnv_summary_plot_1.png", height = 4000, width = 3000, bg = "transparent")
+    ad_e <- plot_grid(a_d, cnv_distri, ncol = 1, rel_heights = c(1,3.3))
+    print(ad_e)
     dev.off()
-    if(file.exists("f1a_length.png")){
-      print("Task done, plot saved in working directory.")
+    if(file.exists("cnv_summary_plot_1.png")){
+      print("cnv_summary_plot_1 was saved in working directory.")
     } else {
       print("Task faild, please check your input data format and paramter used!")
     }
   }
 
-  else if (!is.null(plot_copynumber)) {
-    png(filename = "f1b_cnvnumber.png", res = 300, width = 3500, height = 2000)
-    #fig.1b CNV Vs Length
-    f1b_cnvnumber <- ggplot(cnv_input, aes(x = as.factor(CNV_Value), y = Length, color = as.factor(CNV_Value))) +
-      geom_boxplot() +
-      scale_y_continuous(labels = unit_format(unit = "" ,scale = 1e-3)) +
-      theme_classic() +
-      theme(legend.position = c(0.9, 0.9)) +
-      labs(y = "Length (kb)", x = "Number of copy", col = "CNV Value")
-    print(f1b_cnvnumber)
-    dev.off()
-    if(file.exists("f1b_cnvnumber.png")){
-      print("Task done, plot saved in working directory.")
-    } else {
-      print("Task faild, please check your input data format and paramter used!")
-    }
-  }
-
-  else if (!is.null(plot_chr)) {
-    #fig.1c the count of CNV number distribute on each Chr
-    cnv_chr <- cnv_input %>% group_by(CNV_Value) %>% count(Chr)
-    cnv_chr$Chr <- factor(cnv_chr$Chr, levels = c(1:29))
-    png(filename = "f1c_chr.png", res = 300, width = 3500, height = 2000)
-    f1c_chr<- ggplot(cnv_chr, aes(x = Chr, y = n, group = CNV_Value)) +
-      geom_line(linetype = "dashed", aes(color = as.factor(CNV_Value))) +
-      geom_point(aes(color = as.factor(CNV_Value))) +
-      theme_classic() +
-      theme(legend.position = c(0.9, 0.9)) +
-      labs(y = "Number of CNV", x = "Chr", col = "CNV Value") # col change title of legend
-    print(f1c_chr)
-    dev.off()
-    if(file.exists("f1c_chr.png")){
-      print("Task done, plot saved in working directory.")
-    } else {
-      print("Task faild, please check your input data format and paramter used!")
-    }
-  }
-
-  else if(!is.null(plot_individual)) {
-      #fig.1d the count of CNVs on individual level
-      cnv_indiv <- cnv_input %>% group_by(Sample_ID) %>% count(Sample_ID) %>% group_by(n) %>% count(n)
-      # n is the number of CNVs for each individual, nn is number of individuals on each CNV frequent group
-      png(filename = "f1d_indiv.png", res = 300, width = 3500, height = 2000)
-      f1d_indiv <- ggplot(cnv_indiv, aes(x = n, y = nn)) +
-        geom_bar(stat = "identity",fill = "lightblue", color = "black") +
-        geom_text(aes(label = nn), vjust = -0.3) +
-        theme_classic() +
-        labs(x = "Number of CNV", y = "Number of Individual")
-      print(f1d_indiv)
-      dev.off()
-      if(file.exists("f1d_indiv.png")){
-        print("Task done, plot saved in working directory.")
-      } else {
-        print("Task faild, please check your input data format and paramter used!")
-      }
-    }
-
-  else if(!is.null(plot_merge)){
+  if(!is.null(plot_sum_2)){
       # set a big graph merge four figture in one
-
-    png(filename = "cnv_summaray.png",
+    png(filename = "cnv_summaray_plot_2.png",
         res = 300, # 300ppi
         width = 4300, height = 3400,
         bg = "transparent")
 
-    cnv_count <- cnv_input %>% group_by(CNV_Value) %>% count(group) #summarise the number of CNVs on each state each length group
-    cnv_count$group <- factor(cnv_count$group, levels = c("1-50kb", "50-100kb", "100-200kb", "200-300kb",
-                                                          "300-400kb", "400-500kb", "500-600kb",
-                                                          "600-700kb", "700-1000kb", "1-2Mbp", "2-5Mbp"))
-
-    f1a_length <- ggplot(cnv_count, aes(fill = as.factor(CNV_Value), x = group, y = n)) +
-      geom_bar(stat = "identity", position = position_dodge()) +
-      theme_classic() +
-      theme(axis.text.x = element_text(angle = 20, vjust = 0.8), legend.position = c(0.9, 0.9)) +
-      labs(y = "Number of CNV", x = "Group of Length", fill = "CNV Value") # col change title of legend
-
-
-    f1b_cnvnumber <- ggplot(cnv_input, aes(x = as.factor(CNV_Value), y = Length, color = as.factor(CNV_Value))) +
-      geom_boxplot() +
-      scale_y_continuous(labels = unit_format(unit = "" ,scale = 1e-3)) +
-      theme_classic() +
-      theme(legend.position = c(0.9, 0.9)) +
-      labs(y = "Length (kb)", x = "Number of copy", col = "CNV Value")
-
-    cnv_chr <- cnv_input %>% group_by(CNV_Value) %>% count(Chr)
-    cnv_chr$Chr <- factor(cnv_chr$Chr, levels = c(1:29))
-    f1c_chr<- ggplot(cnv_chr, aes(x = Chr, y = n, group = CNV_Value)) +
-      geom_line(linetype = "dashed", aes(color = as.factor(CNV_Value))) +
-      geom_point(aes(color = as.factor(CNV_Value))) +
-      theme_classic() +
-      theme(legend.position = c(0.9, 0.9)) +
-      labs(y = "Number of CNV", x = "Chr", col = "CNV Value") # col change title of legend
-
-    #fig.1d the count of CNVs on individual level
-    cnv_indiv <- cnv_input %>% group_by(Sample_ID) %>% count(Sample_ID) %>% group_by(n) %>% count(n)
-    # n is the number of CNVs for each individual, nn is number of individuals on each CNV frequent group
-    f1d_indiv <- ggplot(cnv_indiv, aes(x = n, y = nn)) +
-      geom_bar(stat = "identity",fill = "turquoise2", color = "black") +
-      geom_text(aes(label = nn), vjust = -0.3) +
-      theme_classic() +
-      labs(x = "Number of CNV", y = "Number of Individual")
-
-    all <-  plot_grid(f1a_length, f1b_cnvnumber, f1c_chr, f1d_indiv, labels = c("a", "b","c","d"))
+    all <-  plot_grid(f1a_lengthgroup, f1b_lengthbox, f1c_chr, f1d_indiv, labels = c("a", "b","c","d"))
     print(all)
     dev.off()
-      if(file.exists("cnv_summaray.png")){
-        print("Task done, plot saved in working directory.")
+      if(file.exists("cnv_summaray_plot_2.png")){
+        cat("cnv_summaray_polt_2 was saved in working directory.\nTask done!")
       } else {
         print("Task faild, please check your input data format and paramter used!")
       }
-    }
-
-  else {
-    print("Warning: Insufficient input parameters, please read help file for this fuction!")
   }
 
+  else {
+    print("Task done. If you want to combine all these plot together, try arguments in function with plot_sum_1 = 1 and plot_sum_2 = 1")
+  }
 }
 
 
