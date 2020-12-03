@@ -160,12 +160,12 @@ plot_cnv_inten_maf <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
 
     b <- high_freq$title[i]
     dir <- paste( b, ".png", sep = "")
-    #png(dir, res = 300, width = 2000, height = 4000, bg = "transparent")
+    png(dir, res = 300, width = 2000, height = 4000, bg = "transparent")
     #plot_grid(zoom,zoom2, maf, baf, lrr, align = "v", axis = "t", ncol = 1, rel_heights = c(1,1,1,1,1))
     final_plot <- plot_grid(zoom_plot, baf, lrr, maf, ld, align = "v", axis = "t", ncol = 1, rel_heights = c(1.5, 1, 1, 1, 1.5))
-    #print(final_plot)
-    #dev.off()
+    print(final_plot)
+    dev.off()
     print(paste0("Plot ", i, " was stored in working directory."))
-    save_plot(filename = dir, plot = final_plot)
+    #save_plot(filename = dir, plot = final_plot)
   }
 }

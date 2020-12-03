@@ -4,8 +4,8 @@ require(dplyr, quietly = TRUE)
 require(scales, quietly = TRUE)
 require(reshape2, quietly = TRUE)
 require(tidyr, quietly = TRUE)
-cnvr_visual <- function(cnvr, assembly = "ARS",  cnv = NULL, sample_size = NULL, common_cnv_threshold = 0.05) {
-  if (is.null(cnv)) {
+cnvr_plot <- function(cnvr, assembly = "ARS",  cnv_annotation = NULL, sample_size = NULL, common_cnv_threshold = 0.05) {
+  if (is.null(cnv_annotation)) {
     #Prepare parameters for CNVR distribution plot
     #prepare the Y axis for each chromosome
     chr <- data.frame("chr" <- seq(1,29))  #generate a chr order
@@ -98,8 +98,10 @@ cnvr_visual <- function(cnvr, assembly = "ARS",  cnv = NULL, sample_size = NULL,
     cnvr <- fread(file = cnvr) # read cnvr result from call_cnvr function
     # high_freq <- cnvr[which(cnvr[, cnvr$Frequent >= sample_size * 0.05]), ] #call common CNVRs
     high_freq <- filter(cnvr, Frequent >= sample_size * common_cnv_threshold)
+    print(paste0("There ", nrow(high_freq), " high frequent CNVR passed the customized threshold."))
     for (i in 1:nrow(high_freq)) {
-      cnv_visual(clean_cnv = cnv, chr_id = high_freq$Chr[i], start_position = high_freq$Start[i]/1000000, end_position = high_freq$End[i]/1000000, plot_gene = 1)
+      print(paste0("Ploting CNVR ", i, "..." ))
+      cnv_visual(clean_cnv = cnv_annotation, chr_id = high_freq$Chr[i], start_position = high_freq$Start[i]/1000000, end_position = high_freq$End[i]/1000000, plot_gene = 1)
     }
   }
 }

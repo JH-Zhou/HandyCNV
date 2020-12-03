@@ -10,6 +10,9 @@
 #'
 #' @examples
 call_cnvr <- function(clean_cnv, roh = NULL) {
+  if(!file.exists("call_cnvr")){
+    dir.create("call_cnvr")
+  }
 
   clean_cnv <- fread(file = clean_cnv, sep = "\t", header = TRUE)
 
@@ -86,20 +89,20 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
     print("CNVR summary as following:")
     print(cnvr_summary)
 
-    fwrite(cnv_cnvr, file = "individual_cnv_cnvr.txt", sep = "\t", quote = FALSE)
-    fwrite(cnvr_f_type, file = "cnvr.txt", sep = "\t", quote = FALSE)
-    fwrite(cnvr_summary, file = "cnvr_summary.txt", sep = "\t", quote = FALSE, col.names = TRUE)
+    fwrite(cnv_cnvr, file = "call_cnvr/individual_cnv_cnvr.txt", sep = "\t", quote = FALSE)
+    fwrite(cnvr_f_type, file = "call_cnvr/cnvr.txt", sep = "\t", quote = FALSE)
+    fwrite(cnvr_summary, file = "call_cnvr/cnvr_summary.txt", sep = "\t", quote = FALSE, col.names = TRUE)
 
-    if(file.exists("cnvr.txt") & file.exists("individual_cnv_cnvr.txt")) {
+    if(file.exists("call_cnvr/cnvr.txt") & file.exists("call_cnvr/individual_cnv_cnvr.txt")) {
       print("Task done, CNVR results saved in your working directory.")
     } else {print("WARNING, lack of output file, please check format of your input file!!")}
   }
 
   else {
     cnvr_union_f$length <- cnvr_union_f$End - cnvr_union_f$Start + 1
-    fwrite(cnvr_union_f, file = "roh.txt", sep = "\t", quote = FALSE)
+    fwrite(cnvr_union_f, file = "call_cnvr/roh.txt", sep = "\t", quote = FALSE)
 
-    if(file.exists("roh.txt")) {
+    if(file.exists("call_cnvr/roh.txt")) {
       print("Task done, ROH results saved in your working directory.")
     } else {print("WARNING, lack of output file, please check format of your input file!!")}
   }

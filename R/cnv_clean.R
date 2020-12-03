@@ -1,4 +1,9 @@
 cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/") {
+  #creat a directory to store output files
+  if (!file.exists("clean_cnv")){
+    dir.create("clean_cnv")
+  }
+
   if(!is.null(cnvpartition)) {
     cnvpart <- fread(file = cnvpartition, skip = 7)
     names(cnvpart) <- c("Sample_ID", "Chr", "Start", "End", "CNV_Value", "CNV_Conf", "Comment", "Empty")
@@ -23,10 +28,10 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/")
 
     fwrite(summary_cnvpart, file = "cnvpart_summary", sep = "\t", quote = FALSE, col.names = TRUE)
 
-    fwrite(cnvpart_pure, file = "cnvpart_clean.cnv", sep = "\t", quote = FALSE)
-    fwrite(cnvpart_roh, file = "cnvpart_roh.cnv", sep = "\t", quote = FALSE)
+    fwrite(cnvpart_pure, file = "clean_cnv/cnvpart_clean.cnv", sep = "\t", quote = FALSE)
+    fwrite(cnvpart_roh, file = "clean_cnv/cnvpart_roh.cnv", sep = "\t", quote = FALSE)
 
-    if (file.exists("cnvpart_clean.cnv")){
+    if (file.exists("clean_cnv/cnvpart_clean.cnv")){
        print("Task finished, Clean CNV, ROH, CNV Summary results were saved in your working directory.")
      }
 
@@ -64,9 +69,9 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/")
     summary_cnv <- penn %>% group_by(CNV_Value) %>% summarise("N" = n(), "Average Length" = mean(Length), "Min Length" = min(Length), "Max Length" = max(Length))
     print("The basic summary of each CNV type as following:")
     print(summary_cnv)
-    fwrite(penn, file = "penncnv_clean.cnv", sep ="\t", quote = FALSE)
-    fwrite(summary_cnv, file = "penncnv_summary", sep = "\t", quote = FALSE, col.names = TRUE)
-    if (file.exists("penncnv_clean.cnv")){
+    fwrite(penn, file = "clean_cnv/penncnv_clean.cnv", sep ="\t", quote = FALSE)
+    fwrite(summary_cnv, file = "clean_cnv/penncnv_summary", sep = "\t", quote = FALSE, col.names = TRUE)
+    if (file.exists("clean_cnv/penncnv_clean.cnv")){
       print("Task finished, please check Clean CNV results in your working directory.")
     }
 
