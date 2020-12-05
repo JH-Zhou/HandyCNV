@@ -27,7 +27,7 @@
 require(ggplot2, quietly = TRUE)
 require(data.table, quietly = TRUE)
 require(ggrepel, quietly = TRUE)
-cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, plot_gene = NULL, plot_title = NULL) {
+cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, plot_gene = NULL, plot_title = NULL, report_id = NULL) {
   #myAgr <- formals(cnv_visual)
   #prepare for population data
   cnv <- fread(file = clean_cnv)
@@ -115,6 +115,13 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
   print(zoom_plot)
   dev.off()
   print("Task done, plot was stored in working directory.")
+  if(!is.null(report_id)) {
+    indiv_id <- data.frame("Sample_ID" = cnv_chr_zoom$Sample_ID)
+    print("Individual ID in this CNVRs as following: ")
+    print(indiv_id)
+    assign("indiv_id", value = cnv_chr_zoom, envir = .GlobalEnv)
+
+  }
   }
   else if (is.null(start_position) == "FALSE" & is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(plot_gene) == "FALSE") {
     cnv_chr <- cnv[cnv$Chr == chr_id, ]
