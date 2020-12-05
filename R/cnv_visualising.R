@@ -27,7 +27,7 @@
 require(ggplot2, quietly = TRUE)
 require(data.table, quietly = TRUE)
 require(ggrepel, quietly = TRUE)
-cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, plot_gene = NULL, plot_title = NULL, report_id = NULL) {
+cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, plot_gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL) {
   #myAgr <- formals(cnv_visual)
   #prepare for population data
   cnv <- fread(file = clean_cnv)
@@ -120,7 +120,55 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
     print("Individual ID in this CNVRs as following: ")
     print(indiv_id)
     assign("indiv_id", value = cnv_chr_zoom, envir = .GlobalEnv)
+    cnv_visual(clean_cnv = "clean_cnv/penncnv_clean.cnv", chr_id = 5, start_position = 93.6, end_position = 93.7, report_id = 1)
+    pedb <- fread(pedigree)
+    indiv_id <- merge(indiv_id, pedb, by.x = "Sample_ID", by.y = "Chip_ID", all.x = TRUE)
 
+    if ("Herd" %in% colnames(indiv_id)){
+      herd_cnv <- ggplot(indiv_id, aes(x = Herd, fill = as.factor(CNV_Value))) +
+        geom_bar() +
+        theme_classic()+
+        theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
+        labs(x = "Name of Herd", y = "Number of CNV", fill = "Copy of CNV")
+    }
+
+    if ("Sire_Source" %in% colnames(indiv_id)){
+      source_cnv <- ggplot(indiv_id, aes(x = Sire_Source, fill = as.factor(CNV_Value))) +
+        geom_bar() +
+        theme_classic()+
+        theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
+        labs(x = "Bull Source", y = "Number of CNV", fill = "Copy of CNV")
+    }
+
+    if ("Sire_ID_Correct" %in% colnames(indiv_id)){
+      sire_cnv <- ggplot(indiv_id, aes(x = Sire_ID_Correct, fill = as.factor(CNV_Value))) +
+        geom_bar()+
+        theme_classic()+
+        theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
+        labs(x = "Sire ID", y = "Number of CNV", fill = "Copy of CNV")
+    }
+
+    png(filename = "cnv_source.png", res = 300, bg = "transparent")
+    if (exists("herd_cnv") & exists("source_cnv") & exists("sire_cnv")){
+      cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv)
+      print(cnv_source)
+      dev.off()
+    } else if (exists("herd_cnv") & exists("source_cnv")) {
+      cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv)
+      print(cnv_source)
+      dev.off()
+    } else if (exists("herd_cnv") & exists("sire_cnv")) {
+      cnv_source <- plot_grid(herd_cnv, sire_cnv)
+      print(cnv_source)
+      dev.off()
+    } else if (exists("source_cnv") & exists("sire_cnv")) {
+      cnv_source <- plot_grid(source_cnv, sire_cnv)
+      print(cnv_source)
+      dev.off()
+    } else {
+      print(sire_cnv)
+      dev.off()
+    }
   }
   }
   else if (is.null(start_position) == "FALSE" & is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(plot_gene) == "FALSE") {
