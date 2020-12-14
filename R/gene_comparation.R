@@ -29,7 +29,8 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, common_ge
   png(filename = "two_genelists_comparation.png", res = 300, width = 3000, height = 2000)
   compare_plot <- ggplot(data = ars_umd_gene, aes(x = gene_list_1, y = gene_list_2, color = Common_Gene)) +
     geom_point(pch = 19, size = 3, position = position_jitter(height = 0.15, width = 0.15)) +
-    theme_bw() +
+    theme_classic() +
+    theme(legend.position = c(0.9, 0.9)) +
     labs( x = "Gene Frequency in First List", y = "Gene Frequency in Second List")
   print(compare_plot)
   dev.off()

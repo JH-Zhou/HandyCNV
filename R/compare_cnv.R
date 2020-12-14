@@ -17,7 +17,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL) {
   plot_comparison <- function(cnv_checkover, title_fig) {
     cnv <- cnv_checkover
     title_f = title_fig
-    cnv_cal <- cnv_checkover %>% count(CNV_Value, Check_overlap) %>%
+    cnv_cal <- cnv %>% count(CNV_Value, Check_overlap) %>%
       mutate(percent_total = n / sum(n)) %>%
       group_by(CNV_Value) %>%
       mutate(percent_group = n /sum(n))

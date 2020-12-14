@@ -116,53 +116,58 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
   dev.off()
   print("Task done, plot was stored in working directory.")
   if(!is.null(report_id)) {
-    indiv_id <- data.frame("Sample_ID" = cnv_chr_zoom$Sample_ID)
+    indiv_id <- cnv_chr_zoom$Sample_ID
     print("Individual ID in this CNVRs as following: ")
     print(indiv_id)
-    assign("indiv_id", value = cnv_chr_zoom, envir = .GlobalEnv)
-    cnv_visual(clean_cnv = "clean_cnv/penncnv_clean.cnv", chr_id = 5, start_position = 93.6, end_position = 93.7, report_id = 1)
+    #assign("indiv_id", value = cnv_chr_zoom, envir = .GlobalEnv)
+    indiv <- cnv_chr_zoom
+    #cnv_visual(clean_cnv = "clean_cnv/penncnv_clean.cnv", chr_id = 5, start_position = 93.6, end_position = 93.7, report_id = 1)
     pedb <- fread(pedigree)
-    indiv_id <- merge(indiv_id, pedb, by.x = "Sample_ID", by.y = "Chip_ID", all.x = TRUE)
+    if (exists("pedb")) {
+      print("Pedigree was read in.")
+    }
+    indiv_id_ped <- merge(indiv, pedb, by.x = "Sample_ID", by.y = "Chip_ID", all.x = TRUE)
+    #print(colnames(indiv_id_ped))
 
-    if ("Herd" %in% colnames(indiv_id)){
-      herd_cnv <- ggplot(indiv_id, aes(x = Herd, fill = as.factor(CNV_Value))) +
+    if ("Herd" %in% colnames(indiv_id_ped)){
+      herd_cnv <- ggplot(indiv_id_ped, aes(x = as.factor(Herd), fill = as.factor(CNV_Value))) +
         geom_bar() +
         theme_classic()+
         theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
         labs(x = "Name of Herd", y = "Number of CNV", fill = "Copy of CNV")
     }
 
-    if ("Sire_Source" %in% colnames(indiv_id)){
-      source_cnv <- ggplot(indiv_id, aes(x = Sire_Source, fill = as.factor(CNV_Value))) +
+    if ("Sire_Source" %in% colnames(indiv_id_ped)){
+      source_cnv <- ggplot(indiv_id_ped, aes(x = Sire_Source, fill = as.factor(CNV_Value))) +
         geom_bar() +
         theme_classic()+
         theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
         labs(x = "Bull Source", y = "Number of CNV", fill = "Copy of CNV")
     }
 
-    if ("Sire_ID_Correct" %in% colnames(indiv_id)){
-      sire_cnv <- ggplot(indiv_id, aes(x = Sire_ID_Correct, fill = as.factor(CNV_Value))) +
+    if ("Sire_ID" %in% colnames(indiv_id_ped)){
+      sire_cnv <- ggplot(indiv_id_ped, aes(x = Sire_ID, fill = as.factor(CNV_Value))) +
         geom_bar()+
         theme_classic()+
         theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
         labs(x = "Sire ID", y = "Number of CNV", fill = "Copy of CNV")
     }
 
-    png(filename = "cnv_source.png", res = 300, bg = "transparent")
+    png(filename = paste0(zoom_name, "source.png"), res = 300, bg = "transparent", height = 2000, width = 2500)
     if (exists("herd_cnv") & exists("source_cnv") & exists("sire_cnv")){
-      cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv)
+      cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
       print(cnv_source)
       dev.off()
     } else if (exists("herd_cnv") & exists("source_cnv")) {
-      cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv)
+      cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
       print(cnv_source)
       dev.off()
     } else if (exists("herd_cnv") & exists("sire_cnv")) {
-      cnv_source <- plot_grid(herd_cnv, sire_cnv)
+      cnv_source <- plot_grid(herd_cnv, sire_cnv, ncol = 1)
       print(cnv_source)
       dev.off()
     } else if (exists("source_cnv") & exists("sire_cnv")) {
-      cnv_source <- plot_grid(source_cnv, sire_cnv)
+      cnv_source <- plot_grid(source_cnv, sire_cnv, ncol = 1)
       print(cnv_source)
       dev.off()
     } else {
