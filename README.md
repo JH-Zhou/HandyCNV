@@ -84,8 +84,8 @@ HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", chr
 HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", individual_id = "202031420083_R05C01")
 
 #6.5 plot the cnvr sourse information
-# user should provide a pedigree at least include the Sample_ID, Sire_ID two columns
-# Now only support three source information, Sire_ID, Herd and Source(The sire's original country)
+#user should provide a pedigree at least include the Sample_ID, Sire_ID two columns
+#Now only support three source information, Sire_ID, Herd and Source(The sire's original country)
 HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", chr_id = 17, start_position = 20, end_position = 25, 
                      report_id = "yes", 
                      pedigree = "Pedigree.csv") 
