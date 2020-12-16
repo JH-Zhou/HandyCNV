@@ -2,16 +2,16 @@
 R package for fast and normalized summarizing CNV results from SNP intensity data 
 
 # All files we need is CNV results, SNP maps, Reference gene file, Pedigree,Plink bim, bed and fam files, Snp signal intensity
-# 1. CNV results, now only support PennCNV and CNVPartition output files (will adding a standard format to fit all kinds of demands)
-# 2. SNP maps (If user need to convert the coordinates, should provide at least two assembly map file) (need to add the four fixed colums requirments)
-# 3. rederence gene files, this files can download from UCSC website
-# 4. Pedigree (Not necessary, only use in function 'cnv_visual' to plot the source of CNV, its useful when check some high heritability CNVs)
-# 5. Plink bim, bed and fam files (Not necessary, only use in the tenth function 'plot_all')
-# 6. Snp signal intensity (Not necessary, only use in the tenth function 'plot_all')
+#1. CNV results, now only support PennCNV and CNVPartition output files (will adding a standard format to fit all kinds of demands)
+#2. SNP maps (If user need to convert the coordinates, should provide at least two assembly map file) (need to add the four fixed colums requirments)
+#3. rederence gene files, this files can download from UCSC website
+#4. Pedigree (Not necessary, only use in function 'cnv_visual' to plot the source of CNV, its useful when check some high heritability CNVs)
+#5. Plink bim, bed and fam files (Not necessary, only use in the tenth function 'plot_all')
+#6. Snp signal intensity (Not necessary, only use in the tenth function 'plot_all')
 
 
 #here is an example of how to use HandyCNV
-# Copy this code in Rstudio to install HandyCNV: remotes::install_github(repo = "JH-Zhou/HandyCNV", auth_token = "3d2ac98e4c297bab332f1e68b3b2d49f3a17d6aa")
+#Copy this code in Rstudio to install HandyCNV: remotes::install_github(repo = "JH-Zhou/HandyCNV", auth_token = "3d2ac98e4c297bab332f1e68b3b2d49f3a17d6aa")
 
 
 setwd("C:/Users/Jinghang/Desktop/HandyCNV_test_file_1") # Users should set the working directory by themself
@@ -56,8 +56,8 @@ HandyCNV::call_cnvr(clean_cnv = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv") #for
 HandyCNV::call_cnvr(clean_cnv = "2_3_clean_cnv_UMD_Part/cnvpart_clean.cnv") #for UMD CNVPartition results
 
 #5 Fifth function:call_gene, notice the version of reference gene should correspond to the CNV verison
-# which means the ARS CNV and CNVR results should use ARS reference genome
-# The UMD CNV and CNVR results should use UMD reference genome
+#which means the ARS CNV and CNVR results should use ARS reference genome
+#The UMD CNV and CNVR results should use UMD reference genome
 HandyCNV::call_gene(refgene = "gene_annotation/refGene_ars1.2.txt", 
           cnvr = "4_1_call_cnvr_ARS_Penn/cnvr.txt", 
           clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv") #for ARS PennCNV results
@@ -92,13 +92,13 @@ HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", chr
 
 #7 Seventh function:cnvr_plot, we only take the ARS PennCNV results as example
 #7.1 plot the cnvr distribution on each chromosome, output figture name called:cnvr_plot.png
-# Uesr should define the assembly argument specific the ARS or UMD results will been plot
+#Uesr should define the assembly argument specific the ARS or UMD results will been plot
 HandyCNV::cnvr_plot(cnvr = "4_1_call_cnvr_ARS_Penn/cnvr.txt", assembly = "ARS")
 
 #7.2 plot all the high frequent CNVR, input file have to include the annotated CNV results 'cnv_annotation'.
-# user could custom the frequency threshold by define the sample_size and common_cnv_threshold arguments
-# in this example we set sample_size = 388 and common_cnvThreshold = 0.05
-# which means only plot the cnvr with frequecy higher than 388 * 0.05 = 19.4
+#user could custom the frequency threshold by define the sample_size and common_cnv_threshold arguments
+#in this example we set sample_size = 388 and common_cnvThreshold = 0.05
+#which means only plot the cnvr with frequecy higher than 388 * 0.05 = 19.4
 HandyCNV::cnvr_plot(cnvr = "4_1_call_cnvr_ARS_Penn/cnvr.txt", 
                     cnv_annotation = "5_1_call_gene_ARS_Penn/cnv_annotation.txt", 
                     sample_size = 388, 
@@ -110,9 +110,9 @@ HandyCNV::compare_cnv(cnv_umd = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv",
                       cnv_ars = "2_3_clean_cnv_UMD_Part/cnvpart_clean.cnv")
 
 #8.2 compare the CNV results with different reference assembly, need to provide the two verion's map extra
-# this two version assembly map file was generated in the first step, called 'umd_ars_map.map'
-# this function will convert the coordinate for bith cnv results at first
-# then make comparison, the first principal is that the comparison will execute by the lastest ARS coordinate
+#this two version assembly map file was generated in the first step, called 'umd_ars_map.map'
+#this function will convert the coordinate for bith cnv results at first
+#then make comparison, the first principal is that the comparison will execute by the lastest ARS coordinate
 HandyCNV::compare_cnv(cnv_umd = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv", 
                       cnv_ars = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv",
                       umd_ars_map = "1_covert_map/umd_ars_map.map")
@@ -124,13 +124,13 @@ HandyCNV::compare_cnvr(cnvr_umd = "4_2_call_cnvr_UMD_Penn/cnvr.txt",
                        cnvr_ars = "4_3_call_cnvr_UMD_Part/cnvr.txt")
 
 #9.2 compare the CNVR results with different reference assembly, need to provide the two verion's map extra
-# this two version assembly map file was generated in the first step, called 'umd_ars_map.map'
-# this function will convert the coordinate for bith cnvr results at first then make comparison #
-# the first principal is that the comparison will execute by the lastest ARS coordinate
-# the difference between compare CNVR to CNV is that CNVR more concern about the overlapping length
-# but compare CNV we more concern about the overlapping number of CNVs
-# and CNV have the individual level and population level
-# but CNVR only on the population level
+#this two version assembly map file was generated in the first step, called 'umd_ars_map.map'
+#this function will convert the coordinate for bith cnvr results at first then make comparison #
+#the first principal is that the comparison will execute by the lastest ARS coordinate
+#the difference between compare CNVR to CNV is that CNVR more concern about the overlapping length
+#but compare CNV we more concern about the overlapping number of CNVs
+#and CNV have the individual level and population level
+#but CNVR only on the population level
 HandyCNV::compare_cnvr(cnvr_umd = "4_2_call_cnvr_UMD_Penn/cnvr.txt", 
                        cnvr_ars = "4_1_call_cnvr_ARS_Penn/cnvr.txt", 
                        umd_ars_map = "1_covert_map/umd_ars_map.map")
