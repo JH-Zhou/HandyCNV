@@ -18,7 +18,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     cnv <- cnv_checkover
     title_f = title_fig
     drop_name = "Overlap_length"
-     cnvr_cal = unique(cnv[, !(names(cnv) %in% drop_name)]) %>% group_by(Type, Check_overlap) %>%
+     cnvr_cal = unique(subset(cnv, select = !(colnames(cnv) %in% drop_name))) %>% group_by(Type, Check_overlap) %>%
       summarise(origi_length = sum(Length), num_CNVR = n_distinct(Length))
     cnvr_over <- cnv %>% group_by(Type, Check_overlap) %>%
       summarise(overlap_len = sum(Overlap_length), num_overlap_oppsite = n_distinct(Overlap_length))
@@ -31,6 +31,8 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
 
     cnvr_cal = cnvr_cal %>% group_by(Type) %>%
       mutate(prop_overlap_len = overlap_len / sum(origi_length), prop_num = num_CNVR / sum(num_CNVR))
+    cnvr_cal %>% add_row(Total = "")
+
     print(paste0("CNVR comparison summary results in ", title_f," as following:"))
     print(cnvr_cal)
 

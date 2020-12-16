@@ -1,0 +1,7 @@
+Type	Count
+Both Unknown Position	344
+Different Chromosome	851
+Missing SNP on ARS	6
+Same Chromosome	122428
+Unknown Position in ARS	545
+Unknown Position in UMD	13771
