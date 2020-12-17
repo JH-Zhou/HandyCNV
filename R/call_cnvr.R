@@ -83,18 +83,28 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
 
     print(paste0(nrow(cnvr_f_type), " CNVR generated in total."))
 
+    #The overall summary
     cnvr_summary <- cnvr_f_type %>%
       group_by(Type) %>%
       summarise(N = n(), "Average Length" = mean(Length), "Min Legnth" = min(Length), "Max Length" = max(Length), "Total Length" = sum(Length))
-    print("CNVR summary as following:")
+
+    #Partial summary
+    cnvr_chr_summary <- cnvr_f_type %>%
+      group_by(Chr) %>%
+      summarise("Total Length" = sum(Length), "Number of CNVR" = n())
+
+    print("Overall summary of CNVR as following:")
     print(cnvr_summary)
+    print("Partial summary of CNVR on each Chromosome as following:")
+    print(cnvr_chr_summary)
 
     fwrite(cnv_cnvr, file = "call_cnvr/individual_cnv_cnvr.txt", sep = "\t", quote = FALSE)
     fwrite(cnvr_f_type, file = "call_cnvr/cnvr.txt", sep = "\t", quote = FALSE)
     fwrite(cnvr_summary, file = "call_cnvr/cnvr_summary.txt", sep = "\t", quote = FALSE, col.names = TRUE)
+    fwrite(cnvr_chr_summary, file = "call_cnvr/cnvr_chr_summary.txt", sep = "\t", quote = FALSE, col.names = TRUE)
 
     if(file.exists("call_cnvr/cnvr.txt") & file.exists("call_cnvr/individual_cnv_cnvr.txt")) {
-      print("Task done, CNVR results saved in your working directory.")
+      print("Task done, CNVR results saved in the working directory.")
     } else {print("WARNING, lack of output file, please check format of your input file!!")}
   }
 
@@ -103,7 +113,7 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
     fwrite(cnvr_union_f, file = "call_cnvr/roh.txt", sep = "\t", quote = FALSE)
 
     if(file.exists("call_cnvr/roh.txt")) {
-      print("Task done, ROH results saved in your working directory.")
+      print("Task done, ROH results saved in the working directory.")
     } else {print("WARNING, lack of output file, please check format of your input file!!")}
   }
 
