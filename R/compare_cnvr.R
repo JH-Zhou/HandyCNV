@@ -31,7 +31,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
 
     cnvr_cal = cnvr_cal %>% group_by(Type) %>%
       mutate(prop_overlap_len = overlap_len / sum(origi_length), prop_num = num_CNVR / sum(num_CNVR))
-    cnvr_cal %>% add_row(Total = "")
+    #cnvr_cal %>% add_row(Total = "")
 
     print(paste0("CNVR comparison summary results in ", title_f," as following:"))
     print(cnvr_cal)
