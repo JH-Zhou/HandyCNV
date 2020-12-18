@@ -19,7 +19,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     title_f = title_fig
     drop_name = "Overlap_length"
      cnvr_cal = unique(subset(cnv, select = !(colnames(cnv) %in% drop_name))) %>% group_by(Type, Check_overlap) %>%
-      summarise(origi_length = sum(Length), num_CNVR = n_distinct(Length))
+      summarise(origi_length = sum(Length), num_CNVR = n_distinct(CNVR_ID))
     cnvr_over <- cnv %>% group_by(Type, Check_overlap) %>%
       summarise(overlap_len = sum(Overlap_length), num_overlap_oppsite = n_distinct(Overlap_length))
 
@@ -89,7 +89,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
 
     plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1")
 
-    fwrite(checkover_pop_1, file = "cnv_all_population_1.checkoverlap", sep = "\t", quote = FALSE)
+    fwrite(checkover_pop_length, file = "checkover_pop_1.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference
     #UMD overlap number
@@ -140,7 +140,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
 
 
     plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2")
-    fwrite(checkover_pop_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
+    fwrite(checkover_pop_length_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference
     #ARS
@@ -163,7 +163,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     print("The final comparison results of the second file as follows: ")
     print(overlap_summary_2)
     fwrite(overlap_summary_2, file = "overlap_cnv_2.summary", sep = "\t", quote = FALSE)
-    print("Task done. Comparison results were saved in your working directory")
+    print("Task done. Comparison results were saved in the working directory")
   }
 
   else {
@@ -320,7 +320,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
 
     plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1")
 
-    fwrite(checkover_pop_1, file = "cnv_all_population_1.checkoverlap", sep = "\t", quote = FALSE)
+    fwrite(checkover_pop_length, file = "checkover_pop_1.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference
     #UMD
@@ -362,7 +362,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
 
 
     plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2")
-    fwrite(checkover_pop_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
+    fwrite(checkover_pop_length_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference
     #UMD
@@ -376,7 +376,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     print("The final comparison results of the second file as follows: ")
     print(overlap_summary_2)
     fwrite(overlap_summary_2, file = "overlap_cnv_2.summary", sep = "\t", quote = FALSE)
-    print("Task done. Comparison results were saved in your working directory")
+    print("Task done. Comparison results were saved in the working directory")
   }
 }
 
