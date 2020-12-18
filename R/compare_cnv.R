@@ -66,6 +66,10 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL) {
     #2. find non-overlap CNV between UND and ARS
     non_overlap_umd <- dplyr::setdiff(cnv_umd, final_overlap_umd)
 
+    if (nrow(non_overlap_umd) == 0) {
+      print("These two input data are completely same, comparison will stoped.")
+    }
+
     #3. cheking if overlap and non-overlap results are correct by counting the total number
     if (nrow(non_overlap_umd) + nrow(final_overlap_umd) == nrow(cnv_umd)) {
       print(paste0("Comparison Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total ", nrow(cnv_umd)))
