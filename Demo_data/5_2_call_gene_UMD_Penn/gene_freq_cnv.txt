@@ -1,5 +1,4 @@
-name2	Frequent
-	3231
+name2	Frequency
 LOC782061	38
 PLEKHA8	37
 TECRL	34

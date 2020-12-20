@@ -1,5 +1,4 @@
-name2	Frequent
-	826
+name2	Frequency
 FANCC	46
 TSPY	46
 UGT2B10	33

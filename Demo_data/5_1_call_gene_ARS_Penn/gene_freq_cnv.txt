@@ -1,5 +1,4 @@
-name2	Frequent
-	3722
+name2	Frequency
 LOC100848815	67
 BLA-DQB	59
 ZNF804B	36

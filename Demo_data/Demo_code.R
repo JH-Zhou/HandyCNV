@@ -6,7 +6,7 @@
 # 5. Plink bim, bed and fam files (Not necessary, only use in the tenth function 'plot_all')
 # 6. Snp signal intensity (Not necessary, only use in the tenth function 'plot_all')
 
-setwd("C:/Users/Jinghang/Desktop/HandyCNV_test_file_1") # Users should set the working directory by themself
+setwd("C:/Users/Jinghang/Documents/GitHub/Data-Analysis/Demo_data") # Users should set the working directory by themself
 library(HandyCNV)
 library(data.table)
 library(gaston)
@@ -19,7 +19,7 @@ library(ggrepel)
 library(scales)
 library(rgl)
 #1. First function: convert_map
-HandyCNV::convert_map(umd_map = "map/final_403_XJB_CNV.map", 
+HandyCNV::convert_map(umd_map = "map/final_403_XJB_CNV.map",
                       standard_ARS_map = "map/9913_ARS1.2_139977_GGPHDV3_marker_name_180910.map")
 
 #2. Second function:cnv_clean
@@ -30,15 +30,15 @@ HandyCNV::cnv_clean(penncnv = "cnv_results/UMD_PennCNV_WGC.goodcnv", penn_id_sep
 HandyCNV::cnv_clean(cnvpartition = "cnv_results/UMD_CNVPartition.txt")
 
 #3. Third function: cnv_summary_plot
-HandyCNV::cnv_summary_plot(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", 
+HandyCNV::cnv_summary_plot(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv",
                            plot_sum_1 = "yes",
                            plot_sum_2 = "yes") #for ARS PennCNV results
 
-HandyCNV::cnv_summary_plot(clean_cnv = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv", 
+HandyCNV::cnv_summary_plot(clean_cnv = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv",
                            plot_sum_1 = "yes",
                            plot_sum_2 = "yes") #for UMD PennCNV results
 
-HandyCNV::cnv_summary_plot(clean_cnv = "2_3_clean_cnv_UMD_Part/cnvpart_clean.cnv", 
+HandyCNV::cnv_summary_plot(clean_cnv = "2_3_clean_cnv_UMD_Part/cnvpart_clean.cnv",
                            plot_sum_1 = "yes",
                            plot_sum_2 = "yes") #for UMD CNVPartition results
 
@@ -50,26 +50,26 @@ HandyCNV::call_cnvr(clean_cnv = "2_3_clean_cnv_UMD_Part/cnvpart_clean.cnv") #for
 #5 Fifth function:call_gene, notice the version of reference gene should correspond to the CNV verison
 # which means the ARS CNV and CNVR results should use ARS reference genome
 # The UMD CNV and CNVR results should use UMD reference genome
-HandyCNV::call_gene(refgene = "gene_annotation/refGene_ars1.2.txt", 
-          cnvr = "4_1_call_cnvr_ARS_Penn/cnvr.txt", 
+HandyCNV::call_gene(refgene = "gene_annotation/refGene_ars1.2.txt",
+          cnvr = "4_1_call_cnvr_ARS_Penn/cnvr.txt",
           clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv") #for ARS PennCNV results
 
-HandyCNV::call_gene(refgene = "gene_annotation/refGene_umd3.1.txt", 
-                    cnvr = "4_2_call_cnvr_UMD_Penn/cnvr.txt", 
+HandyCNV::call_gene(refgene = "gene_annotation/refGene_umd3.1.txt",
+                    cnvr = "4_2_call_cnvr_UMD_Penn/cnvr.txt",
                     clean_cnv = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv") #for UMD PennCNV results
 
 HandyCNV::call_gene(refgene = "gene_annotation/refGene_umd3.1.txt",
                     cnvr = "4_3_call_cnvr_UMD_Part/cnvr.txt",
                     clean_cnv = "2_3_clean_cnv_UMD_Part/cnvpart_clean.cnv") #for UMD CNVPartition results
 
-#6 Sixth function: here we only take ARS PennCNV results as example 
+#6 Sixth function: here we only take ARS PennCNV results as example
 #6.1 plot all CNV distribution on all Chromsomes
 HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", max_chr_length = 160)
 
-#6.2 plot one of your interest chromosome 
+#6.2 plot one of your interest chromosome
 HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", chr_id = 17)
 
-#6.3 plot one of your interest CNV region 
+#6.3 plot one of your interest CNV region
 HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", chr_id = 17, start_position = 20, end_position = 25)
 
 #6.4 plot one of your interest individual
@@ -78,9 +78,9 @@ HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", ind
 #6.5 plot the cnvr sourse information
 # user should provide a pedigree at least include the Sample_ID, Sire_ID two columns
 # Now only support three source information, Sire_ID, Herd and Source(The sire's original country)
-HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", chr_id = 17, start_position = 20, end_position = 25, 
-                     report_id = "yes", 
-                     pedigree = "Pedigree.csv") 
+HandyCNV::cnv_visual(clean_cnv = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv", chr_id = 17, start_position = 20, end_position = 25,
+                     report_id = "yes",
+                     pedigree = "Pedigree/Pedigree.csv")
 
 #7 Seventh function:cnvr_plot, we only take the ARS PennCNV results as example
 #7.1 plot the cnvr distribution on each chromosome, output figture name called:cnvr_plot.png
@@ -91,28 +91,28 @@ HandyCNV::cnvr_plot(cnvr = "4_1_call_cnvr_ARS_Penn/cnvr.txt", assembly = "ARS")
 # user could custom the frequency threshold by define the sample_size and common_cnv_threshold arguments
 # in this example we set sample_size = 388 and common_cnvThreshold = 0.05
 # which means only plot the cnvr with frequecy higher than 388 * 0.05 = 19.4
-HandyCNV::cnvr_plot(cnvr = "4_1_call_cnvr_ARS_Penn/cnvr.txt", 
-                    cnv_annotation = "5_1_call_gene_ARS_Penn/cnv_annotation.txt", 
-                    sample_size = 388, 
+HandyCNV::cnvr_plot(cnvr = "4_1_call_cnvr_ARS_Penn/cnvr.txt",
+                    cnv_annotation = "5_1_call_gene_ARS_Penn/cnv_annotation.txt",
+                    sample_size = 388,
                     common_cnv_threshold = 0.05)
 
 #8 Eighth function: compare_CNV
 #8.1 compare the CNV results with same reference assembly only need to input two clean CNV results
-HandyCNV::compare_cnv(cnv_umd = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv", 
+HandyCNV::compare_cnv(cnv_umd = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv",
                       cnv_ars = "2_3_clean_cnv_UMD_Part/cnvpart_clean.cnv")
 
 #8.2 compare the CNV results with different reference assembly, need to provide the two verion's map extra
 # this two version assembly map file was generated in the first step, called 'umd_ars_map.map'
 # this function will convert the coordinate for bith cnv results at first
 # then make comparison, the first principal is that the comparison will execute by the lastest ARS coordinate
-HandyCNV::compare_cnv(cnv_umd = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv", 
+HandyCNV::compare_cnv(cnv_umd = "2_2_clean_cnv_UMD_Penn/penncnv_clean.cnv",
                       cnv_ars = "2_1_clean_cnv_ARS_Penn/penncnv_clean.cnv",
                       umd_ars_map = "1_covert_map/umd_ars_map.map")
 
 
 #9 Ninth function: compare_cnvr
 #9.1 compare the CNVR results with same reference assembly only need to input two CNVR results
-HandyCNV::compare_cnvr(cnvr_umd = "4_2_call_cnvr_UMD_Penn/cnvr.txt", 
+HandyCNV::compare_cnvr(cnvr_umd = "4_2_call_cnvr_UMD_Penn/cnvr.txt",
                        cnvr_ars = "4_3_call_cnvr_UMD_Part/cnvr.txt")
 
 #9.2 compare the CNVR results with different reference assembly, need to provide the two verion's map extra
@@ -123,6 +123,25 @@ HandyCNV::compare_cnvr(cnvr_umd = "4_2_call_cnvr_UMD_Penn/cnvr.txt",
 # but compare CNV we more concern about the overlapping number of CNVs
 # and CNV have the individual level and population level
 # but CNVR only on the population level
-HandyCNV::compare_cnvr(cnvr_umd = "4_2_call_cnvr_UMD_Penn/cnvr.txt", 
-                       cnvr_ars = "4_1_call_cnvr_ARS_Penn/cnvr.txt", 
+HandyCNV::compare_cnvr(cnvr_umd = "4_2_call_cnvr_UMD_Penn/cnvr.txt",
+                       cnvr_ars = "4_1_call_cnvr_ARS_Penn/cnvr.txt",
                        umd_ars_map = "1_covert_map/umd_ars_map.map")
+
+#10 Tenth function:compare_gene
+#10.1 Comparison of two gene frequency lists. This gene lists files were generated by fifth function 'call_gene'.
+# user can cunstom the common gene threshold, suggesting to calculate it by the sample size product to 0.05.
+# the title_1, title_2 and title_3 arguments was used to cunstom the x, y and z labs in the comparison plots.
+HandyCNV::compare_gene(gene_freq_1 = "5_1_call_gene_ARS_Penn/gene_freq_cnv.txt",
+                       gene_freq_2 = "5_2_call_gene_UMD_Penn/gene_freq_cnv.txt",
+                       common_gene_threshold = 20,
+                       title_1 = "ARS",
+                       title_2 = "UMD")
+#10.2 Comparison of three gene freqaunct lists.
+# to compare three
+HandyCNV::compare_gene(gene_freq_1 = "5_1_call_gene_ARS_Penn/gene_freq_cnv.txt",
+                       gene_freq_2 = "5_2_call_gene_UMD_Penn/gene_freq_cnv.txt",
+                       gene_freq_3 = "5_3_call_gene_UMD_Part/gene_freq_cnv.txt",
+                       common_gene_threshold = 20,
+                       title_1 = "ARS",
+                       title_2 = "UMD",
+                       title_3 = "Part")
