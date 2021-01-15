@@ -31,19 +31,32 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
   #myAgr <- formals(cnv_visual)
   #prepare for population data
   cnv <- fread(file = clean_cnv)
+
+  #check if the input is a Plink results
+  #convert to the stardards format if it is
+  plink_roh_names <- c("FID", "IID", "PHE", "CHR", "SNP1", "SNP2", "POS1", "POS2",
+                       "KB", "NSNP", "DENSITY", "PHOM", "PHET")
+  if(all(colnames(cnv) == plink_roh_names)){
+    print("ROH with input file in PLINK format was detected, coverting to HandyCNV standard formats")
+    colnames(cnv) <- c("FID", "Sample_ID", "PHE", "Chr", "Start_SNP", "End_SNP",
+                       "Start", "End", "Length", "Num_SNP", "DENSITY", "PHOM", "PHET")
+    handycnv_name <- c("Sample_ID",	"Chr", "Start", "End", "Num_SNP",	"Length", "Start_SNP",	"End_SNP")
+    cnv <- cnv %>% select(handycnv_name) %>% mutate(CNV_Value = 2)
+  }
+
   id_coord <- data.frame("Sample_ID" = sort(unique(cnv$Sample_ID))) #extract unique ID prepare coordinate
   id_coord$Order <- seq(1,nrow(id_coord),1)
   id_coord$x <- 160
   id_coord$y <- (id_coord$Order-1)*5 + 1
   cnv_coord <- merge(cnv, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
   #set length of chr
-  chr_length_ars <- data.frame("chr" <- c(29:1), "length" <- c( 51.098607, 45.94015, 45.612108, 51.992305,
+  chr_length_ars <- data.frame("Chr" = c(29:1), "Length" = c( 51.098607, 45.94015, 45.612108, 51.992305,
                                                                 42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
                                                                 71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
                                                                 85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
                                                                 103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
                                                                 120.089316, 120.000601, 121.005158, 136.231102, 158.53411))
-  names(chr_length_ars) <- c("Chr", "Length")
+  #names(chr_length_ars) <- c("Chr", "Length")
   chr_length_ars <- chr_length_ars[order(chr_length_ars$Chr),]
 
   if(is.null(max_chr_length) == "FALSE") {
