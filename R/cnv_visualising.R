@@ -27,22 +27,27 @@
 require(ggplot2, quietly = TRUE)
 require(data.table, quietly = TRUE)
 require(ggrepel, quietly = TRUE)
-cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, plot_gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL) {
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL) {
   #myAgr <- formals(cnv_visual)
   #prepare for population data
   cnv <- fread(file = clean_cnv)
 
   #check if the input is a Plink results
   #convert to the stardards format if it is
-  plink_roh_names <- c("FID", "IID", "PHE", "CHR", "SNP1", "SNP2", "POS1", "POS2",
-                       "KB", "NSNP", "DENSITY", "PHOM", "PHET")
-  if(all(colnames(cnv) == plink_roh_names)){
-    print("ROH with input file in PLINK format was detected, coverting to HandyCNV standard formats")
-    colnames(cnv) <- c("FID", "Sample_ID", "PHE", "Chr", "Start_SNP", "End_SNP",
-                       "Start", "End", "Length", "Num_SNP", "DENSITY", "PHOM", "PHET")
-    handycnv_name <- c("Sample_ID",	"Chr", "Start", "End", "Num_SNP",	"Length", "Start_SNP",	"End_SNP")
-    cnv <- cnv %>% select(handycnv_name) %>% mutate(CNV_Value = 2)
-  }
+  #plink_roh_names <- c("FID", "IID", "PHE", "CHR", "SNP1", "SNP2", "POS1", "POS2",
+  #                     "KB", "NSNP", "DENSITY", "PHOM", "PHET")
+  #if(length(colnames(cnv)) == length(plink_roh_names)){
+  #  print("ROH with input file in PLINK format was detected, coverting to HandyCNV standard formats")
+  #  colnames(cnv) <- c("FID", "Sample_ID", "PHE", "Chr", "Start_SNP", "End_SNP",
+  #                     "Start", "End", "Length", "Num_SNP", "DENSITY", "PHOM", "PHET")
+  #  handycnv_name <- c("Sample_ID",	"Chr", "Start", "End", "Num_SNP",	"Length", "Start_SNP",	"End_SNP")
+  #  cnv <- cnv %>% select(handycnv_name) %>% mutate(CNV_Value = 2)
+  #  cnv$Chr <- as.numeric(cnv$Chr)
+  #  cnv <- dplyr::filter(cnv, cnv$Chr >=1 & cnv$Chr <= max_chr)
+  #} else{
+  #  print("Preparing plot data...")
+  #  cnv <- dplyr::filter(cnv, cnv$Chr >=1 & cnv$Chr <= max_chr)
+  #}
 
   id_coord <- data.frame("Sample_ID" = sort(unique(cnv$Sample_ID))) #extract unique ID prepare coordinate
   id_coord$Order <- seq(1,nrow(id_coord),1)
@@ -59,17 +64,18 @@ cnv_visual <- function(clean_cnv, max_chr_length = NULL, chr_id = NULL, chr_leng
   #names(chr_length_ars) <- c("Chr", "Length")
   chr_length_ars <- chr_length_ars[order(chr_length_ars$Chr),]
 
-  if(is.null(max_chr_length) == "FALSE") {
+  if(is.null(max_chr) == "FALSE") {
   #1.plot all CNV on all chromosome on population level
   cnv_pop <- cnv_coord
-  png(res = 300, filename = "1_chr_all.png", width = 3000, height = 20000)
+  cnv_pop <- dplyr::filter(cnv_pop, cnv_pop$Chr >=1 & cnv_pop$Chr <= max_chr )
+  png(res = 300, filename = "1_chr_all.png", width = 4000, height = 20000)
   popu_plot <- ggplot(cnv_pop, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
     geom_rect(aes(fill = as.factor(CNV_Value))) +
-    geom_text(aes(x,y, label = Sample_ID), size = 1.5) +
+    #geom_text(aes(x,y, label = Sample_ID), size = 1.5) +
     theme_classic() +
     scale_y_continuous(labels = NULL) +
     scale_x_continuous(breaks = seq(0, max_chr_length +10, by = 10)) +
-    facet_wrap(~as.numeric(Chr), ncol = 1) +
+    facet_wrap(~as.numeric(Chr), nrow = 10) +
     labs(x = "Physical Position", y = "Individual ID", title = "CNV Distribution on Population Level", fill = "CNV_Num")
   print(popu_plot)
   dev.off()
