@@ -5,7 +5,10 @@
 #Third step is summary results, count the roh frequency in each windowsize
 
 #1.set module of windows for single chromosome
-#
+
+require(data.table, quietly = TRUE)
+require(dplyr, quietly = TRUE)
+
 window_module <- function(chr, size, chr_length){
   n_interval <- ceiling(chr_length/size)
 
