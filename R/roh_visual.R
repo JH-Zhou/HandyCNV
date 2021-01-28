@@ -27,8 +27,52 @@
 require(ggplot2, quietly = TRUE)
 require(data.table, quietly = TRUE)
 require(ggrepel, quietly = TRUE)
-roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, plot_gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL) {
-  #myAgr <- formals(cnv_visual)
+roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL) {
+  #the function for plotting gene
+
+  plot_gene <- function(gene, chr_id, start, end){
+    #read gene
+    gene <- fread(gene)
+    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+    gene$Chr <- sub("chr", "", gene$Chr)
+
+    #extract gene list
+    gene_sub <- gene %>%
+      filter(Chr == chr_id & Start >= start * 1000000 & End <= end * 1000000) %>%
+      arrange(Start) %>%
+      mutate(y_min = case_when(length(Chr) <= 5 ~ rep(c(1, 1.1),length.out = length(Chr)),
+                               length(Chr) > 5 & length(Chr) <= 15 ~ rep(c(1, 1.1, 1.2),length.out = length(Chr)),
+                               length(Chr) > 15 & length(Chr) <= 25 ~ rep(c(1, 1.1, 1.2，1.3),length.out = length(Chr)),
+                               length(Chr) > 25 ~ rep(c(1, 1.1, 1.2, 1.3, 1.4),length.out = length(Chr))),
+             y_max =  case_when(length(Chr) <= 5 ~ rep(c(1.1, 1.2),length.out = length(Chr)),
+                                length(Chr) > 5 & length(Chr) <= 15 ~ rep(c(1.1, 1.2, 1.3),length.out = length(Chr)),
+                                length(Chr) > 15 & length(Chr) <= 25 ~ rep(c(1.1, 1.2, 1.3，1.4),length.out = length(Chr)),
+                                length(Chr) > 25 ~ rep(c(1.1, 1.2, 1.3, 1.4, 1.5),length.out = length(Chr))))
+      #mutate(y_min = rep(c(1.0, 1.1, 1.2), length.out = length(Chr)),
+      #       y_max = rep(c(1.1, 1.2, 1.3), length.out = length(Chr)))
+
+      #mutate(y_min = case_when(row_number() %% 2 == 0 ~ "1",
+      #                         row_number() %% 2 == 1 ~ "1.2"),
+      #       y_max = case_when(row_number() %% 2 == 0 ~ "1.1",
+      #                         row_number() %% 2 == 1 ~ "1.3")) #assign y axis by even and odd row number
+
+
+    if(nrow(gene_sub) == 0){
+      print("No gene in this region")
+    } else{
+      #plot gene
+      ggplot(gene_sub) +
+        geom_rect(aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
+        geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2)) +
+        scale_x_continuous(limits = c(start_position, end_position)) +
+        theme_bw() +
+        theme(axis.text.y = element_blank()) +
+        labs(x = "", y = "Gene Annotation")
+    }
+  }
+
   #prepare for population data
   roh <- fread(file = clean_roh)
 
@@ -43,7 +87,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     handycnv_name <- c("Sample_ID",	"Chr", "Start", "End", "Num_SNP",	"Length", "Start_SNP",	"End_SNP")
     roh <- roh %>% select(handycnv_name)
     roh$Chr <- as.numeric(roh$Chr)
-    roh <- dplyr::filter(roh, roh$Chr >=1 & roh$Chr <= max_chr)
+    roh <- dplyr::filter(roh, roh$Chr %in% c(1:29))
   } else{
     print("Preparing plot data...")
     }
@@ -70,7 +114,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     png(res = 300, filename = "1_chr_all_roh.png", width = 5000, height = 3000)
     popu_plot <- ggplot(cnv_pop, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
       geom_rect(aes(fill = Length)) +
-      scale_fill_gradient(low = "red", high = "blue") +
+      scale_fill_gradientn(colours = c("red", "yellow", "blue")) +
       theme_classic() +
       scale_y_continuous(labels = NULL) +
       #scale_x_continuous(breaks = seq(0, max_chr_length +10, by = 10)) +
@@ -82,7 +126,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     print("Task done, plot was stored in working directory.")
   }
 
-  else if(is.null(chr_id) == "FALSE" & is.null(start_position) & is.null(plot_gene)){
+  else if(is.null(chr_id) == "FALSE" & is.null(start_position) & is.null(gene)){
     #2.plot for specific chromosome
     cnv_chr <- roh[roh$Chr == chr_id, ]
     id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr$Sample_ID))) #extract unique ID prepare coordinate
@@ -98,7 +142,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     #png(res = 300, filename = "10_chr.png", width = 3500, height = 2000)
     chr_plot <- ggplot(cnv_chr, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
       geom_rect(aes(fill = Length)) +
-      scale_fill_gradient(low = "red", high = "blue") +
+      scale_fill_gradientn(colours = c("red", "yellow", "blue")) +
       #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
       theme_bw() +
       scale_y_continuous(labels = NULL) +
@@ -110,7 +154,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
   }
 
   #else if(is.null(start_position & end_position) == "FALSE")
-  else if(is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(plot_gene))
+  else if(is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(gene))
   {
     #3.zoom into specific region
     cnv_chr <- roh[roh$Chr == chr_id, ]
@@ -127,7 +171,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     png(res = 300, filename = zoom_name, width = 3500, height = 2000)
     zoom_plot <- ggplot(cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
       geom_rect(aes(fill = Length)) +
-      scale_fill_gradient(low = "red", high = "blue") +
+      scale_fill_gradientn(colours = c("red", "yellow", "blue")) +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       theme_bw() +
       scale_y_continuous(labels = NULL) +
@@ -197,44 +241,34 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       }
     }
   }
-  else if (is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(plot_gene) == "FALSE") {
+  else if (is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(gene) == "FALSE") {
+    #3.zoom into specific region
     cnv_chr <- roh[roh$Chr == chr_id, ]
-    cnv_chr_zoom <- filter(cnv_chr, CNV_Start >= start_position * 1000000 -1 & CNV_End <= end_position * 1000000 + 1)
+    cnv_chr_zoom <- filter(cnv_chr, Start >= start_position * 1000000 -1 & End <= end_position * 1000000 + 1)
     id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr_zoom$Sample_ID))) #extract unique ID prepare coordinate
-    try(id_coord$Order <- seq(1, nrow(id_coord),1), silent = FALSE)
+    id_coord$Order <- seq(1,nrow(id_coord),1)
     id_coord$x <- chr_length_ars[chr_id, 2]
     id_coord$y <- (id_coord$Order-1)*5 + 1
     cnv_chr_zoom <- merge(cnv_chr_zoom, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
     cnv_chr_zoom$zoom_x <- end_position
-    cnv_chr_zoom$gene_order <- max(cnv_chr_zoom$Order) + 3
-
-    #gene_freq <- data.table(gene_freq) #convert it to data.table to set key
-    #setkey(x = gene_freq, name2)
-    gene_coord <- group_by(cnv_chr_zoom, name2) %>% slice(1) # generate gene data
-    gene_coord$CNV_Start <- gene_coord$g_Start
-    gene_coord$Order <- gene_coord$gene_order
-    try(gene_coord$CNV_Value <- "5", silent = FALSE)
-
-    gene_freq <- cnv %>% group_by(name2) %>% count(name2, name = "Frequent", sort = TRUE) #gene freq
-    gene_coord_freq <- merge(gene_coord, gene_freq)
-    gene_coord_freq <- gene_coord_freq[c(gene_coord_freq$Frequent >= 5), ]
-
     zoom_name <- paste0("Chr", chr_id, "_",start_position,"-",end_position, "Mb", "_roh.png")
     id_number <- nrow(id_coord)
-    zoom_title <- paste0("ROH on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
-    png(res = 300, filename = zoom_name, width = 3500, height = 2000)
-    zoom_plot <- ggplot() +
-      geom_rect(data = cnv_chr_zoom, aes(xmin = CNV_Start/1000000, xmax = CNV_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3, fill = Length), scale_fill_gradient(low = "red", high = "blue")) +
-      geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = "black") +
-      geom_text_repel(data = gene_coord_freq, aes(x = g_Start/1000000, y = (Order-1)*5 + 10, label = name2)) +
-      geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
+    zoom_title <- paste0("Chr", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
+    zoom_plot <- ggplot(cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
+      geom_rect(aes(fill = Length), show.legend = F) +
+      scale_fill_gradientn(colours = c("red", "yellow", "blue")) +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
-      #scale_color_manual(values = c("#F8766D", "#A3A500", "#00B0F6", "#E76BF3", "black")) +
       theme_bw() +
+      theme(legend.position = "top") +
       scale_y_continuous(labels = NULL) +
-      scale_x_continuous(breaks = seq(round(start_position,2), round(end_position,2), by = 0.2)) +
-      labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "Length")
-    print(zoom_plot)
+      scale_x_continuous(limits = c(start_position, end_position)) +
+      #labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "Length")
+      labs(x = "Physical Position (Mb)",title = zoom_title, y ="Individual ID")
+    print("plotting gene....")
+    gene_plot <- plot_gene(gene = gene, chr_id = chr_id, start = start_position, end = end_position)
+    png(res = 300, filename = zoom_name, width = 3500, height = 2000)
+    roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
+    print(roh_gene)
     dev.off()
     print("Task done, plot was stored in working directory.")
   }
