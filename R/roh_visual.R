@@ -27,10 +27,10 @@
 require(ggplot2, quietly = TRUE)
 require(data.table, quietly = TRUE)
 require(ggrepel, quietly = TRUE)
-roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name =c(0, 160), width_1 = 13, height_1 = 10) {
+roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL) {
   #the function for plotting gene
 
-  plot_gene <- function(gene, chr_id, start, end, show_name = C(0,160)){
+  plot_gene <- function(gene, chr_id, start, end){
     #read gene
     gene <- fread(gene)
     names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
@@ -50,6 +50,9 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
                                 length(Chr) > 5 & length(Chr) <= 15 ~ rep(c(1.1, 1.2, 1.3),length.out = length(Chr)),
                                 length(Chr) > 15 & length(Chr) <= 25 ~ rep(c(1.1, 1.2, 1.3，1.4),length.out = length(Chr)),
                                 length(Chr) > 25 ~ rep(c(1.1, 1.2, 1.3, 1.4, 1.5),length.out = length(Chr))))
+      #mutate(y_min = rep(c(1.0, 1.1, 1.2), length.out = length(Chr)),
+      #       y_max = rep(c(1.1, 1.2, 1.3), length.out = length(Chr)))
+
       #mutate(y_min = case_when(row_number() %% 2 == 0 ~ "1",
       #                         row_number() %% 2 == 1 ~ "1.2"),
       #       y_max = case_when(row_number() %% 2 == 0 ~ "1.1",
@@ -59,29 +62,14 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     if(nrow(gene_sub) == 0){
       print("No gene in this region")
     } else{
-      #plot the name of genes
-      coord_name <- as.vector(show_name) * 1000000 #read the interval of gene want to present name
-      if(length(coord_name) == 2){
-          gene_present <- gene_sub%>%
-                          filter(Start > coord_name[1] & End < coord_name[2])
-      } else if (length(coord_name) == 4){
-          gene_present <- gene_sub %>%
-                          filter(Start > coord_name[1] & End < coord_name[2] | Start > coord_name[3] & End < coord_name[4])
-      } else{
-        gene_present <- gene_sub %>%
-        filter(Start > coord_name[1] & End < coord_name[2] | Start > coord_name[3] & End < coord_name[4] | Start > coord_name[5] & End < coord_name[6])
-      }
-
-      ggplot() +
-        geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
-        #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
-        #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
-        geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
+      #plot gene
+      ggplot(gene_sub) +
+        geom_rect(aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
+        geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2)) +
         scale_x_continuous(limits = c(start_position, end_position)) +
-        #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
         theme_bw() +
-        theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
-        labs(y = "Gene")
+        theme(axis.text.y = element_blank()) +
+        labs(x = "", y = "Gene Annotation")
     }
   }
 
@@ -255,7 +243,6 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
   }
   else if (is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(gene) == "FALSE") {
     #3.zoom into specific region
-    coord_name <- as.vector(show_name) # add vline for plot
     cnv_chr <- roh[roh$Chr == chr_id, ]
     cnv_chr_zoom <- filter(cnv_chr, Start >= start_position * 1000000 -1 & End <= end_position * 1000000 + 1)
     id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr_zoom$Sample_ID))) #extract unique ID prepare coordinate
@@ -267,26 +254,22 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     zoom_name <- paste0("Chr", chr_id, "_",start_position,"-",end_position, "Mb", "_roh.png")
     id_number <- nrow(id_coord)
     zoom_title <- paste0("Chr", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
-    print(zoom_title)
     zoom_plot <- ggplot(cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
       geom_rect(aes(fill = Length), show.legend = F) +
       scale_fill_gradientn(colours = c("red", "yellow", "blue")) +
-
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       theme_bw() +
       theme(legend.position = "top") +
       scale_y_continuous(labels = NULL) +
-      geom_vline(xintercept = coord_name, linetype = "dashed") +
       scale_x_continuous(limits = c(start_position, end_position)) +
       #labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "Length")
-      labs(x = "Physical Position (Mb)", y ="Individual ID")
+      labs(x = "Physical Position (Mb)",title = zoom_title, y ="Individual ID")
     print("plotting gene....")
-    gene_plot <- plot_gene(gene = gene, chr_id = chr_id, start = start_position, end = end_position, show_name)
-    #png(res = 300, filename = zoom_name, width = 3500, height = 2000)
+    gene_plot <- plot_gene(gene = gene, chr_id = chr_id, start = start_position, end = end_position)
+    png(res = 300, filename = zoom_name, width = 3500, height = 2000)
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
-    ggsave(filename = zoom_name, width = width_1, height = height_1, units = "cm", dpi = 300)
-    #dev.off()
+    dev.off()
     print("Task done, plot was stored in working directory.")
   }
 
