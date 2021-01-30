@@ -6,7 +6,7 @@
 
 
 #mian function
-#' Title
+#' Title window_size
 #'
 #' @param roh
 #' @param window_size
@@ -81,6 +81,8 @@ roh_window <- function(roh, window_size = 5, length_autosomal = 2489.386, thresh
     #dev.off()
   }
   ####################################################################################
+
+
   roh <- fread(roh)
   total_n_sample <- length(unique(roh$IID))
 

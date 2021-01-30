@@ -1,4 +1,6 @@
-#The idea to compare CNV between ars and umd are find out how many differents are there
+
+#' Title compare_cnvr
+#'#The idea to compare CNV between ars and umd are find out how many differents are there
 #we defined 6 comparison standards of CNV
 #1) overlaped
 #1.same start and end, same SNP inside, fully overlap
@@ -11,6 +13,17 @@
 #according to the codintion, the first thing is to match coordinates for both version
 #then find overlap cnv and non overlapcnv
 #then summarize how many CNVRs are in above standards
+#'
+#' @param cnvr_umd
+#' @param cnvr_ars
+#' @param umd_ars_map
+#'
+#' @import data.table dplyr ggplot2
+#'
+#' @return
+#' @export
+#'
+#' @examples
 compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
 
   #default plot function
@@ -67,7 +80,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
 
     #find overlap on population level
     setkey(cnv_ars, Chr_ARS, Start_ARS, End_ARS)
-    pop_overlap <- foverlaps(cnv_umd, cnv_ars, by.x = c("Chr_UMD", "Start_UMD", "End_UMD"), type = "any", nomatch = NULL)
+    pop_overlap <- data.table::foverlaps(cnv_umd, cnv_ars, by.x = c("Chr_UMD", "Start_UMD", "End_UMD"), type = "any", nomatch = NULL)
     pop_overlap$Overlap_length <- pmin(pop_overlap$End_ARS, pop_overlap$End_UMD) - pmax(pop_overlap$Start_ARS, pop_overlap$Start_UMD) + 1
     pop_overlap_umd <- subset(pop_overlap, select = umd_colnames)
     final_pop_overlap_umd <- unique(pop_overlap_umd)
@@ -119,7 +132,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
    #setkey(cnv_umd_ars, Chr_UMD, Start_UMD, End_UMD)
     #find overlap on population level
     setkey(cnv_umd, Chr_UMD, Start_UMD, End_UMD)
-    pop_overlap_2 <- foverlaps(cnv_ars, cnv_umd, by.x = c("Chr_ARS", "Start_ARS", "End_ARS"), type = "any", nomatch = NULL)
+    pop_overlap_2 <- data.table::foverlaps(cnv_ars, cnv_umd, by.x = c("Chr_ARS", "Start_ARS", "End_ARS"), type = "any", nomatch = NULL)
     pop_overlap_2$Overlap_length <- pmin(pop_overlap_2$End_ARS, pop_overlap_2$End_UMD) - pmax(pop_overlap_2$Start_ARS, pop_overlap_2$Start_UMD) + 1
     pop_overlap_ars <- subset(pop_overlap_2, select = ars_colnames)
     final_pop_overlap_ars <- unique(pop_overlap_ars)
@@ -296,7 +309,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     #find overlap on population level
     print("Starting to find overlapping CNVR...")
     setkey(cnv_ars_umd, Chr_ARS, Start_ARS, End_ARS)
-    pop_overlap <- foverlaps(right_umd, cnv_ars_umd, by.x = c("Chr_UMD", "Start_ARS_Map", "End_ARS_Map"), type = "any", nomatch = NULL)
+    pop_overlap <- data.table::foverlaps(right_umd, cnv_ars_umd, by.x = c("Chr_UMD", "Start_ARS_Map", "End_ARS_Map"), type = "any", nomatch = NULL)
     pop_overlap$Overlap_length <- pmin(pop_overlap$End_ARS, pop_overlap$End_ARS_Map) - pmax(pop_overlap$Start_ARS, pop_overlap$Start_ARS_Map) + 1
     pop_overlap <- unique(pop_overlap)
     pop_overlap_umd <- subset(pop_overlap, select = umd_convert_colnames)
@@ -340,7 +353,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     ##########compare results in ARS-------------------------------------------------------------------
     #find overlap on population level
     setkey(right_umd, Chr_UMD, Start_ARS_Map, End_ARS_Map)
-    pop_overlap_2 <- foverlaps(cnv_ars_umd, right_umd, by.x = c("Chr_ARS", "Start_ARS", "End_ARS"), type = "any", nomatch = NULL)
+    pop_overlap_2 <- data.table::foverlaps(cnv_ars_umd, right_umd, by.x = c("Chr_ARS", "Start_ARS", "End_ARS"), type = "any", nomatch = NULL)
     pop_overlap_2$Overlap_length <- pmin(pop_overlap_2$End_ARS, pop_overlap_2$End_ARS_Map) - pmax(pop_overlap_2$Start_ARS, pop_overlap_2$Start_ARS_Map) + 1
     pop_overlap_ars <- subset(pop_overlap_2, select = ars_convert_colnames)
     final_pop_overlap_ars <- unique(pop_overlap_ars)

@@ -1,5 +1,16 @@
 
-#only need Chr, Start and End
+#' Title convert_coord
+#' only need Chr, Start and End
+#' @param input_ars
+#' @param input_umd
+#' @param map
+#'
+#' @import data.table dplyr
+#'
+#' @return
+#' @export convert_coord
+#'
+#' @examples
 convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
   map <- fread(map)
 
@@ -54,16 +65,27 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
     setDT()
   fwrite(cnvr_new_coord, "cnvr_convert_coord.txt", sep ="\t", quote = FALSE)
   fwrite(cnvr_right, "cnvr_convert_coord.correct", sep = "\t", quote = FALSE)
-
 }
 
 
-#compare cnvr, each input file should contain Chr, Start and End columns,
-#the Chr column should be the number only, for example: 1 not chr1
-compare_cnvrs <- function(cnvr_1, cnvr_2, map = NULL){
-  cnvr_1 <- fread(cnvr_1)
+
+#' Title compare_interval
+#' compare cnvr, each input file should contain Chr, Start and End columns,
+#' the Chr column should be the number only, for example: 1 not chr1
+#' @param interval_1
+#' @param interval_2
+#' @param map
+#'
+#' @import data.table
+#'
+#' @return overlap
+#' @export compare_interval
+#'
+#' @examples
+compare_interval <- function(interval_1, interval_2, map = NULL){
+  cnvr_1 <- fread(interval_1)
   cnvr_1$Chr <- as.factor(cnvr_1$Chr)
-  cnvr_2 <- fread(cnvr_2)
+  cnvr_2 <- fread(interval_2)
   cnvr_2$Chr <- as.factor(cnvr_2$Chr)
   #set key for cnvr_1
   setkey(cnvr_1, Chr, Start, End)
@@ -78,3 +100,4 @@ compare_cnvrs <- function(cnvr_1, cnvr_2, map = NULL){
   print("task done")
   return(overlap)
 }
+

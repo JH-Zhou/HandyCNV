@@ -1,3 +1,18 @@
+#' Title  cnv_clean
+#' Used for cleaning the default CNV results into a standard format for the further use.
+#' Now support to read the results from PennCNV and CNVPartition
+#'
+#' @param cnvpartition
+#' @param penncnv
+#' @param penn_id_sep
+#'
+#'
+#' @import data.table tidyr
+#'
+#' @return
+#' @export
+#'
+#' @examples
 cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/") {
   #creat a directory to store output files
   if (!file.exists("clean_cnv")){

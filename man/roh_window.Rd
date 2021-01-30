@@ -2,7 +2,7 @@
 % Please edit documentation in R/roh_window.R
 \name{roh_window}
 \alias{roh_window}
-\title{Title}
+\title{Title window_size}
 \usage{
 roh_window(roh, window_size = 5, length_autosomal = 2489.386, threshold = 0.3)
 }
@@ -13,5 +13,5 @@ roh_window(roh, window_size = 5, length_autosomal = 2489.386, threshold = 0.3)
 
 }
 \description{
-Title
+Title window_size
 }

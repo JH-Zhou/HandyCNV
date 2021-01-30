@@ -1,4 +1,3 @@
-
 plot_cnv_source <- function(cnvr, clean_cnv, pedigree, Frequent_threshold) {
   cnvr <- fread(cnvr)
   high_freq <- filter(cnvr, Frequent >= Frequent_threshold)

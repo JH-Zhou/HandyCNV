@@ -11,7 +11,7 @@
 #' @param plot_gene
 #' @param plot_title
 #'
-#' @import data.table dplyr ggplot2 tidyr ggrepel
+#' @import data.table dplyr ggplot2 tidyr ggrepel scales
 #'
 #' @return
 #' CNV distribution plot
