@@ -16,7 +16,7 @@
 #' @param cnv_umd
 #' @param cnv_ars
 #' @param umd_ars_map
-#' @import dpylr data.table sacles ggplot2
+#' @import dplyr data.table scales ggplot2
 #'
 #' @return
 #' @export
