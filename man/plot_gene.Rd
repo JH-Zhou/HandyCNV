@@ -7,7 +7,16 @@
 plot_gene(gene, chr_id, start, end, show_name = C(0, 160))
 }
 \arguments{
-\item{show_name}{}
+\item{gene}{reference gene list.}
+
+\item{chr_id}{chromosome ID, should be the integer only, like 1 or 29}
+
+\item{start}{the start physical position used in the plot, the unit is Mb}
+
+\item{end}{the end physical position used in plotm, the unit is Mb}
+
+\item{show_name}{default value is show_name = c(0, 160). accept the vectors only, unit is Mb. for example show_name = c(11.2, 12.4, 15.3, 18.4), means only plot the genes within
+interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three}
 }
 \value{
 

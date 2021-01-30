@@ -1,11 +1,12 @@
 #the function for plotting gene
 #' Title plot_gene
 #'
-#' @param gene
-#' @param chr_id
-#' @param start
-#' @param end
-#' @param show_name
+#' @param gene reference gene list.
+#' @param chr_id chromosome ID, should be the integer only, like 1 or 29
+#' @param start the start physical position used in the plot, the unit is Mb
+#' @param end the end physical position used in plotm, the unit is Mb
+#' @param show_name default value is show_name = c(0, 160). accept the vectors only, unit is Mb. for example show_name = c(11.2, 12.4, 15.3, 18.4), means only plot the genes within
+#' interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three
 #'
 #' @import ggplot2 dplyr
 #'
@@ -60,7 +61,7 @@ plot_gene <- function(gene, chr_id, start, end, show_name = C(0,160)){
       #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
       #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
       geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
-      scale_x_continuous(limits = c(start_position, end_position)) +
+      scale_x_continuous(limits = c(start, end)) +
       #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
       theme_bw() +
       theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
@@ -72,15 +73,15 @@ plot_gene <- function(gene, chr_id, start, end, show_name = C(0,160)){
 #' Title
 #' Visualizing ROH on both population level and individual level
 #'
-#' @param roh
-#' @param max_chr_length
-#' @param chr_id
-#' @param chr_length
+#' @param roh roh results from plink or CNVPartition
+#' @param max_chr_length the maximun length of chromosome in the aimed species, it used to set the boundary of the polt
+#' @param chr_id the number of chromosome want to plot
+#' @param chr_length set the length for the chromosome
 #' @param start_position
 #' @param end_position
-#' @param individual_id
-#' @param plot_gene
-#' @param plot_title
+#' @param individual_id reproting ID of individuals while plotting
+#' @param plot_gene present genes in given interval
+#' @param plot_title add title in the polt
 #'
 #' @import data.table dplyr ggplot2 tidyr
 #'

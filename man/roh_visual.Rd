@@ -23,7 +23,19 @@ roh_visual(
 )
 }
 \arguments{
-\item{plot_title}{}
+\item{chr_id}{the number of chromosome want to plot}
+
+\item{chr_length}{set the length for the chromosome}
+
+\item{individual_id}{reproting ID of individuals while plotting}
+
+\item{plot_title}{add title in the polt}
+
+\item{roh}{roh results from plink or CNVPartition}
+
+\item{max_chr_length}{the maximun length of chromosome in the aimed species, it used to set the boundary of the polt}
+
+\item{plot_gene}{present genes in given interval}
 }
 \value{
 ROH distribution plot

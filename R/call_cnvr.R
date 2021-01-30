@@ -3,7 +3,7 @@
 #' Title
 #'
 #' @param clean_cnv
-#' @import data.table dplyr
+#' @import data.table dplyr reshape2
 #'
 #' @return
 #' @export

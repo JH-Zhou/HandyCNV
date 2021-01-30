@@ -1,17 +1,17 @@
-#The idea to compare CNV between ars and umd are find out how many differents are there
-#we defined 6 comparison standards of CNV
-#1) overlaped
-#1.same start and end, same SNP inside, fully overlap
-#2.same start and end, diffrent snp number, fully overlap
-#3.different start or end, overlaped, partial overlap
-#2) non-overlap
-#4.missing start or end position
-#5.End <= start
-#6.different start or end, non-overlap
-#according to the codintion, the first thing is to match coordinates for both version
-#then find overlap cnv and non overlapcnv
-#then summarize how many CNVs are in above standards
-#' Title
+#' Title compare_cnv
+#'The idea to compare CNV between ars and umd are find out how many differents are there
+#' we defined 6 comparison standards of CNV
+#' 1) overlaped
+#' 1.same start and end, same SNP inside, fully overlap
+#' 2.same start and end, diffrent snp number, fully overlap
+#' 3.different start or end, overlaped, partial overlap
+#' 2) non-overlap
+#' 4.missing start or end position
+#' 5.End <= start
+#' 6.different start or end, non-overlap
+#' according to the codintion, the first thing is to match coordinates for both version
+#' then find overlap cnv and non overlapcnv
+#' then summarize how many CNVs are in above standards
 #'
 #' @param cnv_umd
 #' @param cnv_ars
