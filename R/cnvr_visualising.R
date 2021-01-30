@@ -1,9 +1,17 @@
-require(data.table, quietly = TRUE)
-require(ggplot2, quietly = TRUE)
-require(dplyr, quietly = TRUE)
-require(scales, quietly = TRUE)
-require(reshape2, quietly = TRUE)
-require(tidyr, quietly = TRUE)
+#' Title
+#'
+#' @param cnvr
+#' @param assembly
+#' @param cnv_annotation
+#' @param sample_size
+#' @param common_cnv_threshold
+#'
+#' @import data.table ggplot2 dplyr scales reshape2 tidyr
+#'
+#' @return
+#' @export
+#'
+#' @examples
 cnvr_plot <- function(cnvr, assembly = "ARS",  cnv_annotation = NULL, sample_size = NULL, common_cnv_threshold = 0.05) {
   if (is.null(cnv_annotation)) {
     #Prepare parameters for CNVR distribution plot

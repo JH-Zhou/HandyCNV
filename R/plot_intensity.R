@@ -1,9 +1,4 @@
-  library(gaston)
-  library(graphics)
-  library(base2grob)
-  library(cowplot)
-
-plot_intensity <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, sample_size, common_cnv_threshold = 0.05, chr_id, start_position, end_position) {
+  plot_intensity <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, sample_size, common_cnv_threshold = 0.05, chr_id, start_position, end_position) {
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)
   cnvr <- unite(cnvr, "title", names(cnvr[, c(2:4, 10)]), remove = FALSE) #generate a new columns names

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cnvr_annotation.R
 \name{call_gene}
 \alias{call_gene}
-\title{Title}
+\title{Title call_gene}
 \usage{
 call_gene(refgene, interval = NULL, clean_cnv = NULL)
 }
@@ -17,5 +17,7 @@ call_gene(refgene, interval = NULL, clean_cnv = NULL)
 
 }
 \description{
-Title
+This function used for annotating genes for any interval by giving the interval list and reference gene list.
+The interval file requirs at least consists of four cloumns, they are ID, Chr, Start and End.
+The first column must be the ID column, the column of Chr should only contain the number of chromosome, the units of Start and End columns are the basepair.
 }

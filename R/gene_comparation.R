@@ -1,6 +1,3 @@
-require(rgl)
-require(data.table)
-require(ggplot2)
 #' Title Gene Comparison
 #' There are two application scenarios:Compare two gene lists or three gene lists
 #'
@@ -8,6 +5,8 @@ require(ggplot2)
 #' @param gene_freq_2
 #' @param gene_freq_3
 #' @param common_gene_threshold
+#'
+#' @import rgl data.table ggplot2
 #'
 #' @return
 #' @export

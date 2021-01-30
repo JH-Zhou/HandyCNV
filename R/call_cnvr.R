@@ -3,7 +3,7 @@
 #' Title
 #'
 #' @param clean_cnv
-#' @import data.table, dplyr
+#' @import data.table dplyr
 #'
 #' @return
 #' @export
@@ -14,7 +14,7 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
     dir.create("call_cnvr")
   }
 
-  clean_cnv <- fread(file = clean_cnv, sep = "\t", header = TRUE)
+  clean_cnv <- data.table::fread(file = clean_cnv, sep = "\t", header = TRUE)
 
   merge_cnvr <- function(cnv) {
     if (nrow(cnv) == 1) {
@@ -28,7 +28,7 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
       rest_cnv <- cnv[i, ]
 
       if (cnvr_union$End[nrow(cnvr_union)] < rest_cnv$Start) {
-        cnvr_union <- bind_rows(cnvr_union, rest_cnv)
+        cnvr_union <- dplyr::bind_rows(cnvr_union, rest_cnv)
       } else if (cnvr_union$End[nrow(cnvr_union)] == rest_cnv$Start) {
         cnvr_union$End[nrow(cnvr_union)] <- rest_cnv$End
       }
@@ -51,8 +51,8 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
   #extraxt CNVR inofrmation, recode for CNVR
   cnvr_union <- cnvr[, c("Chr", "Start", "End")]
   cnvr_union$CNVR_ID <- paste0("CNVR_", seq(1, nrow(cnvr_union), 1))
-  setkey(cnvr_union, Chr, Start, End)
-  cnv_cnvr <- foverlaps(clean_cnv, cnvr_union)
+  data.table::setkey(cnvr_union, Chr, Start, End)
+  cnv_cnvr <- data.table::foverlaps(clean_cnv, cnvr_union)
   names(cnv_cnvr)[names(cnv_cnvr) == "i.Start"] <- "CNV_Start"
   names(cnv_cnvr)[names(cnv_cnvr) == "i.End"] <- "CNV_End"
 

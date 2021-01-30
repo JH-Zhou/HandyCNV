@@ -1,8 +1,18 @@
-library(gaston)
-library(graphics)
-library(base2grob)
-library(cowplot)
-
+#' Title
+#'
+#' @param cnvr
+#' @param cnv_annotation
+#' @param intensity
+#' @param map
+#' @param sample_size
+#' @param common_cnv_threshold
+#'
+#' @import gaston graphics base2grob cowplot
+#'
+#' @return
+#' @export
+#'
+#' @examples
 plot_inten <- function(cnvr, cnv_annotation, intensity, map, sample_size, common_cnv_threshold = 0.05) {
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)

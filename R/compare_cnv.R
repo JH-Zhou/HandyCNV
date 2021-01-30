@@ -11,6 +11,17 @@
 #according to the codintion, the first thing is to match coordinates for both version
 #then find overlap cnv and non overlapcnv
 #then summarize how many CNVs are in above standards
+#' Title
+#'
+#' @param cnv_umd
+#' @param cnv_ars
+#' @param umd_ars_map
+#' @import dpylr data.table sacles ggplot2
+#'
+#' @return
+#' @export
+#'
+#' @examples
 compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL) {
 
   #default plot function

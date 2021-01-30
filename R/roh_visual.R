@@ -11,11 +11,7 @@
 #' @param plot_gene
 #' @param plot_title
 #'
-#' @import
-#' data.table,
-#' dplyr,
-#' ggplot2,
-#' tidyr
+#' @import data.table dplyr ggplot2 tidyr
 #'
 #' @return
 #' ROH distribution plot
@@ -44,11 +40,11 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       arrange(Start) %>%
       mutate(y_min = case_when(length(Chr) <= 5 ~ rep(c(1, 1.1),length.out = length(Chr)),
                                length(Chr) > 5 & length(Chr) <= 15 ~ rep(c(1, 1.1, 1.2),length.out = length(Chr)),
-                               length(Chr) > 15 & length(Chr) <= 25 ~ rep(c(1, 1.1, 1.2，1.3),length.out = length(Chr)),
+                               length(Chr) > 15 & length(Chr) <= 25 ~ rep(c(1, 1.1, 1.2, 1.3),length.out = length(Chr)),
                                length(Chr) > 25 ~ rep(c(1, 1.1, 1.2, 1.3, 1.4),length.out = length(Chr))),
              y_max =  case_when(length(Chr) <= 5 ~ rep(c(1.1, 1.2),length.out = length(Chr)),
                                 length(Chr) > 5 & length(Chr) <= 15 ~ rep(c(1.1, 1.2, 1.3),length.out = length(Chr)),
-                                length(Chr) > 15 & length(Chr) <= 25 ~ rep(c(1.1, 1.2, 1.3，1.4),length.out = length(Chr)),
+                                length(Chr) > 15 & length(Chr) <= 25 ~ rep(c(1.1, 1.2, 1.3, 1.4),length.out = length(Chr)),
                                 length(Chr) > 25 ~ rep(c(1.1, 1.2, 1.3, 1.4, 1.5),length.out = length(Chr))))
       #mutate(y_min = case_when(row_number() %% 2 == 0 ~ "1",
       #                         row_number() %% 2 == 1 ~ "1.2"),

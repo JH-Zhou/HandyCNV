@@ -1,18 +1,19 @@
-library(gaston)
-library(graphics)
-library(base2grob)
-library(cowplot)
-library(grDevices)
-library(gridGraphics)
-library(grid)
-library(rvcheck)
-library(data.table)
-library(scales)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(ggrepel)
-
+#' Title
+#'
+#' @param cnvr
+#' @param cnv_annotation
+#' @param intensity
+#' @param map
+#' @param prefix_bed
+#' @param sample_size
+#' @param common_cnv_threshold
+#'
+#' @import data.table dplyr ggrepel ggplot2 tidyr gaston graphics base2grob cowplot grDevices gridGraphics rvcheck grid scales
+#'
+#' @return
+#' @export
+#'
+#' @examples
 plot_cnv_inten_maf <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, sample_size, common_cnv_threshold = 0.05) {
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)

@@ -1,10 +1,16 @@
-require(data.table, quietly = TRUE)
-require(ggplot2, quietly = TRUE)
-require(dplyr, quietly = TRUE)
-require(scales, quietly = TRUE)
-require(reshape2, quietly = TRUE)
-require(tidyr, quietly = TRUE)
-#3.1.1 Make graphes for CNVs from CNVPartition--------------------------
+#' Title
+#' Make graphes for CNVs
+#'
+#' @param clean_cnv
+#' @param plot_sum_1
+#' @param plot_sum_2
+#'
+#' @import data.table ggplot2 dplyr scales reshape2 tidyr
+#'
+#' @return
+#' @export
+#'
+#' @examples
 cnv_summary_plot <- function(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL) {
   if (!file.exists("cnv_summary_plot")){
     dir.create("cnv_summary_plot")

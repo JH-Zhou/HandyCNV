@@ -11,11 +11,7 @@
 #' @param plot_gene
 #' @param plot_title
 #'
-#' @import
-#' data.table,
-#' dplyr,
-#' ggplot2,
-#' tidyr
+#' @import data.table dplyr ggplot2 tidyr ggrepel
 #'
 #' @return
 #' CNV distribution plot
@@ -24,9 +20,7 @@
 #'
 #' @examples
 #'
-require(ggplot2, quietly = TRUE)
-require(data.table, quietly = TRUE)
-require(ggrepel, quietly = TRUE)
+
 cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL) {
   #myAgr <- formals(cnv_visual)
   #prepare for population data

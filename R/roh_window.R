@@ -4,9 +4,21 @@
 #Second step is find overlap between window size and roh by Chromosome, Start and End position
 #Third step is summary results, count the roh frequency in each windowsize
 
-require(data.table, quietly = TRUE)
-require(dplyr, quietly = TRUE)
+
 #mian function
+#' Title
+#'
+#' @param roh
+#' @param window_size
+#' @param length_autosomal
+#' @param threshold
+#'
+#' @import data.table dplyr
+#'
+#' @return
+#' @export
+#'
+#' @examples
 roh_window <- function(roh, window_size = 5, length_autosomal = 2489.386, threshold = 0.3) {
   ###################################################################################
   #1.set module of windows for single chromosome
