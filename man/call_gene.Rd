@@ -4,7 +4,12 @@
 \alias{call_gene}
 \title{Title call_gene}
 \usage{
-call_gene(refgene, interval = NULL, clean_cnv = NULL)
+call_gene(
+  refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt",
+    "HandyCNV"),
+  interval = NULL,
+  clean_cnv = NULL
+)
 }
 \arguments{
 \item{refgene}{The reference genes list corresponding to your data}

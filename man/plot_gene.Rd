@@ -4,7 +4,14 @@
 \alias{plot_gene}
 \title{Title plot_gene}
 \usage{
-plot_gene(gene, chr_id, start, end, show_name = C(0, 160))
+plot_gene(
+  gene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt",
+    "HandyCNV"),
+  chr_id,
+  start,
+  end,
+  show_name = C(0, 160)
+)
 }
 \arguments{
 \item{gene}{reference gene list.}
