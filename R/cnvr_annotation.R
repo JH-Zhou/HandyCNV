@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", "HandyCNV"), interval = NULL, clean_cnv = NULL){
+call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV"), interval = NULL, clean_cnv = NULL){
   if(!file.exists("call_gene")){
     dir.create("call_gene")
     print("A new folder 'call_gene' was created in working directory.")

@@ -14,7 +14,7 @@
 #' @export plot_gene
 #'
 #' @examples
-plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", "HandyCNV"), chr_id, start, end, show_name = C(0,160)){
+plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV"), chr_id, start, end, show_name = C(0,160)){
   #read gene
   gene <- fread(gene)
   names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
