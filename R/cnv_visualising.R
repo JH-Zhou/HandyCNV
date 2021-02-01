@@ -87,7 +87,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NU
 
   chr_name <- paste0("Chr", chr_id, ".png")
   id_number <- nrow(id_coord)
-  chr_title <- paste0("CNV on Chromosome ", chr_id, " with ", id_number, " Indiciduals")
+  chr_title <- paste0("CNV on Chromosome ", chr_id, " with ", id_number, " Individuals")
   png(res = 300, filename = chr_name, width = 3500, height = 2000)
   #png(res = 300, filename = "10_chr.png", width = 3500, height = 2000)
   chr_plot <- ggplot(cnv_chr, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
