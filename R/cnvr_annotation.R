@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-call_gene <- function(refgene, interval = NULL, clean_cnv = NULL){
+call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", "HandyCNV"), interval = NULL, clean_cnv = NULL){
   if(!file.exists("call_gene")){
     dir.create("call_gene")
     print("A new folder 'call_gene' was created in working directory.")
@@ -52,6 +52,11 @@ call_gene <- function(refgene, interval = NULL, clean_cnv = NULL){
   gene_summary[1, 1:3] <- c(num_CNVR_has_gene, num_CNVR_no_gene, gene_number) #assign relative value into table
   print("The summary of annotation results as shown below:")
   print(gene_summary)
+
+  #report gene as list format for annotation use in David Annotation
+  gene_list <- cnvr_gene %>%
+               select(c("ID", "Chr", "name2"))
+  fwrite(gene_list, file = "call_gene/gene_list.annotation", sep = "\t", quote = F)
 
   #summarise results group by ID then paste all gene into one cell
   window_gene <- cnvr_gene %>%
