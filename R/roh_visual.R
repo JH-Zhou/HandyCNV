@@ -14,9 +14,14 @@
 #' @export plot_gene
 #'
 #' @examples
-plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV"), chr_id, start, end, show_name = C(0,160)){
+plot_gene <- function(gene = NULL, chr_id, start, end, show_name = c(0,160)){
   #read gene
-  gene <- data.table::fread(gene)
+  if(is.null(gene)){
+    gene <- fread(file = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV"), header = F)
+  } else{
+    gene <- fread(gene)
+  }
+
   names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
                    "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
                    "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
@@ -290,7 +295,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       #labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "Length")
       labs(x = "Physical Position (Mb)", y ="Individual ID")
     print("plotting gene....")
-    gene_plot <- HandyCNV::plot_gene(chr_id = chr_id, start = start_position, end = end_position, show_name)
+    gene_plot <- HandyCNV::plot_gene(chr_id = chr_id, start = start_position, end = end_position, show_name = show_name)
     #png(res = 300, filename = zoom_name, width = 3500, height = 2000)
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
