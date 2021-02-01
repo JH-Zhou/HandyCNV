@@ -16,7 +16,7 @@
 #' @examples
 plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV"), chr_id, start, end, show_name = C(0,160)){
   #read gene
-  gene <- fread(gene)
+  gene <- data.table::fread(gene)
   names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
                    "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
                    "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
