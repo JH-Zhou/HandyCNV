@@ -14,17 +14,17 @@
 #' @export plot_gene
 #'
 #' @examples
-plot_gene <- function(gene = NULL, chr_id, start, end, show_name = c(0,160)){
+plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV"), chr_id, start, end, show_name = c(0,160)){
   #read gene
-  if(is.null(gene)){
-    gene <- fread(file = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV"), header = F)
+  if(missing(gene)){
+    gene <- fread(file = gene, header = T)
   } else{
-    gene <- fread(gene)
+    gene <- fread(gene, header = F)
+    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
   }
 
-  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
-                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
-                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
   gene$Chr <- sub("chr", "", gene$Chr)
 
   #extract gene list

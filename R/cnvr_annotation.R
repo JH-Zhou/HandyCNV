@@ -13,16 +13,21 @@
 #' @export
 #'
 #' @examples
-call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV"), interval = NULL, clean_cnv = NULL){
+call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV"), interval = NULL, clean_cnv = NULL){
   if(!file.exists("call_gene")){
     dir.create("call_gene")
     print("A new folder 'call_gene' was created in working directory.")
   }
 
-  gene <- fread(file = refgene, header = FALSE)
-  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
-                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
-                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  if(missing(refgene)){
+    gene <- fread(file = refgene, header = TRUE)
+  } else{
+    gene <- fread(file = refgene, header = FALSE)
+    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  }
+
   gene$Chr <- as.integer(sub("chr", "", gene$Chr)) #convert Chr to integer in order to use foverlap in next step
   interval <- fread(file = interval)
   names(interval)[1] = "ID"    #Repalce names of table in order to the summarise in the final step,
