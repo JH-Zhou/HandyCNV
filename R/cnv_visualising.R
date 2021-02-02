@@ -21,7 +21,7 @@
 #' @examples
 #'
 
-cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL) {
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10) {
   #myAgr <- formals(cnv_visual)
   #prepare for population data
   cnv <- fread(file = clean_cnv)
@@ -189,9 +189,9 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NU
     }
   }
   }
-  else if (is.null(start_position) == "FALSE" & is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(plot_gene) == "FALSE") {
+  else if (is.null(chr_id) == "FALSE" & is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(plot_gene) == "FALSE") {
     cnv_chr <- cnv[cnv$Chr == chr_id, ]
-    cnv_chr_zoom <- filter(cnv_chr, CNV_Start >= start_position * 1000000 -1 & CNV_End <= end_position * 1000000 + 1)
+    cnv_chr_zoom <- filter(cnv_chr, Start >= start_position * 1000000 -1 & End <= end_position * 1000000 + 1)
     id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr_zoom$Sample_ID))) #extract unique ID prepare coordinate
     try(id_coord$Order <- seq(1, nrow(id_coord),1), silent = FALSE)
     id_coord$x <- chr_length_ars[chr_id, 2]
@@ -202,30 +202,47 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NU
 
     #gene_freq <- data.table(gene_freq) #convert it to data.table to set key
     #setkey(x = gene_freq, name2)
-    gene_coord <- group_by(cnv_chr_zoom, name2) %>% slice(1) # generate gene data
-    gene_coord$CNV_Start <- gene_coord$g_Start
-    gene_coord$Order <- gene_coord$gene_order
-    try(gene_coord$CNV_Value <- "5", silent = FALSE)
+    #gene_coord <- group_by(cnv_chr_zoom, name2) %>% slice(1) # generate gene data
+    #gene_coord$CNV_Start <- gene_coord$g_Start
+    #gene_coord$Order <- gene_coord$gene_order
+    #try(gene_coord$CNV_Value <- "5", silent = FALSE)
 
-    gene_freq <- cnv %>% group_by(name2) %>% count(name2, name = "Frequent", sort = TRUE) #gene freq
-    gene_coord_freq <- merge(gene_coord, gene_freq)
-    gene_coord_freq <- gene_coord_freq[c(gene_coord_freq$Frequent >= 5), ]
+    #gene_freq <- cnv %>% group_by(name2) %>% count(name2, name = "Frequent", sort = TRUE) #gene freq
+    #gene_coord_freq <- merge(gene_coord, gene_freq)
+    #gene_coord_freq <- gene_coord_freq[c(gene_coord_freq$Frequent >= 5), ]
 
     zoom_name <- paste0("Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
     id_number <- nrow(id_coord)
     zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
-    png(res = 300, filename = zoom_name, width = 3500, height = 2000)
+    print(zoom_title)
+    #png(res = 300, filename = zoom_name, width = 3500, height = 2000)
     zoom_plot <- ggplot() +
-      geom_rect(data = cnv_chr_zoom, aes(xmin = CNV_Start/1000000, xmax = CNV_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3, fill = as.factor(CNV_Value))) +
-      geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = "black") +
-      geom_text_repel(data = gene_coord_freq, aes(x = g_Start/1000000, y = (Order-1)*5 + 10, label = name2)) +
-      geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
+      geom_rect(data = cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3, fill = as.factor(CNV_Value))) +
+      #geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = "black") +
+      #geom_text_repel(data = gene_coord_freq, aes(x = g_Start/1000000, y = (Order-1)*5 + 10, label = name2)) +
+      #geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       #scale_color_manual(values = c("#F8766D", "#A3A500", "#00B0F6", "#E76BF3", "black")) +
       theme_bw() +
+      theme(legend.key.size = unit(0.5,"line"),
+            legend.title = element_text(size = 6),
+            legend.text  = element_text(size = 6),
+            legend.margin=margin(-10, 0, 0, 0),
+            legend.position = c(0.95, -0.15),
+            legend.justification='right',
+            legend.direction='horizontal') +
       scale_y_continuous(labels = NULL) +
-      scale_x_continuous(breaks = seq(round(start_position,2), round(end_position,2), by = 0.2)) +
-      labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
+      scale_x_continuous(limits = c(start_position, end_position)) +
+      #labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
+      labs(x = "Physical Position (Mb)", y ="CNV", fill = "CNV_Num")
+
+    print("Plotting gene...")
+    gene_plot <- HandyCNV::plot_gene(chr_id = chr_id, start = start_position, end = end_position, show_name = show_name)
+
+    roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
+    print(roh_gene)
+    ggsave(filename = zoom_name, width = width_1, height = height_1, units = "cm", dpi = 300)
+
     print(zoom_plot)
     dev.off()
     print("Task done, plot was stored in working directory.")
