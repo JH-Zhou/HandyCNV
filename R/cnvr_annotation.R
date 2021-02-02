@@ -38,16 +38,10 @@ call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotatio
 
   print("Starting to check gene annotation status in interval file....")
   #Summarise how many CNVRs got gene annotated
-  cnvr_gene$Check_gene <- ""  #add a empty column, to assign if this CNVR has a gene
-  for (i in 1:nrow(cnvr_gene)){
-    if (is.na(cnvr_gene$Start[i]) & is.na(cnvr_gene$End[i])) {
-      cnvr_gene$Check_gene[i] = "Without-gene"
-    } else{
-      cnvr_gene$Check_gene[i] = "Has-gene"
-    }
-  }
+  cnvr_gene <- cnvr_gene %>%
+               mutate(Check_gene = if_else(is.na(Start) & is.na(End), true = "Non_gene", false = "Has_gene"))
 
-  cnvr_has_gene <- subset(cnvr_gene, Check_gene == "Has-gene") #extract a subset which contain the CNVR has gene only
+  cnvr_has_gene <- subset(cnvr_gene, Check_gene == "Has_gene") #extract a subset which contain the CNVR has gene only
   gene_number <- length(unique(cnvr_has_gene$name2)) #count the number of unique genes
   num_CNVR_has_gene <- nrow(unique(cnvr_has_gene[,c("Chr", "i.Start", "i.End")])) #count the number of unique CNVR which got gene annotation
   num_CNVR_no_gene <- nrow(unique(cnvr_gene[,c("Chr", "i.Start", "i.End")])) - num_CNVR_has_gene #"i.Start" and "i.End" are the location of Chr
@@ -83,25 +77,24 @@ call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotatio
     cnv <- fread(file = clean_cnv)
     setkey(gene, Chr, Start, End)
     cnv_annotation <- foverlaps(cnv, gene)
-    names(cnv_annotation)[c(5, 6, 18, 19)] <- c("g_Start", "g_End", "CNV_Start", "CNV_End")
+    cnv_annotation <- cnv_annotation %>%
+                      rename(g_Start = Start,
+                             g_End = End,
+                             CNV_Start = i.Start,
+                             CNV_End = i.End)
     print("Starting to check gene annotation status in CNV file....")
 
-    cnv_annotation$Check_gene <- ""
-    for (i in 1:nrow(cnv_annotation)){
-      if (is.na(cnv_annotation$g_Start[i]) & is.na(cnv_annotation$g_End[i])){
-        cnv_annotation$Check_gene[i] <- "Witout-gene"
-      } else {
-        cnv_annotation$Check_gene[i] <- "Has-gene"
-      }
-    }
+    cnv_annotation <- cnv_annotation %>%
+                      mutate(Check_gene = if_else(is.na(g_Start) & is.na(g_End), true = "Non_gene", false = "Has_gene"))
 
-    cnv_gene <- subset(cnv_annotation, Check_gene == "Has-gene") #extract CNV which has gene
+
+    cnv_gene <- subset(cnv_annotation, Check_gene == "Has_gene") #extract CNV which has gene
     gene_freq <- cnv_gene %>% group_by(name2) %>% count(name2, name = "Frequency", sort = TRUE)
     print(paste0(nrow(gene_freq), " genes were matched in the CNV and CNVR, top 10 frequent genes as below: "))
     print(gene_freq[1:10, ])
 
-    # assin CNVR Id and position for in gene frequency list
-    cnvr_has_gene_unique <- unique(subset(cnvr_has_gene, select = c("name2", "CNVR_ID", "Chr", "i.Start", "i.End")))
+    # assin CNVR ID and positions into gene frequency list
+    cnvr_has_gene_unique <- unique(subset(cnvr_has_gene, select = c("name2", "ID", "Chr", "i.Start", "i.End")))
     # in this file still has some duplicated genes which located in multiple CNVRs, here we need to report its out
     # the function check_dup_gene is used to reprot all duplicated genes
     check_dup_gene <- function(cnvr_has_gene_unique) {
