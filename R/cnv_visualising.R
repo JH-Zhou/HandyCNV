@@ -230,14 +230,16 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NU
             legend.margin=margin(-10, 0, 0, 0),
             legend.position = c(0.95, -0.15),
             legend.justification='right',
-            legend.direction='horizontal') +
+            legend.direction='horizontal',
+            plot.margin=unit(c(0,1,1,1), "cm"),
+            axis.ticks.y = element_blank()) +
       scale_y_continuous(labels = NULL) +
       scale_x_continuous(limits = c(start_position, end_position)) +
       #labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
-      labs(x = "Physical Position (Mb)", y ="CNV", fill = "CNV_Num")
+      labs(x = "Position (Mb)", y ="CNV", fill = "Copy")
 
     print("Plotting gene...")
-    gene_plot <- HandyCNV::plot_gene(chr_id = chr_id, start = start_position, end = end_position, show_name = show_name)
+    gene_plot <- HandyCNV::plot_gene(chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, cnv = "yes")
 
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)

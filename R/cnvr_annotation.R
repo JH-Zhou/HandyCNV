@@ -114,7 +114,7 @@ call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotatio
 
     fwrite(cnv_annotation, file = "call_gene/cnv_annotation.txt", sep = "\t", quote = FALSE)
     fwrite(gene_freq_location, file = "call_gene/gene_freq_cnv.txt", sep = "\t", quote = FALSE)
-    if(file.exists("call_gene/cnvr_annotation.txt") & file.exists("call_gene/call_gene_summary.txt") & file.exists("call_gene/cnv_annotation.txt") & file.exists("call_gene/gene_freq_cnv.txt")) {
+    if(file.exists("call_gene/interval_annotation.txt") & file.exists("call_gene/call_gene_summary.txt") & file.exists("call_gene/cnv_annotation.txt") & file.exists("call_gene/gene_freq_cnv.txt")) {
       print("Task done. CNV, CNVR Annotation, summary files and the Frequency of Gene in CNV Region have been saved in Working directory.")
     } else {
       print("Task failed, please check your input file format carefully!!")

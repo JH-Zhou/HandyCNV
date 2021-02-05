@@ -14,7 +14,7 @@
 #' @export plot_gene
 #'
 #' @examples
-plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV"), chr_id, start, end, show_name = c(0,160)){
+plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV"), chr_id, start, end, show_name = c(0,160), cnv = NULL){
   #read gene
   if(missing(gene)){
     gene <- fread(file = gene, header = T)
@@ -61,16 +61,33 @@ plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/e
         filter(Start > coord_name[1] & End < coord_name[2] | Start > coord_name[3] & End < coord_name[4] | Start > coord_name[5] & End < coord_name[6])
     }
 
-    ggplot() +
-      geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
-      #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
-      #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
-      geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
-      scale_x_continuous(limits = c(start, end)) +
-      #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
-      theme_bw() +
-      theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
-      labs(y = "Gene")
+    #if plot for roh
+    if(is.null(cnv)){
+      ggplot() +
+        geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
+        #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
+        #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
+        geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
+        scale_x_continuous(limits = c(start, end)) +
+        #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
+        theme_bw() +
+        theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
+        labs(y = "Gene")
+    } else {
+      ggplot() +
+        geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max), fill = "gray50", show.legend = F) +
+        #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
+        #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
+        geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
+        scale_x_continuous(limits = c(start, end), labels = NULL) +
+        #scale_x_continuous(limits = c(start, end)) +
+        #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
+        theme_bw() +
+        theme(axis.text.y = element_blank(), axis.title.x = element_blank(),
+              plot.margin=unit(c(1,1,0,1), "cm"),
+              axis.ticks.y = element_blank()) +
+        labs(y = "Gene")
+    }
   }
 }
 
