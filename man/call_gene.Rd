@@ -5,8 +5,8 @@
 \title{Title call_gene}
 \usage{
 call_gene(
-  refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt",
-    "HandyCNV"),
+  refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt",
+    package = "HandyCNV"),
   interval = NULL,
   clean_cnv = NULL
 )

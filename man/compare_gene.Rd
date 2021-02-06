@@ -2,26 +2,52 @@
 % Please edit documentation in R/gene_comparation.R
 \name{compare_gene}
 \alias{compare_gene}
-\title{Title Gene Comparison
-There are two application scenarios:Compare two gene lists or three gene lists}
+\title{Title compare_gene
+Do comparison of genes between two annotated gene frequency list. The default genelist file was generate by call_gene function.
+If the users coustomize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)}
 \usage{
 compare_gene(
   gene_freq_1,
   gene_freq_2,
   gene_freq_3 = NULL,
+  gene_freq_4 = NULL,
   common_gene_threshold = 3,
-  title_1 = "genelist_1",
-  title_2 = "genelist_2",
-  title_3 = "genelist_3"
+  title_1 = "list_1",
+  title_2 = "list_2",
+  title_3 = "list_3",
+  title_4 = "list_4",
+  height_1 = 10,
+  width_1 = 14
 )
 }
 \arguments{
-\item{common_gene_threshold}{}
+\item{gene_freq_1}{first genelist}
+
+\item{gene_freq_2}{second genelist}
+
+\item{gene_freq_3}{third genelist}
+
+\item{gene_freq_4}{fourth genelist}
+
+\item{common_gene_threshold}{integer input.could calculate by multiplying The Number of Sample by 0.05 or 0.1, et al}
+
+\item{title_1}{custom title(two and three lists) or label(four lists) in figture}
+
+\item{title_2}{custom title(two and three lists) or label(four lists) in figture}
+
+\item{title_3}{custom title(two and three lists) or label(four lists) in figture}
+
+\item{title_4}{custom title(two and three lists) or label(four lists) in figture}
+
+\item{height_1}{custom the height to save figure}
+
+\item{width_1}{custom the width to save figure}
 }
 \value{
 
 }
 \description{
-Title Gene Comparison
-There are two application scenarios:Compare two gene lists or three gene lists
+Title compare_gene
+Do comparison of genes between two annotated gene frequency list. The default genelist file was generate by call_gene function.
+If the users coustomize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)
 }

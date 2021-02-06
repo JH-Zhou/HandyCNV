@@ -5,12 +5,13 @@
 \title{Title plot_gene}
 \usage{
 plot_gene(
-  gene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt",
-    "HandyCNV"),
+  gene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt",
+    package = "HandyCNV"),
   chr_id,
   start,
   end,
-  show_name = C(0, 160)
+  show_name = c(0, 160),
+  cnv = NULL
 )
 }
 \arguments{
