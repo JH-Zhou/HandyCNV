@@ -2,7 +2,8 @@
 % Please edit documentation in R/call_cnvr.R
 \name{call_cnvr}
 \alias{call_cnvr}
-\title{Title}
+\title{Title clean CNV
+Formatting CNV results from PennCNV and CNVPartition to the standard format}
 \usage{
 call_cnvr(clean_cnv, roh = NULL)
 }
@@ -10,5 +11,6 @@ call_cnvr(clean_cnv, roh = NULL)
 
 }
 \description{
-Title
+Title clean CNV
+Formatting CNV results from PennCNV and CNVPartition to the standard format
 }

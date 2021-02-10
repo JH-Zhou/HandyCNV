@@ -5,7 +5,13 @@
 \title{Title compare_cnvr
 #The idea to compare CNV between ars and umd are find out how many differents are there}
 \usage{
-compare_cnvr(cnvr_umd, cnvr_ars, umd_ars_map = NULL)
+compare_cnvr(
+  cnvr_umd,
+  cnvr_ars,
+  umd_ars_map = NULL,
+  width_1 = 15,
+  height_1 = 15
+)
 }
 \arguments{
 \item{umd_ars_map}{}

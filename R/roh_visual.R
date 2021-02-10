@@ -9,6 +9,7 @@
 #' interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three
 #'
 #' @import ggplot2 dplyr
+#' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'
 #' @return
 #' @export plot_gene
@@ -105,8 +106,8 @@ plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/e
 #' @param plot_gene present genes in given interval
 #' @param plot_title add title in the polt
 #'
-#' @import data.table dplyr ggplot2 tidyr
-#'
+#' @import dplyr ggplot2 tidyr
+#' @importFrom data.table fread fwrite setkey foverlaps setDT
 #' @return
 #' ROH distribution plot
 #'

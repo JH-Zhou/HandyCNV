@@ -5,7 +5,8 @@
 #' @param input_umd
 #' @param map
 #'
-#' @import data.table dplyr
+#' @import dplyr
+#' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'
 #' @return
 #' @export convert_coord
@@ -86,7 +87,7 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
 #' @param interval_2
 #' @param map
 #'
-#' @import data.table
+#' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'
 #' @return overlap
 #' @export compare_interval

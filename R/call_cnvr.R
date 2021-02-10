@@ -1,9 +1,12 @@
 
 #Call CNVR, summary individual CNVR type, report CNVR frequeny and type
-#' Title
+#' Title clean CNV
+#' Formatting CNV results from PennCNV and CNVPartition to the standard format
 #'
 #' @param clean_cnv
-#' @import data.table dplyr reshape2
+#' @import dplyr
+#' @importFrom data.table fread fwrite setkey foverlaps
+#' @importFrom reshape2 dcast
 #'
 #' @return
 #' @export

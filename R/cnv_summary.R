@@ -1,14 +1,15 @@
-#' Title
+#' Title summarise CNVs
 #' Make graphes for CNVs
 #'
 #' @param clean_cnv
 #' @param plot_sum_1
 #' @param plot_sum_2
 #'
-#' @import data.table ggplot2 dplyr scales reshape2 tidyr
+#' @import ggplot2 dplyr scales reshape2 tidyr
+#' @importFrom data.table fread fwrite
 #'
 #' @return
-#' @export
+#' @export cnv_summary_plot
 #'
 #' @examples
 cnv_summary_plot <- function(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL) {

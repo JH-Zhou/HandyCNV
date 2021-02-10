@@ -7,10 +7,12 @@
 #' @param penn_id_sep
 #'
 #'
-#' @import data.table tidyr
+#' @import dplyr
+#' @importFrom data.table fread fwrite
+#' @importFrom tidyr separate
 #'
 #' @return
-#' @export
+#' @export cnv_clean
 #'
 #' @examples
 cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/") {

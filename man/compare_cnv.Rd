@@ -17,7 +17,7 @@ according to the codintion, the first thing is to match coordinates for both ver
 then find overlap cnv and non overlapcnv
 then summarize how many CNVs are in above standards}
 \usage{
-compare_cnv(cnv_umd, cnv_ars, umd_ars_map = NULL)
+compare_cnv(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, height_1 = 11)
 }
 \value{
 

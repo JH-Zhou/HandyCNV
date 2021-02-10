@@ -8,6 +8,7 @@
 #' @param common_cnv_threshold
 #'
 #' @import gaston graphics base2grob cowplot
+#' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'
 #' @return
 #' @export

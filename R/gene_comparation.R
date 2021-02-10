@@ -14,7 +14,8 @@
 #' @param height_1 custom the height to save figure
 #' @param width_1 custom the width to save figure
 #'
-#' @import data.table dplyr ggplot2 scatterplot3d
+#' @import dplyr ggplot2 scatterplot3d
+#' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'
 #' @return
 #' @export compare_gene

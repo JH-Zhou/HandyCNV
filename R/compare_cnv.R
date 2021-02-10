@@ -18,7 +18,9 @@
 #' @param umd_ars_map
 #' @param width_1
 #' @param height_1
-#' @import dplyr data.table scales ggplot2
+#' @import dplyr scales ggplot2
+#'
+#' @importFrom data.table fread fwrite setkey foverlaps
 #'
 #' @return
 #' @export compare_cnv

@@ -7,7 +7,9 @@
 #' @param refgene The reference genes list corresponding to your data
 #' @param interval Could be CNV, ROH, QTL or any interval list. At least comprised by four columns Interval_ID, Chr, Start and End
 #' @param clean_cnv The output data from cnv_clean function
-#' @import data.table dplyr
+#' @import dplyr
+#'
+#' @importFrom  data.table fread fwrite setkey foverlaps
 #'
 #' @return
 #' @export

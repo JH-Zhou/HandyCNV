@@ -8,6 +8,9 @@
 #' @param tarMap_title customize the title of target map in plot
 #' @param species the name of species
 #'
+#' @import ggplot2 dplyr
+#' @importFrom data.table fread fwrite setkey foverlaps setDT
+#'
 #' @return
 #' @export convert_map
 #'

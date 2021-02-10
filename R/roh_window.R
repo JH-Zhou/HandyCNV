@@ -14,7 +14,8 @@
 #' @param threshold the proportion used in the roh windows ditribution plot. For example 1000 samples, if threshold set as 0.5,
 #' and 1000*0.5 = 500, the value of histgram above 500 will be color as red and the group below 500 will filling with other color
 #'
-#' @import data.table dplyr
+#' @import dplyr
+#' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'
 #' @return
 #' @export

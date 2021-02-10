@@ -18,7 +18,8 @@
 #' @param cnvr_ars
 #' @param umd_ars_map
 #'
-#' @import data.table dplyr ggplot2
+#' @import dplyr ggplot2
+#' @importFrom data.table fread fwrite setkey foverlaps
 #'
 #' @return
 #' @export

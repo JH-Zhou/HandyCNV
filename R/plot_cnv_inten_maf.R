@@ -8,8 +8,8 @@
 #' @param sample_size
 #' @param common_cnv_threshold
 #'
-#' @import data.table dplyr ggrepel ggplot2 tidyr gaston graphics base2grob cowplot grDevices gridGraphics rvcheck grid scales
-#'
+#' @import dplyr ggrepel ggplot2 tidyr gaston graphics base2grob cowplot grDevices gridGraphics rvcheck grid scales
+#' @importFrom data.table fread fwrite setkey foverlaps setDT
 #' @return
 #' @export
 #'

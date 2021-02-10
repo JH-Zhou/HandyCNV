@@ -6,7 +6,9 @@
 #' @param sample_size
 #' @param common_cnv_threshold
 #'
-#' @import data.table ggplot2 dplyr scales reshape2 tidyr
+#' @import ggplot2 dplyr scales reshape2 tidyr
+#'
+#' @importFrom data.table fread fwrite
 #'
 #' @return
 #' @export

@@ -2,7 +2,7 @@
 % Please edit documentation in R/cnv_summary.R
 \name{cnv_summary_plot}
 \alias{cnv_summary_plot}
-\title{Title
+\title{Title summarise CNVs
 Make graphes for CNVs}
 \usage{
 cnv_summary_plot(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL)
@@ -14,6 +14,6 @@ cnv_summary_plot(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL)
 
 }
 \description{
-Title
+Title summarise CNVs
 Make graphes for CNVs
 }
