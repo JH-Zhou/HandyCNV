@@ -24,10 +24,10 @@
 #' @export
 #'
 #' @examples
-compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
+compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, height_1 = 15) {
 
   #default plot function
-  plot_comparison <- function(cnv_checkover, title_fig) {
+  plot_comparison <- function(cnv_checkover, title_fig, width_1 = 15, height_1 = 15) {
     cnv <- cnv_checkover
     title_f = title_fig
     drop_name = "Overlap_length"
@@ -49,7 +49,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     print(paste0("CNVR comparison summary results in ", title_f," as following:"))
     print(cnvr_cal)
 
-    png(res = 300, filename = paste0(title_f, ".png"), width = 1500, height = 1500, bg = "transparent")
+    png(res = 300, filename = paste0(title_f, ".png"), width = width_1, height = height_1, bg = "transparent", units = "cm")
     compare_plot <- ggplot(cnvr_cal) +
       geom_col(aes(x = Type, y = overlap_len, fill = Check_overlap)) +
       scale_fill_brewer(palette = 'Set1') +
@@ -100,7 +100,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     checkover_pop_length <- merge(checkover_pop_1, pop_overlap[, c("CNVR_ID_UMD", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_UMD", all.x = TRUE)
     checkover_pop_length <- unique(checkover_pop_length)
 
-    plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1")
+    plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1)
 
     fwrite(checkover_pop_length, file = "checkover_pop_1.txt", sep = "\t", quote = FALSE)
 
@@ -152,7 +152,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     checkover_pop_length_2 <- unique(checkover_pop_length_2)
 
 
-    plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2")
+    plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1)
     fwrite(checkover_pop_length_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference
@@ -203,7 +203,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     #There are some duplicated rows after merge progress, because of there are some different SNP with same location in the map file
     #To sovle this problem, we should check duplicated row after each merge step and remove the duplicates
     print("Starting to convert the coordinates for the first input file...")
-    cnv_umd_ars <- merge(cnv_umd, two_map, by.x = c("Chr_UMD", "Start_UMD"), by.y = c("Chr_UMD_Map", "Position_UMD_Map"), all.x = TRUE)
+    cnv_umd_ars <- merge(cnv_umd, two_map, by.x = c("Chr_UMD", "Start_UMD"), by.y = c("Chr_def_Map", "Position_def_Map"), all.x = TRUE)
     dup_index <- grep("TRUE", duplicated(cnv_umd_ars[, c("Chr_UMD", "Start_UMD", "CNVR_ID_UMD")]))
     if (length(dup_index) > 0){
       cnv_umd_ars <- cnv_umd_ars[-dup_index, ]
@@ -212,17 +212,17 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
       print("Non duplicated SNPs were detected after converting the Start Position for the first file.")
     }
 
-    if (all(cnv_umd_ars$Start_UMD == cnv_umd_ars$Position_UMD_Map)){
+    if (all(cnv_umd_ars$Start_UMD == cnv_umd_ars$Position_def_Map)){
       print("Matching results by the Start position passed the validation.")
     } else {print("matching results didn't pass the validation, please check your input data, make sure the input file all generate by HandyCNV")}
 
-    cnv_umd_ars <- subset(cnv_umd_ars, select = c(umd_colnames, "Position_ARS_Map"))
-    names(cnv_umd_ars)[names(cnv_umd_ars) == "Position_ARS_Map"] <- "Start_ARS_Map"
+    cnv_umd_ars <- subset(cnv_umd_ars, select = c(umd_colnames, "Position_tar_Map"))
+    names(cnv_umd_ars)[names(cnv_umd_ars) == "Position_tar_Map"] <- "Start_ARS_Map"
     umd_temp_colnames <- colnames(cnv_umd_ars)
 
     #matching the end position of CNV
     #cnv_umd_ars <- merge(cnv_umd_ars, two_map, by.x = "End_SNP_UMD", by.y = "Name_Map", all.x = TRUE)
-    cnv_umd_ars <- merge(cnv_umd_ars, two_map, by.x = c("Chr_UMD", "End_UMD"), by.y = c("Chr_UMD_Map", "Position_UMD_Map"), all.x = TRUE)
+    cnv_umd_ars <- merge(cnv_umd_ars, two_map, by.x = c("Chr_UMD", "End_UMD"), by.y = c("Chr_def_Map", "Position_def_Map"), all.x = TRUE)
     dup_index <- grep("TRUE", duplicated(cnv_umd_ars[, c("Chr_UMD", "End_UMD", "CNVR_ID_UMD")]))
     if (length(dup_index) > 0){
       cnv_umd_ars <- cnv_umd_ars[-dup_index, ]
@@ -231,19 +231,19 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
       print("Non duplicated SNPs were detected after converting the End Position for the first file.")
     }
 
-    if (all(cnv_umd_ars$End_UMD == cnv_umd_ars$Position_UMD_Map)){
+    if (all(cnv_umd_ars$End_UMD == cnv_umd_ars$Position_def_Map)){
       print("Matching results by the End position passed the validation.")
     } else {print("matching results didn't pass the validation, please check your input data, make sure the input file all generate by HandyCNV")}
 
-    cnv_umd_ars <- subset(cnv_umd_ars, select = c(umd_temp_colnames, "Position_ARS_Map"))
-    names(cnv_umd_ars)[names(cnv_umd_ars) == "Position_ARS_Map"] <- "End_ARS_Map"
+    cnv_umd_ars <- subset(cnv_umd_ars, select = c(umd_temp_colnames, "Position_tar_Map"))
+    names(cnv_umd_ars)[names(cnv_umd_ars) == "Position_tar_Map"] <- "End_ARS_Map"
     umd_convert_colnames <- colnames(cnv_umd_ars)
 
 
     #2.convert ars result to umd
     #cnv_ars_umd <- merge(cnv_ars, two_map, by.x = "Start_SNP_ARS", by.y = "Name_Map", all.x = TRUE)
     print("Starting to convert the coordinates for the second input file...")
-    cnv_ars_umd <- merge(cnv_ars, two_map, by.x = c("Chr_ARS", "Start_ARS"), by.y = c("Chr_ARS_Map", "Position_ARS_Map"), all.x = TRUE)
+    cnv_ars_umd <- merge(cnv_ars, two_map, by.x = c("Chr_ARS", "Start_ARS"), by.y = c("Chr_tar_Map", "Position_tar_Map"), all.x = TRUE)
     dup_index <- grep("TRUE", duplicated(cnv_ars_umd[, c("Chr_ARS", "Start_ARS", "CNVR_ID_ARS")]))
     if (length(dup_index) > 0){
       cnv_ars_umd <- cnv_ars_umd[-dup_index, ]
@@ -253,16 +253,16 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     }
 
     #checking if the matching results correct?
-    if (all(cnv_ars_umd$Start_ARS == cnv_ars_umd$Position_ARS_Map)){
+    if (all(cnv_ars_umd$Start_ARS == cnv_ars_umd$Position_tar_Map)){
       print("Matching results by the Start position passed the validation.")
     } else {print("matching results didn't pass the validation, please check your input data, make sure the input file all generate by HandyCNV")}
-    cnv_ars_umd <- subset(cnv_ars_umd, select = c(ars_colnames, "Position_UMD_Map"))
-    names(cnv_ars_umd)[names(cnv_ars_umd) == "Position_UMD_Map"] <- "Start_UMD_Map"
+    cnv_ars_umd <- subset(cnv_ars_umd, select = c(ars_colnames, "Position_def_Map"))
+    names(cnv_ars_umd)[names(cnv_ars_umd) == "Position_def_Map"] <- "Start_UMD_Map"
     ars_temp_colnames <- colnames(cnv_ars_umd)
 
     #matching end position
     #cnv_ars_umd <- merge(cnv_ars_umd, two_map, by.x = "End_SNP_ARS", by.y = "Name_Map", all.x = TRUE)
-    cnv_ars_umd <- merge(cnv_ars_umd, two_map, by.x = c("Chr_ARS", "End_ARS"), by.y = c("Chr_ARS_Map", "Position_ARS_Map"), all.x = TRUE)
+    cnv_ars_umd <- merge(cnv_ars_umd, two_map, by.x = c("Chr_ARS", "End_ARS"), by.y = c("Chr_tar_Map", "Position_tar_Map"), all.x = TRUE)
     dup_index <- grep("TRUE", duplicated(cnv_ars_umd[, c("Chr_ARS", "End_ARS", "CNVR_ID_ARS")]))
     if (length(dup_index) > 0){
       cnv_ars_umd <- cnv_ars_umd[-dup_index, ]
@@ -271,11 +271,11 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
       print("Non duplicated SNPs were detected after converting the End Postion for the Second File.")
     }
 
-    if (all(cnv_ars_umd$End_ARS == cnv_ars_umd$Position_ARS_Map)){
+    if (all(cnv_ars_umd$End_ARS == cnv_ars_umd$Position_tar_Map)){
       print("Matching results by the End position passed the validation.")
     } else {print("matching results didn't pass the validation, please check your input data, make sure the input file all generate by HandyCNV")}
-    cnv_ars_umd <- subset(cnv_ars_umd, select = c(ars_temp_colnames, "Position_UMD_Map"))
-    names(cnv_ars_umd)[names(cnv_ars_umd) == "Position_UMD_Map"] <- "End_UMD_Map"
+    cnv_ars_umd <- subset(cnv_ars_umd, select = c(ars_temp_colnames, "Position_def_Map"))
+    names(cnv_ars_umd)[names(cnv_ars_umd) == "Position_def_Map"] <- "End_UMD_Map"
     ars_convert_colnames <- colnames(cnv_ars_umd)
 
     #write out CNV with converted coordinates
@@ -331,7 +331,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     checkover_pop_length <- unique(checkover_pop_length)
 
 
-    plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1")
+    plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1)
 
     fwrite(checkover_pop_length, file = "checkover_pop_1.txt", sep = "\t", quote = FALSE)
 
@@ -374,7 +374,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL) {
     checkover_pop_length_2 <- unique(checkover_pop_length_2)
 
 
-    plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2")
+    plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1)
     fwrite(checkover_pop_length_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference

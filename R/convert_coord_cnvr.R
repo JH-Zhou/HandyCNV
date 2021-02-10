@@ -18,15 +18,15 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
   if (is.null(input_umd)) {
     cnvr <- fread(input_ars)
     #first step, matching the start position
-    cnvr_start <- dplyr::left_join(x = cnvr, y = map, by =c("Chr" = "Chr_ARS", "Start" = "Position_ARS")) %>%
-      rename(Start_UMD = Position_UMD, Start_Match = Match) %>%
+    cnvr_start <- dplyr::left_join(x = cnvr, y = map, by =c("Chr" = "Chr_tar", "Start" = "Position_tar")) %>%
+      rename(Start_UMD = Position_def, Start_Match = Match) %>%
       unique()
 
-    #sencond step, matching the end position
-    cnvr_end <- dplyr::left_join(x = cnvr_start, y = map, by = c("Chr" = "Chr_ARS", "End" = "Position_ARS")) %>%
-      rename(End_UMD = Position_UMD, End_Match = Match)
+    #second step, matching the end position
+    cnvr_end <- dplyr::left_join(x = cnvr_start, y = map, by = c("Chr" = "Chr_tar", "End" = "Position_tar")) %>%
+      rename(End_UMD = Position_def, End_Match = Match)
 
-    #thord step, extract all information we need
+    #third step, extract all information we need
     cnvr_new_coord <- cnvr_end %>%
       select(c("CNVR_ID", "Chr", "Start", "End", "Start_UMD", "End_UMD", "Start_Match", "End_Match")) %>%
       unique()
@@ -36,15 +36,24 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
     print(table(cnvr_new_coord$Start_Match))
     print("The quality of converion of End Position as below: FALSE means not match between two version.")
     print(table(cnvr_new_coord$End_Match))
-  } else{
+
+    cnvr_right <- cnvr_new_coord %>%
+      filter(Start_Match == "Match" & End_Match == "Match") %>%
+      filter(Start_UMD < End_UMD) %>%
+      select(c("CNVR_ID", "Chr", "Start_UMD", "End_UMD")) %>%
+      rename(Start = "Start_UMD", End = "End_UMD") %>%
+      setDT()
+    fwrite(cnvr_new_coord, "cnvr_convert_coord.txt", sep ="\t", quote = FALSE)
+    fwrite(cnvr_right, "cnvr_convert_coord.correct", sep = "\t", quote = FALSE)
+  } else {
     cnvr = fread(input_umd)
     #convert from UMD to ARS
-    cnvr_start <- dplyr::left_join(x = cnvr, y = map, by =c("Chr" = "Chr_UMD", "Start" = "Position_UMD")) %>%
-      rename(Start_ARS = Position_ARS, Start_Match = Match)
+    cnvr_start <- dplyr::left_join(x = cnvr, y = map, by =c("Chr" = "Chr_def", "Start" = "Position_def")) %>%
+      rename(Start_ARS = Position_tar, Start_Match = Match)
 
     #sencond step, matching the end position
-    cnvr_end <- dplyr::left_join(x = cnvr_start, y = map, by = c("Chr" = "Chr_UMD", "End" = "Position_UMD")) %>%
-      rename(End_ARS = Position_ARS, End_Match = Match)
+    cnvr_end <- dplyr::left_join(x = cnvr_start, y = map, by = c("Chr" = "Chr_def", "End" = "Position_def")) %>%
+      rename(End_ARS = Position_tar, End_Match = Match)
 
     #thord step, extract all information we need
     cnvr_new_coord <- cnvr_end %>%
@@ -56,15 +65,16 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
     print(table(cnvr_new_coord$Start_Match))
     print("The quality of converion of End Position as below: FALSE means not match between two version.")
     print(table(cnvr_new_coord$End_Match))
+
+    cnvr_right <- cnvr_new_coord %>%
+      filter(Start_Match == "Match" & End_Match == "Match") %>%
+      filter(Start_ARS < End_ARS) %>%
+      select(c("CNVR_ID", "Chr", "Start_ARS", "End_ARS")) %>%
+      rename(Start = "Start_ARS", End = "End_ARS") %>%
+      setDT()
+    fwrite(cnvr_new_coord, "cnvr_convert_coord.txt", sep ="\t", quote = FALSE)
+    fwrite(cnvr_right, "cnvr_convert_coord.correct", sep = "\t", quote = FALSE)
   }
-  cnvr_right <- cnvr_new_coord %>%
-    filter(Start_Match == "TRUE" & End_Match == "TRUE") %>%
-    filter(Start_UMD < End_UMD) %>%
-    select(c("CNVR_ID", "Chr", "Start_UMD", "End_UMD")) %>%
-    rename(Start = "Start_UMD", End = "End_UMD") %>%
-    setDT()
-  fwrite(cnvr_new_coord, "cnvr_convert_coord.txt", sep ="\t", quote = FALSE)
-  fwrite(cnvr_right, "cnvr_convert_coord.correct", sep = "\t", quote = FALSE)
 }
 
 
