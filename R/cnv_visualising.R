@@ -1,15 +1,21 @@
-#' Title
+#' Title visual CNV
 #' Visualizing CNV on both population level and individual level
 #'
-#' @param clean_cnv
-#' @param max_chr_length
-#' @param chr_id
-#' @param chr_length
-#' @param start_position
-#' @param end_position
-#' @param individual_id
-#' @param plot_gene
-#' @param plot_title
+#' @param clean_cnv cnv list file, standard file was generated from cnv_clean function
+#' @param max_chr_length the maximum length of chromosome, default unit is 'Mb'
+#' @param chr_id the number of chromosome want to plot
+#' @param chr_length set the length for single chromosome
+#' @param start_position decimal digit, default unit is 'Mb'. such as 23.2112
+#' @param end_position decimal digit, default unit is 'Mb'. such as 23.2112
+#' @param individual_id the ID of individual in cnv list, used to plot all chromosome for specific Individual
+#' @param plot_gene if ture, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function
+#' @param plot_title set the title of final plot
+#' @param max_chr the maximum number of chromosomes to plot, it used for plot all chromosomes at once
+#' @param report_id report the sample ID while plotting
+#' @param pedigree pedigree list, requir at least three columns, Sample_Id, Sire and Dam
+#' @param show_name default value is show_name = c(0, 160). accept the vectors only, unit is Mb. for example show_name = c(11.2, 12.4, 15.3, 18.4), means only plot the genes within the given interval
+#' @param width_1 number to set the width of final plot size, unit is 'cm'
+#' @param height_1 number to set the height of final plot size, unit is 'cm'
 #'
 #' @import dplyr ggplot2 tidyr ggrepel scales
 #'

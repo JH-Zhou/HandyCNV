@@ -21,13 +21,13 @@ compare_gene(
 )
 }
 \arguments{
-\item{gene_freq_1}{first genelist}
+\item{gene_freq_1}{first genelist, the default file was generated from call_gene function}
 
-\item{gene_freq_2}{second genelist}
+\item{gene_freq_2}{second genelist, the default file was generated from call_gene function}
 
-\item{gene_freq_3}{third genelist}
+\item{gene_freq_3}{third genelist, the default file was generated from call_gene function}
 
-\item{gene_freq_4}{fourth genelist}
+\item{gene_freq_4}{fourth genelist, the default file was generated from call_gene function}
 
 \item{common_gene_threshold}{integer input.could calculate by multiplying The Number of Sample by 0.05 or 0.1, et al}
 

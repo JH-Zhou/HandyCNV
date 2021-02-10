@@ -1,9 +1,9 @@
 #' Title summarise CNVs
 #' Make graphes for CNVs
 #'
-#' @param clean_cnv
-#' @param plot_sum_1
-#' @param plot_sum_2
+#' @param clean_cnv the clean cnv file was generate by clean_cnv function
+#' @param plot_sum_1 first type of combination of summary plot
+#' @param plot_sum_2 second type of combination of summary plot
 #'
 #' @import ggplot2 dplyr scales reshape2 tidyr
 #' @importFrom data.table fread fwrite

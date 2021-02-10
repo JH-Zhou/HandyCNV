@@ -3,9 +3,15 @@
 \name{call_cnvr}
 \alias{call_cnvr}
 \title{Title clean CNV
-Formatting CNV results from PennCNV and CNVPartition to the standard format}
+Formatting CNV results from PennCNV and CNVPartition to the standard format
+Call CNVR, summary individual CNVR type, report CNVR frequeny and type}
 \usage{
 call_cnvr(clean_cnv, roh = NULL)
+}
+\arguments{
+\item{clean_cnv}{the clean cnv file was generate by clean_cnv function}
+
+\item{roh}{roh file from clean_cnv function, only CNVPartition results will generate the roh results}
 }
 \value{
 
@@ -13,4 +19,5 @@ call_cnvr(clean_cnv, roh = NULL)
 \description{
 Title clean CNV
 Formatting CNV results from PennCNV and CNVPartition to the standard format
+Call CNVR, summary individual CNVR type, report CNVR frequeny and type
 }

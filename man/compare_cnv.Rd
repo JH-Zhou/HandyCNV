@@ -19,6 +19,17 @@ then summarize how many CNVs are in above standards}
 \usage{
 compare_cnv(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, height_1 = 11)
 }
+\arguments{
+\item{cnv_umd}{first cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function}
+
+\item{cnv_ars}{second cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function}
+
+\item{umd_ars_map}{map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
+
+\item{width_1}{number to set the width of final plot size, unit is 'cm'}
+
+\item{height_1}{number to set the height of final plot size, unit is 'cm'}
+}
 \value{
 
 }

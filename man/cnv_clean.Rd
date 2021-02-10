@@ -9,7 +9,11 @@ Now support to read the results from PennCNV and CNVPartition}
 cnv_clean(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/")
 }
 \arguments{
-\item{penn_id_sep}{}
+\item{cnvpartition}{the default CNV results from CNVPartition}
+
+\item{penncnv}{the default CNV results from PennCNV}
+
+\item{penn_id_sep}{the sepatator in the column of Sample ID in PennCNV results, if the ID bind with the path, need to separate by this argument}
 }
 \value{
 

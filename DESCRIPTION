@@ -23,7 +23,9 @@ Imports:
     grDevices,
     grid,
     gridGraphics,
-    rvcheck
+    rvcheck,
+    scatterplot3d,
+    utils
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

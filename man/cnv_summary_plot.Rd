@@ -8,7 +8,11 @@ Make graphes for CNVs}
 cnv_summary_plot(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL)
 }
 \arguments{
-\item{plot_sum_2}{}
+\item{clean_cnv}{the clean cnv file was generate by clean_cnv function}
+
+\item{plot_sum_1}{first type of combination of summary plot}
+
+\item{plot_sum_2}{second type of combination of summary plot}
 }
 \value{
 

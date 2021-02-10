@@ -1,10 +1,10 @@
 #' Title
 #'
-#' @param cnvr
-#' @param assembly
-#' @param cnv_annotation
-#' @param sample_size
-#' @param common_cnv_threshold
+#' @param cnvr cnvr file generated from call_cnvr function
+#' @param assembly which reference genome assenbly used in the data, each chromosome has different length between various assembly, now only support Bovine UMD3.1 and ARS1.2
+#' @param cnv_annotation gene annotated cnv file, generated from call_gene function
+#' @param sample_size integer, the total number of unique samples in the cnv result. combine with common_cnv_threshold to plot all CNVs which passed the threshold
+#' @param common_cnv_threshold two decimal places, cobine with sample_size to plot all CNVs passed the common threshold
 #'
 #' @import ggplot2 dplyr scales reshape2 tidyr
 #'

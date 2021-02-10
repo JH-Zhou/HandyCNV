@@ -8,7 +8,11 @@ only need Chr, Start and End}
 convert_coord(input_ars = NULL, input_umd = NULL, map)
 }
 \arguments{
-\item{map}{}
+\item{input_ars}{the interval list with ARS1.2 coordinates, not limited on ARS once given the right map file}
+
+\item{input_umd}{the interval list with UMD3.1 coordinates, not limited on UMD once given the right map file}
+
+\item{map}{map file contains coordinats in both version of map. default file is generated from convert_map function}
 }
 \value{
 

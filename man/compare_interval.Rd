@@ -9,7 +9,11 @@ the Chr column should be the number only, for example: 1 not chr1}
 compare_interval(interval_1, interval_2, map = NULL)
 }
 \arguments{
-\item{map}{}
+\item{interval_1}{the interval list with ARS1.2 coordinates, not limited on ARS once given the right map file}
+
+\item{interval_2}{the interval list with UMD3.1 coordinates, not limited on UMD once given the right map file}
+
+\item{map}{map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
 }
 \value{
 overlap

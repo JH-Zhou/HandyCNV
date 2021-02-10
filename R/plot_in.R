@@ -1,11 +1,11 @@
 #' Title
 #'
-#' @param cnvr
-#' @param cnv_annotation
-#' @param intensity
-#' @param map
-#' @param sample_size
-#' @param common_cnv_threshold
+#' @param cnvr cnvr list, standard file was generated from call_cnvr function
+#' @param cnv_annotation standard file was generaed from call_gene function
+#' @param intensity the signal inyensity file contains LRR and BAF
+#' @param map the map corresponding to the reference genome in cnvr file, standard file was generated from convert_map function
+#' @param sample_size the total number of unique samples in cnvr list
+#' @param common_cnv_threshold two decimal places, combine with sample_size to set the common threshold
 #'
 #' @import gaston graphics base2grob cowplot
 #' @importFrom data.table fread fwrite setkey foverlaps setDT

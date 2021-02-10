@@ -2,10 +2,10 @@
 #' Do comparison of genes between two annotated gene frequency list. The default genelist file was generate by call_gene function.
 #' If the users coustomize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)
 #'
-#' @param gene_freq_1 first genelist
-#' @param gene_freq_2 second genelist
-#' @param gene_freq_3 third genelist
-#' @param gene_freq_4 fourth genelist
+#' @param gene_freq_1 first genelist, the default file was generated from call_gene function
+#' @param gene_freq_2 second genelist, the default file was generated from call_gene function
+#' @param gene_freq_3 third genelist, the default file was generated from call_gene function
+#' @param gene_freq_4 fourth genelist, the default file was generated from call_gene function
 #' @param common_gene_threshold integer input.could calculate by multiplying The Number of Sample by 0.05 or 0.1, et al
 #' @param title_1 custom title(two and three lists) or label(four lists) in figture
 #' @param title_2 custom title(two and three lists) or label(four lists) in figture

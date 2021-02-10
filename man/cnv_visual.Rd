@@ -2,7 +2,7 @@
 % Please edit documentation in R/cnv_visualising.R
 \name{cnv_visual}
 \alias{cnv_visual}
-\title{Title
+\title{Title visual CNV
 Visualizing CNV on both population level and individual level}
 \usage{
 cnv_visual(
@@ -24,13 +24,41 @@ cnv_visual(
 )
 }
 \arguments{
-\item{plot_title}{}
+\item{clean_cnv}{cnv list file, standard file was generated from cnv_clean function}
+
+\item{max_chr}{the maximum number of chromosomes to plot, it used for plot all chromosomes at once}
+
+\item{chr_id}{the number of chromosome want to plot}
+
+\item{chr_length}{set the length for single chromosome}
+
+\item{start_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
+
+\item{end_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
+
+\item{individual_id}{the ID of individual in cnv list, used to plot all chromosome for specific Individual}
+
+\item{max_chr_length}{the maximum length of chromosome, default unit is 'Mb'}
+
+\item{plot_gene}{if ture, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function}
+
+\item{plot_title}{set the title of final plot}
+
+\item{report_id}{report the sample ID while plotting}
+
+\item{pedigree}{pedigree list, requir at least three columns, Sample_Id, Sire and Dam}
+
+\item{show_name}{default value is show_name = c(0, 160). accept the vectors only, unit is Mb. for example show_name = c(11.2, 12.4, 15.3, 18.4), means only plot the genes within the given interval}
+
+\item{width_1}{number to set the width of final plot size, unit is 'cm'}
+
+\item{height_1}{number to set the height of final plot size, unit is 'cm'}
 }
 \value{
 CNV distribution plot
 }
 \description{
-Title
+Title visual CNV
 Visualizing CNV on both population level and individual level
 }
 \examples{

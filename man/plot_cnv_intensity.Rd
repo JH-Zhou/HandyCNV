@@ -14,7 +14,17 @@ plot_cnv_intensity(
 )
 }
 \arguments{
-\item{common_cnv_threshold}{}
+\item{cnvr}{cnvr list, standard file was generated from call_cnvr function}
+
+\item{cnv_annotation}{standard file was generaed from call_gene function}
+
+\item{intensity}{the signal inyensity file contains LRR and BAF}
+
+\item{map}{the map corresponding to the reference genome in cnvr file, standard file was generated from convert_map function}
+
+\item{sample_size}{the total number of unique samples in cnvr list}
+
+\item{common_cnv_threshold}{two decimal places, combine with sample_size to set the common threshold}
 }
 \value{
 

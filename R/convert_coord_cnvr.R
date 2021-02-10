@@ -1,9 +1,9 @@
 
 #' Title convert_coord
 #' only need Chr, Start and End
-#' @param input_ars
-#' @param input_umd
-#' @param map
+#' @param input_ars the interval list with ARS1.2 coordinates, not limited on ARS once given the right map file
+#' @param input_umd the interval list with UMD3.1 coordinates, not limited on UMD once given the right map file
+#' @param map map file contains coordinats in both version of map. default file is generated from convert_map function
 #'
 #' @import dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -83,9 +83,9 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
 #' Title compare_interval
 #' compare cnvr, each input file should contain Chr, Start and End columns,
 #' the Chr column should be the number only, for example: 1 not chr1
-#' @param interval_1
-#' @param interval_2
-#' @param map
+#' @param interval_1 the interval list with ARS1.2 coordinates, not limited on ARS once given the right map file
+#' @param interval_2 the interval list with UMD3.1 coordinates, not limited on UMD once given the right map file
+#' @param map map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
 #'
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'

@@ -1,3 +1,20 @@
+#' Title plot intensity of cnvr
+#'
+#' @param cnvr cnvr list, standard file was generated from call_cnvr function
+#' @param cnv_annotation standard file was generaed from call_gene function
+#' @param intensity the signal inyensity file contains LRR and BAF
+#' @param map the map corresponding to the reference genome in cnvr file, standard file was generated from convert_map function
+#' @param prefix_bed the prefix of bed, bim and fam file in plink format
+#' @param sample_size the total number of unique samples in cnvr list
+#' @param common_cnv_threshold two decimal places, combine with sample_size to set the common threshold
+#' @param chr_id the number of chromosome, integer, such as chromosome 1 is: 1
+#' @param start_position decimal digit, default unit is 'Mb'. such as 23.2112
+#' @param end_position decimal digit, default unit is 'Mb'. such as 23.2112
+#'
+#' @return
+#' @export
+#'
+#' @examples
   plot_intensity <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, sample_size, common_cnv_threshold = 0.05, chr_id, start_position, end_position) {
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)

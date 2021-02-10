@@ -14,7 +14,15 @@ compare_cnvr(
 )
 }
 \arguments{
-\item{umd_ars_map}{}
+\item{cnvr_umd}{first cnvr list, not limited on umd or ars, default file is the result from call_cnvr function}
+
+\item{cnvr_ars}{second cnvr list, not limited on umd or ars, default file is the result from call_cnvr function}
+
+\item{umd_ars_map}{map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
+
+\item{width_1}{number to set the width of final plot size, unit is 'cm'}
+
+\item{height_1}{number to set the height of final plot size, unit is 'cm'}
 }
 \value{
 

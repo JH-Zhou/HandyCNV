@@ -2,10 +2,9 @@
 #' Used for cleaning the default CNV results into a standard format for the further use.
 #' Now support to read the results from PennCNV and CNVPartition
 #'
-#' @param cnvpartition
-#' @param penncnv
-#' @param penn_id_sep
-#'
+#' @param cnvpartition the default CNV results from CNVPartition
+#' @param penncnv the default CNV results from PennCNV
+#' @param penn_id_sep the sepatator in the column of Sample ID in PennCNV results, if the ID bind with the path, need to separate by this argument
 #'
 #' @import dplyr
 #' @importFrom data.table fread fwrite

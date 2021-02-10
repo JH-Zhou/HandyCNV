@@ -13,7 +13,15 @@ cnvr_plot(
 )
 }
 \arguments{
-\item{common_cnv_threshold}{}
+\item{cnvr}{cnvr file generated from call_cnvr function}
+
+\item{assembly}{which reference genome assenbly used in the data, each chromosome has different length between various assembly, now only support Bovine UMD3.1 and ARS1.2}
+
+\item{cnv_annotation}{gene annotated cnv file, generated from call_gene function}
+
+\item{sample_size}{integer, the total number of unique samples in the cnv result. combine with common_cnv_threshold to plot all CNVs which passed the threshold}
+
+\item{common_cnv_threshold}{two decimal places, cobine with sample_size to plot all CNVs passed the common threshold}
 }
 \value{
 

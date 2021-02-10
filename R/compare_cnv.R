@@ -13,11 +13,11 @@
 #' then find overlap cnv and non overlapcnv
 #' then summarize how many CNVs are in above standards
 #'
-#' @param cnv_umd
-#' @param cnv_ars
-#' @param umd_ars_map
-#' @param width_1
-#' @param height_1
+#' @param cnv_umd first cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function
+#' @param cnv_ars second cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function
+#' @param umd_ars_map map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
+#' @param width_1 number to set the width of final plot size, unit is 'cm'
+#' @param height_1  number to set the height of final plot size, unit is 'cm'
 #' @import dplyr scales ggplot2
 #'
 #' @importFrom data.table fread fwrite setkey foverlaps

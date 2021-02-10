@@ -1,15 +1,15 @@
-
-#Call CNVR, summary individual CNVR type, report CNVR frequeny and type
 #' Title clean CNV
 #' Formatting CNV results from PennCNV and CNVPartition to the standard format
+#' Call CNVR, summary individual CNVR type, report CNVR frequeny and type
 #'
-#' @param clean_cnv
+#' @param clean_cnv the clean cnv file was generate by clean_cnv function
+#' @param roh roh file from clean_cnv function, only CNVPartition results will generate the roh results
 #' @import dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps
 #' @importFrom reshape2 dcast
 #'
 #' @return
-#' @export
+#' @export call_cnvr
 #'
 #' @examples
 call_cnvr <- function(clean_cnv, roh = NULL) {
@@ -119,8 +119,6 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
       print("Task done, ROH results saved in the working directory.")
     } else {print("WARNING, lack of output file, please check format of your input file!!")}
   }
-
-
 }
 
 
