@@ -2,16 +2,34 @@
 % Please edit documentation in R/convert_map_coord.R
 \name{convert_map}
 \alias{convert_map}
-\title{Title Prepare SNP Map}
+\title{Title convert_map
+Prepare map file for PennCNV and Plink with Default and Target assembly.
+Four colmuns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position}
 \usage{
-convert_map(umd_map, standard_ARS_map)
+convert_map(
+  default_map,
+  target_map,
+  defMap_title = "UMD 3.1",
+  tarMap_title = "ARS .12",
+  species = "Bovine"
+)
 }
 \arguments{
-\item{convert_map}{}
+\item{default_map}{the map file to be converted}
+
+\item{target_map}{the map file used to convert}
+
+\item{defMap_title}{customize the title of default map in plot}
+
+\item{tarMap_title}{customize the title of target map in plot}
+
+\item{species}{the name of species}
 }
 \value{
 
 }
 \description{
-Title Prepare SNP Map
+Title convert_map
+Prepare map file for PennCNV and Plink with Default and Target assembly.
+Four colmuns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position
 }

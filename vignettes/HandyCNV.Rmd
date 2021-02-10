@@ -1,0 +1,22 @@
+---
+title: "HandyCNV"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{HandyCNV}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(HandyCNV)
+```
+
+# Introduction
+This package was originally desiged for the Post-analysis of CNV reuslts inferred from PennCNV and GenomeStudio. And then it expanded to do the post-analysis of ROH from Plink and GenomeStudio. It's aimed to provide a Standard, reproducible and timesaving pipelines for the CNV and ROH summarision, annotation, comparison and visualizsion.
