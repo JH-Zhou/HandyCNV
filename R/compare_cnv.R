@@ -16,8 +16,10 @@
 #' @param cnv_umd first cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function
 #' @param cnv_ars second cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function
 #' @param umd_ars_map map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
-#' @param width_1 number to set the width of final plot size, unit is 'cm'
-#' @param height_1  number to set the height of final plot size, unit is 'cm'
+#' @param width_1 integer, default value is 14, number to set the width of final plot size, unit is 'cm'
+#' @param height_1 integer, default value is 14,number to set the height of final plot size, unit is 'cm'
+#' @param legend_x decial digit, default value is 0.9, consistent with ggplot manual coordinates of legend
+#' @param legend_y decial digit, default value is 0.9, consistent with ggplot manual coordinates of legend
 #' @import dplyr scales ggplot2
 #'
 #' @importFrom data.table fread fwrite setkey foverlaps
@@ -26,10 +28,9 @@
 #' @export compare_cnv
 #'
 #' @examples
-compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, height_1 = 11) {
-
+compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, height_1 = 11, legend_x = 0.9, legend_y = 0.9) {
   #default plot function
-  plot_comparison <- function(cnv_checkover, title_fig, width_1 =14, height_1 =11) {
+  plot_comparison <- function(cnv_checkover, title_fig, width_1 =14, height_1 =11, legend_x = 0.9, legend_y = 0.9) {
     cnv <- cnv_checkover
     title_f = title_fig
     cnv_cal <- cnv %>% count(CNV_Value, Check_overlap) %>%
@@ -47,7 +48,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
       geom_text(inherit.aes = FALSE, data = cnv_freq, aes(x = CNV_Value, y = percent_total, label = scales::percent(percent_total)), vjust = -0.5, hjust  =-0.5) +
       scale_y_continuous(labels=scales::percent) +
       theme_classic() +
-      theme(legend.position = c(0.95, 0.9), legend.title = element_blank()) +
+      theme(legend.position = c(legend_x, legend_y), legend.title = element_blank()) +
       labs(x = "CNV Value", y = "Percentage of CNV Number", caption = "Note: The integer and percentage on the top of bar plot indicates the total number and percentage of CNV.\nPercentage with blue color indicates the percent of Overlapped CNVs within a CNV Value group.")
     print(compare_plot)
     dev.off()
@@ -96,7 +97,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     checkover_indiv_1 <- rbind(final_overlap_umd, non_overlap_umd)
     colnames(checkover_indiv_1) <- sub("_UMD", "", colnames(checkover_indiv_1))
 
-    plot_comparison(cnv_checkover = checkover_indiv_1, title_fig = "checkover_indiv_1", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_indiv_1, title_fig = "checkover_indiv_1", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
     #4. write out the overlap and non-overlap CNVs
     fwrite(final_overlap_umd, file = "overlap_cnv_1.indiv", sep = "\t", quote = FALSE)
@@ -131,7 +132,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     colnames(checkover_pop_1) <- sub("_UMD", "", colnames(checkover_pop_1))
 
 
-    plot_comparison(cnv_checkover = checkover_pop_1, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_pop_1, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
     fwrite(checkover_pop_1, file = "cnv_all_population_1.checkoverlap", sep = "\t", quote = FALSE)
 
@@ -183,7 +184,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
 
     fwrite(checkover_indiv_2, file = "cnv_all_indiv_2.checkoverlap", sep = "\t", quote = FALSE)
 
-    plot_comparison(cnv_checkover = checkover_indiv_2, title_fig = "checkover_indiv_2", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_indiv_2, title_fig = "checkover_indiv_2", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
     #5.summarize difference
     overlap_percent_indiv_2 <- round(nrow(final_overlap_ars) / nrow(cnv_ars), 3) * 100
@@ -212,7 +213,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     colnames(checkover_pop_2) <- sub("_ARS", "", colnames(checkover_pop_2))
 
 
-    plot_comparison(cnv_checkover = checkover_pop_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_pop_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
     fwrite(checkover_pop_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference
@@ -373,7 +374,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     checkover_indiv_1 <- rbind(final_overlap_umd, non_overlap_umd)
     colnames(checkover_indiv_1) <- sub("_UMD", "", colnames(checkover_indiv_1))
 
-    plot_comparison(cnv_checkover = checkover_indiv_1, title_fig = "checkover_indiv_1", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_indiv_1, title_fig = "checkover_indiv_1", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
     #5.summarize difference
     overlap_percent_indiv <- round(nrow(final_overlap_umd) / nrow(cnv_umd_ars), 3) * 100
@@ -403,7 +404,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     colnames(checkover_pop_1) <- sub("_UMD", "", colnames(checkover_pop_1))
 
 
-    plot_comparison(cnv_checkover = checkover_pop_1, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_pop_1, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
     fwrite(checkover_pop_1, file = "cnv_all_population_1.checkoverlap", sep = "\t", quote = FALSE)
 
@@ -456,7 +457,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
 
     fwrite(checkover_indiv_2, file = "cnv_all_indiv_2.checkoverlap", sep = "\t", quote = FALSE)
 
-    plot_comparison(cnv_checkover = checkover_indiv_2, title_fig = "checkover_indiv_2", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_indiv_2, title_fig = "checkover_indiv_2", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
     #5.summarize difference
     overlap_percent_indiv_2 <- round(nrow(final_overlap_ars) / nrow(cnv_ars_umd), 3) * 100
@@ -486,7 +487,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     colnames(checkover_pop_2) <- sub("_ARS", "", colnames(checkover_pop_2))
 
 
-    plot_comparison(cnv_checkover = checkover_pop_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_pop_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
     fwrite(checkover_pop_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference

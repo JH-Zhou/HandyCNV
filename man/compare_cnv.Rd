@@ -17,7 +17,15 @@ according to the codintion, the first thing is to match coordinates for both ver
 then find overlap cnv and non overlapcnv
 then summarize how many CNVs are in above standards}
 \usage{
-compare_cnv(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, height_1 = 11)
+compare_cnv(
+  cnv_umd,
+  cnv_ars,
+  umd_ars_map = NULL,
+  width_1 = 14,
+  height_1 = 11,
+  legend_x = 0.9,
+  legend_y = 0.9
+)
 }
 \arguments{
 \item{cnv_umd}{first cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function}
@@ -26,9 +34,13 @@ compare_cnv(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, height_1 = 11)
 
 \item{umd_ars_map}{map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
 
-\item{width_1}{number to set the width of final plot size, unit is 'cm'}
+\item{width_1}{integer, default value is 14, number to set the width of final plot size, unit is 'cm'}
 
-\item{height_1}{number to set the height of final plot size, unit is 'cm'}
+\item{height_1}{integer, default value is 14,number to set the height of final plot size, unit is 'cm'}
+
+\item{legend_x}{decial digit, default value is 0.9, consistent with ggplot manual coordinates of legend}
+
+\item{legend_y}{decial digit, default value is 0.9, consistent with ggplot manual coordinates of legend}
 }
 \value{
 
