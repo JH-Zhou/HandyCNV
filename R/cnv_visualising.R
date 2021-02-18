@@ -9,6 +9,7 @@
 #' @param end_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param individual_id the ID of individual in cnv list, used to plot all chromosome for specific Individual
 #' @param plot_gene if ture, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function
+#' @param refgene internal reference genelist are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
 #' @param plot_title set the title of final plot
 #' @param max_chr the maximum number of chromosomes to plot, it used for plot all chromosomes at once
 #' @param report_id report the sample ID while plotting
@@ -29,33 +30,24 @@
 #' @examples
 #'
 
-cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10) {
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, refgene = "ARS_ens", plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10) {
   #myAgr <- formals(cnv_visual)
   #prepare for population data
   cnv <- fread(file = clean_cnv)
-
-  #check if the input is a Plink results
-  #convert to the stardards format if it is
-  #plink_roh_names <- c("FID", "IID", "PHE", "CHR", "SNP1", "SNP2", "POS1", "POS2",
-  #                     "KB", "NSNP", "DENSITY", "PHOM", "PHET")
-  #if(length(colnames(cnv)) == length(plink_roh_names)){
-  #  print("ROH with input file in PLINK format was detected, coverting to HandyCNV standard formats")
-  #  colnames(cnv) <- c("FID", "Sample_ID", "PHE", "Chr", "Start_SNP", "End_SNP",
-  #                     "Start", "End", "Length", "Num_SNP", "DENSITY", "PHOM", "PHET")
-  #  handycnv_name <- c("Sample_ID",	"Chr", "Start", "End", "Num_SNP",	"Length", "Start_SNP",	"End_SNP")
-  #  cnv <- cnv %>% select(handycnv_name) %>% mutate(CNV_Value = 2)
-  #  cnv$Chr <- as.numeric(cnv$Chr)
-  #  cnv <- dplyr::filter(cnv, cnv$Chr >=1 & cnv$Chr <= max_chr)
-  #} else{
-  #  print("Preparing plot data...")
-  #  cnv <- dplyr::filter(cnv, cnv$Chr >=1 & cnv$Chr <= max_chr)
-  #}
+  standard_col <- c("Sample_ID", "Chr", "Start", "End")
+  if(all(standard_col %in% colnames(cnv))){
+    print("Input data passed requirment check...")
+  } else {
+    print("Missing mandatory columns, please conform that input file at least has four columns: 'Sample_ID', 'Chr', 'Start', 'End' ")
+  }
 
   id_coord <- data.frame("Sample_ID" = sort(unique(cnv$Sample_ID))) #extract unique ID prepare coordinate
   id_coord$Order <- seq(1,nrow(id_coord),1)
   id_coord$x <- 160
   id_coord$y <- (id_coord$Order-1)*5 + 1
   cnv_coord <- merge(cnv, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
+
+
   #set length of chr
   chr_length_ars <- data.frame("Chr" = c(29:1), "Length" = c( 51.098607, 45.94015, 45.612108, 51.992305,
                                                                 42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
@@ -208,6 +200,11 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NU
     cnv_chr_zoom$zoom_x <- end_position
     cnv_chr_zoom$gene_order <- max(cnv_chr_zoom$Order) + 3
 
+    if(!is.null(report_id)) {
+      indiv_id <- cnv_chr_zoom$Sample_ID
+      print("Individual ID in this CNVRs as following: ")
+      print(indiv_id)
+      }
     #gene_freq <- data.table(gene_freq) #convert it to data.table to set key
     #setkey(x = gene_freq, name2)
     #gene_coord <- group_by(cnv_chr_zoom, name2) %>% slice(1) # generate gene data
@@ -247,7 +244,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NU
       labs(x = "Position (Mb)", y ="CNV", fill = "Copy")
 
     print("Plotting gene...")
-    gene_plot <- HandyCNV::plot_gene(chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, cnv = "yes")
+    gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, cnv = "yes")
 
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
