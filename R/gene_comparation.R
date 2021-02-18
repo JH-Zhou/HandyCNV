@@ -97,9 +97,9 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
     print(subset(three_list[three_list$Common_Gene == "Common_High", ],
                  select = c("name2_1", "Frequency_1","Frequency_2", "Frequency_3", "Common_Gene"))) #here only plot selected columns
     print("Brief summary:")
-    print(three_gene_summary)
+    print(three_list_summary)
 
-    pdf("compare_gene/three_list_comparison.pdf", width = 7, height = 6, onefile = T)
+    pdf("compare_gene/three_list_comparison.pdf", width = width_1, height = height_1, onefile = T)
     #par(mfrow = c(2,2))
     three_list$Common_Gene <- as.factor(three_list$Common_Gene) #set color for factors
     color_custom = c("red", "orange", "blue")[three_list$Common_Gene] #set color for factors
@@ -114,9 +114,9 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
     legend("top", legend = c("Common High", "Common Low", "High and Low"), col =  c("red", "orange", "blue"), pch = 16, inset = -0.1, xpd = TRUE, horiz = TRUE, bty = "n")
     dev.off()
 
-    fwrite(three_list, file = "compare_gene/three_genelists_comparison.txt", sep = "\t", quote = FALSE)
+      fwrite(three_list, file = "compare_gene/three_genelists_comparison.txt", sep = "\t", quote = FALSE)
     fwrite(three_list_summary, file = "compare_gene/three_genelists_comparison_summary.txt", sep = "\t", quote = FALSE)
-    if(file.exists("compare_gene/three_genelists_comparison.txt") & file.exists("compare_gene/three_genelists_comparison_summary.txt") & file.exists("compare_gene/gene_comparison.pdf")){
+    if(file.exists("compare_gene/three_genelists_comparison.txt") & file.exists("compare_gene/three_genelists_comparison_summary.txt") & file.exists("compare_gene/three_list_comparison.pdf")){
       print("Gene comparison list, brife summary and comparison plot was saved in working directory.")
     } else{
       print("Checking outputs files was faild, please check the input files and resetting a working directory!")
