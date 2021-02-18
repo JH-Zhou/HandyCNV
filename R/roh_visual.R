@@ -1,7 +1,7 @@
 #the function for plotting gene
 #' Title plot_gene
 #'
-#' @param gene reference gene list.
+#' @param refgene reference gene list.
 #' @param chr_id chromosome ID, should be the integer only, like 1 or 29
 #' @param start the start physical position used in the plot, the unit is Mb
 #' @param end the end physical position used in plotm, the unit is Mb
@@ -16,16 +16,38 @@
 #' @export plot_gene
 #'
 #' @examples
-plot_gene <- function(gene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV"), chr_id, start, end, show_name = c(0,160), cnv = NULL){
+plot_gene <- function(refgene = "ARS_ens", chr_id, start, end, show_name = c(0,160), cnv = NULL){
   #read gene
-  if(missing(gene)){
-    gene <- fread(file = gene, header = T)
+  if(refgene == "ARS_ens"){
+    refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV")
+    gene <- fread(file = refgene, header = TRUE)
+  } else if(refgene == "ARS_UCSC"){
+    refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV")
+    gene <- fread(file = refgene, header = FALSE)
+    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  } else if(refgene == "UMD_UCSC"){
+    refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_umd3.1.txt", package = "HandyCNV")
+    gene <- fread(file = refgene, header = FALSE)
+    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
   } else{
-    gene <- fread(gene, header = F)
+    gene <- fread(file = refgene, header = FALSE)
     names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
                      "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
                      "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
   }
+
+  #if(missing(gene)){
+  #  gene <- fread(file = gene, header = T)
+  #} else{
+  #  gene <- fread(gene, header = F)
+  #  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+  #                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+  #                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  #}
 
   gene$Chr <- sub("chr", "", gene$Chr)
 
