@@ -5,25 +5,33 @@
 #' @param cnv_annotation gene annotated cnv file, generated from call_gene function
 #' @param sample_size integer, the total number of unique samples in the cnv result. combine with common_cnv_threshold to plot all CNVs which passed the threshold
 #' @param common_cnv_threshold two decimal places, cobine with sample_size to plot all CNVs passed the common threshold
+#' @param legend_x the x coordinate of legend, relative to the maximum length of Chromosome, unit is 'Mb'
+#' @param legend_y the y coordinate of legend
 #'
 #' @import ggplot2 dplyr scales reshape2 tidyr
 #'
 #' @importFrom data.table fread fwrite
 #'
-#' @return
-#' @export
+#' @return A figture of CNVR distribution map and plot parameters.
+#' If given cnv_annotation file, will plot all CNVRs which are passed common threhold.
+#' @export cnvr_plot
 #'
 #' @examples
-cnvr_plot <- function(cnvr, assembly = "ARS",  cnv_annotation = NULL, sample_size = NULL, common_cnv_threshold = 0.05) {
+cnvr_plot <- function(cnvr, assembly = "ARS", legend_x = 127, legend_y = 30, cnv_annotation = NULL, sample_size = NULL, common_cnv_threshold = 0.05) {
   if (is.null(cnv_annotation)) {
     #Prepare parameters for CNVR distribution plot
     #prepare the Y axis for each chromosome
-    chr <- data.frame("chr" <- seq(1,29))  #generate a chr order
-    names(chr)[1] <- 'Chr'
-    chr$chr_top <- (30-chr$Chr)*3 #our plot depend on x and y coordinate axix, the toppest is chr 1 and bottom is chr29, interval of y axis is 3
-    chr$chr_bottom <- chr$chr_top - 1.5 #bar plot deepth is 1.5, this will using for polt rectangle for cnvr
-    class(chr$Chr) #check the type
-    chr[,1] = as.character(chr[,1])#convert interger to charactor
+    cnvr_plot_part <- fread(file = cnvr)
+    chr <- data.frame("Chr" = seq(1,max(cnvr_plot_part$Chr)))  #generate a chr order
+    chr <- chr %>%
+           mutate(chr_top = (max(cnvr_plot_part$Chr) + 1 - Chr)*3,
+                  chr_bottom <- chr_top - 1.5)   #our plot depend on x and y coordinate axix, the toppest is chr 1 and bottom is chr29, interval of y axis is 3
+                                                #bar plot depth is 1.5, this will using for polt rectangle for cnvr
+
+    #chr$chr_top <- (max(cnvr_plot_part$Chr) + 1 -chr$Chr)*3 #our plot depend on x and y coordinate axix, the toppest is chr 1 and bottom is chr29, interval of y axis is 3
+    #chr$chr_bottom <- chr$chr_top - 1.5 #bar plot deepth is 1.5, this will using for polt rectangle for cnvr
+    #class(chr$Chr) #check the type
+    chr$Chr = as.character(chr$Chr)#convert interger to charactor
 
     if (assembly == "UMD") {
       #UMD3.1 Chromsome Length
@@ -32,7 +40,8 @@ cnvr_plot <- function(cnvr, assembly = "ARS",  cnv_annotation = NULL, sample_siz
                       66.004023,75.158596, 81.724687, 85.296676, 84.64839, 84.24035, 91.163125,
                       107.310763, 104.305016, 105.70825, 113.384836, 112.638659, 119.458736,
                       121.1914245, 120.829699, 121.430405, 137.060424, 158.337067)
-    } else {
+      chr_name <- paste0("chr", seq(from = 29, to = 1, by = -1))
+    } else if(assembly == "ARS"){
       # The length of X Chromsome is 139.009144 in ARS reference genome
       # ARS assembly
       chr_length <- c( 51.098607, 45.94015, 45.612108, 51.992305, 42.350435,
@@ -41,10 +50,20 @@ cnvr_plot <- function(cnvr, assembly = "ARS",  cnv_annotation = NULL, sample_siz
                            85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
                            103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
                            120.089316, 120.000601, 121.005158, 136.231102, 158.53411)
+      chr_name <- paste0("chr", seq(from = 29, to = 1, by = -1))
+    } else {
+      #construct the border of each chromosome from imput data
+      chr_length <- cnvr_plot_part %>%
+                    group_by(Chr) %>%
+                    summarise(length = max(End) / 1000000) %>%
+                    arrange(-as.numeric(Chr)) %>%
+                    select(length) %>%
+                    as.matrix() %>%
+                    t()
+      chr_name <- paste0("chr", seq(from = max(cnvr_plot_part$Chr), to = 1, by = -1))
     }
 
     #4.6.1 prepare CNVPartition plot input data-----
-    cnvr_plot_part <- fread(file = cnvr)
     cnvr_plot_part$start_left <- cnvr_plot_part$Start/1000000 #convert bp to Mbp
     cnvr_plot_part$end_right <- cnvr_plot_part$End/1000000 #convert bp to Mbp
     cnvr_plot_part$Chr <- as.character(cnvr_plot_part$Chr)
@@ -65,11 +84,11 @@ cnvr_plot <- function(cnvr, assembly = "ARS",  cnv_annotation = NULL, sample_siz
     )
 
     #setting the graphic parameter
-    par(lab=c(29,29,3),las=1,yaxt="s",xaxt="s",mar=c(7,7,4,5))
+    par(lab=c(max(cnvr_plot_part$Chr),max(cnvr_plot_part$Chr),3),las=1,yaxt="s",xaxt="s",mar=c(7,7,4,5))
 
     #draw a bar plot and setup each bar name
-    bar <- barplot(chr_length, horiz=TRUE,width=1.5,space=1,xlim=c(0,160),
-                   names.arg=c("chr29","chr28","chr27","chr26","chr25","chr24","chr23","chr22","chr21","chr20","chr19","chr18","chr17","chr16","chr15","chr14","chr13","chr12","chr11","chr10","chr9","chr8","chr7","chr6","chr5","chr4","chr3","chr2","chr1"),
+    bar <- barplot(chr_length, horiz=TRUE,width=1.5,space=1,xlim=c(0,max(chr_length)),
+                   names.arg= chr_name,
                    col=c("white"),xlab="Physical Position (Mbp)",cex.name=0.8)
 
     #read the gain type file, each file need prepare four columns as following order: start_left, end_right, chr_top and chr_bottom
@@ -88,7 +107,7 @@ cnvr_plot <- function(cnvr, assembly = "ARS",  cnv_annotation = NULL, sample_siz
 
 
     #add legend
-    legend(127, 30,c("Gain","Loss","Mixed"), pch = c(15, 15, 15),
+    legend(legend_x, legend_y,c("Gain","Loss","Mixed"), pch = c(15, 15, 15),
            col =c("red", "green", "blue"), bty = "n")
 
     #title(main = "CNVR Distribution on Population Level")
