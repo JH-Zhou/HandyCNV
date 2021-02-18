@@ -32,6 +32,41 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
       select(c("CNVR_ID", "Chr", "Start", "End", "Start_UMD", "End_UMD", "Start_Match", "End_Match")) %>%
       unique()
 
+    #replace the missing poistion as 'Unfound'
+    cnvr_new_coord <- cnvr_new_coord %>%
+                      replace(., is.na(.), values = "Unfound")
+
+    #assign the nearest location for the missing position
+    #if missing of Start, assign the most nearest smaller position within 200 kb distance
+    #if missing of End, assign the moost neasrest larger position within 200 kb distance
+    missing_start <- which(cnvr_new_coord$Start_UMD == "Unfound")
+    if(!(length(missing_start) == 0)){
+      print(paste0(length(missing_start), " of start position unfound in target map file, the most nearest larger position will be assigned"))
+      for(i in 1:length(missing_start)){
+        cnvr_new_coord$Start_UMD[missing_start[i]] <- try(map %>%
+          filter(Chr_tar == cnvr_new_coord$Chr[missing_start[i]] &
+                   Position_tar >= cnvr_new_coord$Start[missing_start[i]] &
+                   Position_tar < (cnvr_new_coord$Start[missing_start[i]] - 100000)) %>%
+          select(Position_def) %>%
+          filter(Position_def > 0) %>%
+          max(), silent = TRUE)
+      }
+    }
+
+    missing_end <- which(cnvr_new_coord$End_UMD == "Unfound")
+    if(!(length(missing_end) == 0)){
+      print(paste0(length(missing_end), " of end position unfound in target map file, the most nearest smaller position will be assigned"))
+      for(i in 1:length(missing_end)){
+        cnvr_new_coord$End_UMD[missing_end[i]] <- try(map %>%
+          filter(Chr_tar == cnvr_new_coord$Chr[missing_end[i]] &
+                   Position_tar < cnvr_new_coord$Start[missing_end[i]] &
+                   Position_tar >= (cnvr_new_coord$Start[missing_end[i]] + 100000)) %>%
+          select(Position_def) %>%
+          filter(Position_def > 0) %>%
+          min(), silent = TRUE)
+      }
+    }
+
     #summary the quality of convertion
     print("The quality of converion of Start Position as below: FALSE means not match between two version.")
     print(table(cnvr_new_coord$Start_Match))
@@ -56,10 +91,45 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
     cnvr_end <- dplyr::left_join(x = cnvr_start, y = map, by = c("Chr" = "Chr_def", "End" = "Position_def")) %>%
       rename(End_ARS = Position_tar, End_Match = Match)
 
-    #thord step, extract all information we need
+    #third step, extract all information we need
     cnvr_new_coord <- cnvr_end %>%
       select(c("CNVR_ID", "Chr", "Start", "End", "Start_ARS", "End_ARS", "Start_Match", "End_Match")) %>%
       unique()
+
+    #replace the missing poistion as 'Unfound'
+    cnvr_new_coord <- cnvr_new_coord %>%
+                      replace(., is.na(.), values = "Unfound")
+
+    #assign the nearest location for the missing position
+    #if missing of Start, assign the most nearest larger position within 200 kb distance
+    #if missing of End, assign the moost neasrest larger position within 200 kb distance
+    missing_start <- which(cnvr_new_coord$Start_ARS == "Unfound")
+    if(!(length(missing_start) == 0)){
+      print(paste0(length(missing_start), " of start position unfound in target map file, the most nearest larger position will be assigned"))
+      for(i in 1:length(missing_start)){
+        cnvr_new_coord$Start_ARS[missing_start[i]] <- try(map %>%
+          filter(Chr_def == cnvr_new_coord$Chr[missing_start[i]] &
+                   Position_def >= cnvr_new_coord$Start[missing_start[i]] &
+                   Position_def < (cnvr_new_coord$Start[missing_start[i]] - 100000)) %>%
+          select(Position_tar) %>%
+          filter(Position_tar > 0) %>%
+          max(), silent = TRUE)
+      }
+    }
+
+    missing_end <- which(cnvr_new_coord$End_ARS == "Unfound")
+    if(!(length(missing_end) == 0)){
+      print(paste0(length(missing_end), " of end position unfound in target map file, the most nearest smaller position will be assigned"))
+      for(i in 1:length(missing_end)){
+        cnvr_new_coord$End_ARS[missing_end[i]] <- try(map %>%
+          filter(Chr_def == cnvr_new_coord$Chr[missing_end[i]] &
+                   Position_def < cnvr_new_coord$Start[missing_end[i]] &
+                   Position_def >= (cnvr_new_coord$Start[missing_end[i]] + 50000)) %>%
+          select(Position_tar) %>%
+          filter(Position_tar > 0) %>%
+          min(), silent = TRUE)
+      }
+    }
 
     #summary the quality of convertion
     print("The quality of converion of Start Position as below: FALSE means not match between two version.")
