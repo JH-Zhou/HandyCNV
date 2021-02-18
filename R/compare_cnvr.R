@@ -19,6 +19,8 @@
 #' @param umd_ars_map map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
 #' @param width_1 number to set the width of final plot size, unit is 'cm'
 #' @param height_1 number to set the height of final plot size, unit is 'cm'
+#' @param hjust_prop default value is 0.0. used to adjust horizontal position of the number of overlapped CNVR in the plot
+#' @param hjust_num default value is 1.5. used to adjust horizontal position of the number of overlapped CNVR in the plot
 #'
 #' @import dplyr ggplot2
 #' @importFrom data.table fread fwrite setkey foverlaps
@@ -27,10 +29,10 @@
 #' @export
 #'
 #' @examples
-compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, height_1 = 15) {
+compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, height_1 = 15, hjust_prop = 0.0, hjust_num = 1.5) {
 
   #default plot function
-  plot_comparison <- function(cnv_checkover, title_fig, width_1 = 15, height_1 = 15) {
+  plot_comparison <- function(cnv_checkover, title_fig, width_1 = 15, height_1 = 15, hjust_prop = 0.0, hjust_num = 1.5) {
     cnv <- cnv_checkover
     title_f = title_fig
     drop_name = "Overlap_length"
@@ -52,18 +54,27 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     print(paste0("CNVR comparison summary results in ", title_f," as following:"))
     print(cnvr_cal)
 
+    #prepare title for plot
+    overlap_sum <- cnvr_cal %>%
+                   group_by(Check_overlap) %>%
+                   summarise(num_CNVR = sum(num_CNVR),
+                             overlap_len = sum(overlap_len))
+
+    summary_title <- paste0(overlap_sum$num_CNVR[2]," CNVRs ",
+                            round(overlap_sum$overlap_len[2]/sum(cnvr_cal$origi_length), 4) * 100, "% overlap Length")
+
     png(res = 300, filename = paste0(title_f, ".png"), width = width_1, height = height_1, bg = "transparent", units = "cm")
     compare_plot <- ggplot(cnvr_cal) +
       geom_col(aes(x = Type, y = overlap_len, fill = Check_overlap)) +
       scale_fill_brewer(palette = 'Set1') +
-      geom_text(data = subset(cnvr_cal, Check_overlap == "Overlap"), aes(x= Type, y = overlap_len,label = scales::percent(prop_overlap_len)), color = "orange", position = position_stack(0.5), hjust = -0.3) +
-      geom_text(data = subset(cnvr_cal, Check_overlap == "Overlap"), aes(x= Type, y = overlap_len,label = num_CNVR), color = "orange", position = position_stack(0.5), hjust = 1.5) +
+      geom_text(data = subset(cnvr_cal, Check_overlap == "Overlap"), aes(x= Type, y = overlap_len,label = scales::percent(prop_overlap_len)), color = "black", position = position_stack(0.5), hjust = hjust_prop) +
+      geom_text(data = subset(cnvr_cal, Check_overlap == "Overlap"), aes(x= Type, y = overlap_len,label = num_CNVR), color = "orange", position = position_stack(0.5), hjust = hjust_num) +
       #geom_text(aes(x = Type, y = percent_total, label = num), vjust = -0.5, hjust = 1.3) +
       #geom_text(inherit.aes = FALSE, data = cnv_freq, aes(x = Type, y = percent_total, label = scales::percent(percent_total)), vjust = -0.5, hjust  =-0.5) +
-      scale_y_continuous(labels=scales::unit_format(unit = "Mb", scale = 1e-6)) +
+      scale_y_continuous(labels=scales::unit_format(unit = "", scale = 1e-6)) +
       theme_classic() +
       theme(legend.position = "top", legend.title = element_blank()) +
-      labs(x = "CNVR Type", y = "Length of CNVR (Mb)")
+      labs(x = summary_title, y = "Total Length (Mb)")
     print(compare_plot)
     dev.off()
     fwrite(cnvr_cal, file = paste0(title_f, ".summary"), sep = "\t", quote = FALSE)
@@ -101,9 +112,12 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     checkover_pop_1 <- rbind(final_pop_overlap_umd, non_overlap_pop_umd)
     colnames(checkover_pop_1) <- sub("_UMD", "", colnames(checkover_pop_1))
     checkover_pop_length <- merge(checkover_pop_1, pop_overlap[, c("CNVR_ID_UMD", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_UMD", all.x = TRUE)
-    checkover_pop_length <- unique(checkover_pop_length)
+    #checkover_pop_length <- unique(checkover_pop_length)
+    drop_name = "Overlap_length"
+    checkover_pop_uniqe_1 = unique(subset(checkover_pop_length, select = !(colnames(checkover_pop_length) %in% drop_name))) #used for calculate overlapping
 
-    plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1)
+
+    try(plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1, hjust_prop = hjust_prop, hjust_num = hjust_num), silent = TRUE)
 
     fwrite(checkover_pop_length, file = "checkover_pop_1.txt", sep = "\t", quote = FALSE)
 
@@ -116,7 +130,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
 
     #overlap length
     overlap_length_1 <- sum(checkover_pop_length$Overlap_length, na.rm = TRUE)
-    cnvr_length_1 <- sum(checkover_pop_length$Length, na.rm = TRUE)
+    cnvr_length_1 <- sum(checkover_pop_uniqe_1$Length, na.rm = TRUE)
     overlap_length_prop <- round((overlap_length_1 / cnvr_length_1),3) * 100
     print(paste0("The overlapping length is ", overlap_length_1, " bp, which is around ", overlap_length_prop, " percent in first file"))
 
@@ -152,10 +166,12 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     checkover_pop_2 <- rbind(final_pop_overlap_ars, non_overlap_pop_ars)
     colnames(checkover_pop_2) <- sub("_ARS", "", colnames(checkover_pop_2))
     checkover_pop_length_2 <- merge(checkover_pop_2, pop_overlap_2[, c("CNVR_ID_ARS", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_ARS", all.x = TRUE)
-    checkover_pop_length_2 <- unique(checkover_pop_length_2)
+    #checkover_pop_length_2 <- unique(checkover_pop_length_2)
+    drop_name = "Overlap_length"
+    checkover_pop_uniqe_2 = unique(subset(checkover_pop_length_2, select = !(colnames(checkover_pop_length_2) %in% drop_name))) #used for calculate overlapping
 
 
-    plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1)
+    try(plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1, hjust_prop = hjust_prop, hjust_num = hjust_num), silent = TRUE)
     fwrite(checkover_pop_length_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference
@@ -167,7 +183,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
 
     #overlap length
     overlap_length_2 <- sum(checkover_pop_length_2$Overlap_length, na.rm = TRUE)
-    cnvr_length_2 <- sum(checkover_pop_length_2$Length, na.rm = TRUE)
+    cnvr_length_2 <- sum(checkover_pop_uniqe_2$Length, na.rm = TRUE)
     overlap_length_prop_2 <- round((overlap_length_2 / cnvr_length_2),3) * 100
     print(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in first file"))
 
@@ -331,10 +347,12 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     checkover_pop_1 <- rbind(final_pop_overlap_umd, non_overlap_pop_umd)
     colnames(checkover_pop_1) <- sub("_UMD", "", colnames(checkover_pop_1))
     checkover_pop_length <- merge(checkover_pop_1, pop_overlap[, c("CNVR_ID_UMD", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_UMD", all.x = TRUE)
-    checkover_pop_length <- unique(checkover_pop_length)
+    #checkover_pop_length <- unique(checkover_pop_length)
+    drop_name = "Overlap_length"
+    checkover_pop_uniqe = unique(subset(checkover_pop_length, select = !(colnames(checkover_pop_length) %in% drop_name))) #used for calculate overlapping
 
 
-    plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_pop_length, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1, hjust_prop = hjust_prop, hjust_num = hjust_num)
 
     fwrite(checkover_pop_length, file = "checkover_pop_1.txt", sep = "\t", quote = FALSE)
 
@@ -345,11 +363,24 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     print(paste0("The number of overlaped CNVRs on population level is ", nrow(final_pop_overlap_umd), ", which is around ", overlap_percent_pop, " percent in first file."))
     print(paste0("The number of Non-overlaped CNVRs on population level is ", nrow(non_overlap_pop_umd), ", which is around ", non_overlap_percent_pop, " percent in first file"))
 
+    #overlap length
+    overlap_length_1 <- sum(checkover_pop_length$Overlap_length, na.rm = TRUE)
+    cnvr_length_1 <- sum(checkover_pop_uniqe$Length, na.rm = TRUE)
+    overlap_length_prop <- round((overlap_length_1 / cnvr_length_1),3) * 100
+    print(paste0("The overlapping length is ", overlap_length_1, " bp, which is around ", overlap_length_prop, " percent in first file"))
+
+    overlap_summary <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs", "In Total"),
+                                  "Number of CNVR" = c(nrow(final_pop_overlap_umd), nrow(non_overlap_pop_umd), nrow(final_pop_overlap_umd) + nrow(non_overlap_pop_umd)),
+                                  "Proportion of Number (%)" = c(overlap_percent_pop, non_overlap_percent_pop, 100),
+                                  "Length(bp)" = c(overlap_length_1, cnvr_length_1- overlap_length_1, cnvr_length_1),
+                                  "Proportion of Length (%)" = c(overlap_length_prop, 100 - overlap_length_prop, 100))
+
+
     #overlap_summary <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs"),
     #                              "Population Level" = c(overlap_percent_pop, non_overlap_percent_pop))
-    #print("The final comparison results of the first file as follows: ")
-    #print(overlap_summary)
-    #fwrite(overlap_summary, file = "overlap_cnv.summary", sep = "\t", quote = FALSE)
+    print("The final comparison results of the first file as follows: ")
+    print(overlap_summary)
+    fwrite(overlap_summary, file = "overlap_cnv.summary", sep = "\t", quote = FALSE)
     print("Comparison to the first file was finished.")
 
 
@@ -374,10 +405,13 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     checkover_pop_2 <- rbind(final_pop_overlap_ars, non_overlap_pop_ars)
     colnames(checkover_pop_2) <- sub("_ARS", "", colnames(checkover_pop_2))
     checkover_pop_length_2 <- merge(checkover_pop_2, pop_overlap_2[, c("CNVR_ID_ARS", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_ARS", all.x = TRUE)
-    checkover_pop_length_2 <- unique(checkover_pop_length_2)
+    #checkover_pop_length_2 <- unique(checkover_pop_length_2)
+
+    drop_name = "Overlap_length"
+    checkover_pop_uniqe_2 = unique(subset(checkover_pop_length_2, select = !(colnames(checkover_pop_length_2) %in% drop_name))) #used for calculate overlapping
 
 
-    plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1)
+    plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1, hjust_prop = hjust_prop, hjust_num = hjust_num)
     fwrite(checkover_pop_length_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
 
     #5.summarize difference
@@ -387,8 +421,19 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     print(paste0("The number of overlaped CNVRs in seceond file on population level are ", nrow(final_pop_overlap_ars), ", which is around ", overlap_percent_pop_2, " percent"))
     print(paste0("The number of Non-overlaped CNVRs in second file on population level are ", nrow(non_overlap_pop_ars), ", which is around ", non_overlap_percent_pop_2, " percent"))
 
-    overlap_summary_2 <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs"),
-                                    "Population Level" = c(overlap_percent_pop_2, non_overlap_percent_pop_2))
+    #overlap length
+    overlap_length_2 <- sum(checkover_pop_length_2$Overlap_length, na.rm = TRUE)
+    cnvr_length_2 <- sum(checkover_pop_uniqe_2$Length, na.rm = TRUE)
+    overlap_length_prop_2 <- round((overlap_length_2 / cnvr_length_2),3) * 100
+    print(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in first file"))
+
+    overlap_summary_2 <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs", "In Total"),
+                                    "Number of CNVR" = c(nrow(final_pop_overlap_ars), nrow(non_overlap_pop_ars), nrow(final_pop_overlap_ars) + nrow(non_overlap_pop_ars)),
+                                    "Proportion of Number (%)" = c(overlap_percent_pop_2, non_overlap_percent_pop_2, 100),
+                                    "Length(bp)" = c(overlap_length_2, cnvr_length_2- overlap_length_2, cnvr_length_2),
+                                    "Proportion of Length (%)" = c(overlap_length_prop_2, 100 - overlap_length_prop_2, 100))
+    #overlap_summary_2 <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs"),
+    #                                "Population Level" = c(overlap_percent_pop_2, non_overlap_percent_pop_2))
     print("The final comparison results of the second file as follows: ")
     print(overlap_summary_2)
     fwrite(overlap_summary_2, file = "overlap_cnv_2.summary", sep = "\t", quote = FALSE)
