@@ -4,7 +4,7 @@
 #' The interval file requirs at least consists of four cloumns, they are ID, Chr, Start and End.
 #' The first column must be the ID column, the column of Chr should only contain the number of chromosome, the units of Start and End columns are the basepair.
 #'
-#' @param refgene The reference genes list corresponding to your data
+#' @param refgene internal reference genelist are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
 #' @param interval Could be CNV, ROH, QTL or any interval list. At least comprised by four columns Interval_ID, Chr, Start and End
 #' @param clean_cnv The output data from cnv_clean function
 #' @import dplyr
@@ -15,22 +15,48 @@
 #' @export
 #'
 #' @examples
-call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV"), interval = NULL, clean_cnv = NULL){
+call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL){
   if(!file.exists("call_gene")){
     dir.create("call_gene")
     print("A new folder 'call_gene' was created in working directory.")
   }
 
-  if(missing(refgene)){
+  #if(missing(refgene)){
+  #  gene <- fread(file = refgene, header = TRUE)
+  #} else{
+  #  gene <- fread(file = refgene, header = FALSE)
+  #  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+  #                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+  #                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  #}
+
+  if(refgene == "ARS_ens"){
+    refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV")
     gene <- fread(file = refgene, header = TRUE)
-  } else{
+  } else if(refgene == "ARS_UCSC"){
+    refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV")
     gene <- fread(file = refgene, header = FALSE)
     names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
                      "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
                      "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  } else if(refgene == "UMD_UCSC"){
+    refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_umd3.1.txt", package = "HandyCNV")
+    gene <- fread(file = refgene, header = FALSE)
+    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  } else{
+    gene <- fread(file = refgene, header = FALSE)
+      names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+                       "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+                       "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
   }
 
-  gene$Chr <- as.integer(sub("chr", "", gene$Chr)) #convert Chr to integer in order to use foverlap in next step
+  #else{
+  # print("Wrong argument input. Defaults refgene can only be 'ARS_ens' or 'ARS_UCSC' or 'UMD_UCSC'")
+  #}
+
+  gene$Chr <- suppressWarnings(as.integer(sub("chr", "", gene$Chr))) #convert Chr to integer in order to use foverlap in next step
   interval <- fread(file = interval)
   names(interval)[1] = "ID"    #Repalce names of table in order to the summarise in the final step,
                                #It requied provide the Interval ID in the first column
@@ -113,6 +139,8 @@ call_gene <- function(refgene = system.file("extdata", "Demo_data/gene_annotatio
     gene_freq_location <- merge(gene_freq, cnvr_has_gene_unique_pure, by = "name2", all.x = TRUE)
     names(gene_freq_location)[names(gene_freq_location) == "i.Start"] = "CNVR_Start"
     names(gene_freq_location)[names(gene_freq_location) == "i.End"] = "CNVR_End"
+    gene_freq_location <- gene_freq_location %>%
+                          arrange(-Frequency)
 
     fwrite(cnv_annotation, file = "call_gene/cnv_annotation.txt", sep = "\t", quote = FALSE)
     fwrite(gene_freq_location, file = "call_gene/gene_freq_cnv.txt", sep = "\t", quote = FALSE)
