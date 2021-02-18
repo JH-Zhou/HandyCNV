@@ -7,19 +7,33 @@
 #' @param prefix_bed the prefix of bed, bim and fam file in plink format
 #' @param sample_size the total number of unique samples in cnvr list
 #' @param common_cnv_threshold two decimal places, combine with sample_size to set the common threshold
+#' @param width_1 default value is 14, unit is 'cm', set the width of final polt
+#' @param height_1 default value is 30, unit is 'cm', set the height of final polt
 #'
-#' @import dplyr ggrepel ggplot2 tidyr gaston graphics base2grob cowplot grDevices gridGraphics rvcheck grid scales
+#' @import dplyr ggrepel ggplot2 tidyr gaston cowplot scales
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
-#' @return
-#' @export
+#' @importFrom ggplotify base2grob
+#' @return cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...
+#' @export plot_cnvr_panorama
 #'
 #' @examples
-plot_cnv_inten_maf <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, sample_size, common_cnv_threshold = 0.05) {
+plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30) {
+  if(!file.exists("cnvr_panorama")){
+    dir.create("cnvr_panorama")
+    print("A new folder 'cnvr_panorama' was created in working directory.")
+  }
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)
   cnvr <- unite(cnvr, "title", names(cnvr[, c(2:4, 10)]), remove = FALSE) #generate a new columns names
-  high_freq <- filter(cnvr, Frequent >= sample_size * common_cnv_threshold)
-  high_freq <- high_freq[order(high_freq$Length), ]
+  high_freq <- cnvr %>%
+               filter(Frequent >= sample_size * common_cnv_threshold) %>%
+               arrange(Length)
+  if(nrow(high_freq) == 0){
+    print("No CNVR passed the high frequency threshold, please reset your common_cnv_threshold!")
+  } else {
+    print(paste0(nrow(high_freq), " CNVRs passed the common frequency threshold."))
+  }
+
   #2.read cnv
   cnv <- fread(file = cnv_annotation)
   names(cnv)[names(cnv) == "CNV_Start"] <- "Start"
@@ -28,25 +42,30 @@ plot_cnv_inten_maf <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
   setkey(cnv, Chr, Start, End)
   cnv_cnvr <- foverlaps(cnvr, cnv)
   #3. Read SNP intensity file----
-  intensity <- fread(file = intensity, skip = 9, header = TRUE)  #
+  default_title <- c("SNP Name", "Sample ID",	"B Allele Freq", "Log R Ratio")
+  intensity <- fread(file = intensity, skip = 9, header = TRUE)
+  intensity <- intensity %>%
+               select(all_of(default_title))
+
   #4.read map
   map <-fread(file = map, header = TRUE)
+  map$Chr <- suppressWarnings(as.character(map$Chr))
   names(map)[names(map) == "Name"] <- 'SNP Name'
-  inten_chr <- merge(intensity, map, all.x =TRUE, sort =F) #add location information to intensity file
+  inten_chr <- merge(intensity, map, by = "SNP Name", all.x =TRUE, sort =F) #add location information to intensity file
 
   #5. Read bed,bim and fam data from plink----
   x <- read.bed.matrix(basename = prefix_bed, rds = NULL) #path and prefix
 
   #zoom cnv, in order to match cnv value for each snp in Intensity
-  chr_length_ars <- data.frame("chr" <- c(29:1), "length" <- c( 51.098607, 45.94015, 45.612108, 51.992305,
+  chr_length_ars <- data.frame("Chr" = c(29:1), "Length" = c( 51.098607, 45.94015, 45.612108, 51.992305,
                                                                 42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
                                                                 71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
                                                                 85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
                                                                 103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
                                                                 120.089316, 120.000601, 121.005158, 136.231102, 158.53411))
-  names(chr_length_ars) <- c("Chr", "Length")
   chr_length_ars <- chr_length_ars[order(chr_length_ars$Chr),]
 
+  print("Starting to make plot...")
   for (i in 1:nrow(high_freq)){
     chr_id = high_freq$Chr[i]
     start_position = high_freq$Start[i]
@@ -124,49 +143,53 @@ plot_cnv_inten_maf <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
     ld_x[is.na(ld_x)] <- 0
     snp_info <- x@snps[c(which(x@snps$id == sub_inten$`SNP Name`[1]):which(x@snps$id == sub_inten$`SNP Name`[nrow(sub_inten)])),]
     #snp_info <- x@snps[c(which(x@snps$id == sub_inten$`SNP Name`[1]):which(x@snps$id == sub_inten$`SNP Name`[10])),]
+    ld <- ggplotify::as.ggplot(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, graphical.par = list(mar = c(0,0,0,0)), below.space = 0))
+    ###ld <- ggplotify::base2grob(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE))
 
-    #ld_1 <- ~{LD.plot(ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, write.snp.id = FALSE)}
-    #ld <- recordPlot()
-    #ld <- LD.plot(ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, write.snp.id = FALSE)
-    ld <- ggplotify::base2grob(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE))
-    #ld <- as.grob(~LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, write.snp.id = FALSE))
-    #ld_1 <- LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, write.snp.id = FALSE)
-    #ld <- base2grob(ld_1)
-    #ld_convert <- cowplot::as_grob(LD.plot(ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, write.snp.id = FALSE))
-    #ld_grob <- ggdraw(ld_convert)
-
-    #show_col(hue_pal()(10))
 
     baf <- ggplot(sub_inten, aes(x = Position, y =`B Allele Freq`, color = as.factor(CNV_Value))) +
       scale_color_manual(values = c("#F8766D", "#A3A500","grey", "#00B0F6", "#E76BF3")) +
-      theme_bw() + theme(legend.position = "top") +geom_point(shape = 1) +
+      theme_bw() +
+      theme(legend.position = "top",
+            axis.title.x = element_blank()) +
+      geom_point(shape = 1) +
       scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
-      ylim(0,1) + labs(x = 'Position (Mb)', y = 'B Allele Freq', color = "Copy_Num")
+      ylim(0,1) +
+      #labs(x = 'Position (Mb)', y = 'B Allele Freq', color = "Copy_Num")
+      labs(y = 'B Allele Freq', color = "Copy_Num")
 
     lrr <- ggplot(sub_inten, aes(x = Position, y = `Log R Ratio`, color = as.factor(CNV_Value))) +
       scale_color_manual(values = c("#F8766D", "#A3A500", "grey", "#00B0F6", "#E76BF3")) +
-      theme_bw() + theme(legend.position = "top") + geom_point(shape = 1) +
+      theme_bw() +
+      theme(legend.position = "top",
+            axis.title.x = element_blank()) +
+      geom_point(shape = 1) +
       scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
-      ylim(-2, 2) + labs(x = 'Position (Mb)', y = 'Log R Ratio', color = "Copy_Num")
+      ylim(-2, 2) +
+      #labs(x = 'Position (Mb)', y = 'Log R Ratio', color = "Copy_Num")
+      labs(y = 'Log R Ratio', color = "Copy_Num")
 
      maf <- ggplot(data = snp_info) +
       geom_point(aes(x = pos, y = maf, color = "maf")) +
       geom_point(aes(x = pos, y = hz, color = "heterozygosity")) +
       geom_line(aes(x = pos, y = callrate, color = "callrate")) +
       scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
-      ylim(0.0, 1.0) + theme_bw() + theme(legend.position = "top") +
-      labs( x = "Position (Mb)", y = "Percentage") +
+      ylim(0.0, 1.0) + theme_bw() +
+      theme(legend.position = "top",
+            axis.title.x = element_blank()) +
+      labs(y = "Percentage") +
       scale_color_manual(values = c("maf" = "red", "heterozygosity" = "green", "callrate" = "purple"))
 
 
     b <- high_freq$title[i]
     dir <- paste( b, ".png", sep = "")
-    png(dir, res = 300, width = 2000, height = 5000, bg = "transparent")
+    #png(dir, res = 300, width = 2000, height = 5000, bg = "transparent")
     #plot_grid(zoom,zoom2, maf, baf, lrr, align = "v", axis = "t", ncol = 1, rel_heights = c(1,1,1,1,1))
-    final_plot <- plot_grid(zoom_plot, baf, lrr, maf, ld, align = "v", axis = "t", ncol = 1, rel_heights = c(1.5, 1, 1, 1, 1.5))
-    print(final_plot)
-    dev.off()
+    final_plot <- plot_grid(zoom_plot, baf, lrr, maf, ld, align = "v", ncol = 1,
+                            rel_heights = c(1.5, 1, 1, 1, 1.6))
+    #print(final_plot)
+    #dev.off()
+    ggsave(plot = final_plot, path = "cnvr_panorama/", filename = dir, width = width_1, height = height_1, dpi = 300, units = "cm")
     print(paste0("Plot ", i, " was stored in working directory."))
-    #save_plot(filename = dir, plot = final_plot)
   }
 }
