@@ -4,15 +4,17 @@
 #'
 #' @param clean_cnv the clean cnv file was generate by clean_cnv function
 #' @param roh roh file from clean_cnv function, only CNVPartition results will generate the roh results
+#' @param  chr_set set the maximum number of chromosome in CNV list
 #' @import dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps
 #' @importFrom reshape2 dcast
+#' @importFrom grDevices dev.off pdf png
 #'
 #' @return
 #' @export call_cnvr
 #'
 #' @examples
-call_cnvr <- function(clean_cnv, roh = NULL) {
+call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29) {
   if(!file.exists("call_cnvr")){
     dir.create("call_cnvr")
   }
@@ -44,7 +46,7 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
 
   cnvr <- data.frame()
 
-  for ( i in 1:29){
+  for ( i in 1:chr_set){
     cnv_chr <- clean_cnv[which(clean_cnv$Chr == i), ]
     cnvr_chr <- merge_cnvr(cnv = cnv_chr)
     cnvr <- rbind(cnvr, cnvr_chr)
@@ -62,9 +64,9 @@ call_cnvr <- function(clean_cnv, roh = NULL) {
   #add frequent of CNVR
   cnvr_frequent <- cnv_cnvr %>% group_by(CNVR_ID) %>% count(CNVR_ID, name = "Frequent")
   cnvr_union_f <- merge(cnvr_union, cnvr_frequent, by = "CNVR_ID", sort = F)
+  fwrite(cnvr_union_f, file = "call_cnvr/no_freq_cnvr.txt", sep = "\t", quote = FALSE)
 
   if (is.null(roh)) {
-
     #add type of CNVR
     cnvr_type <- cnv_cnvr %>% group_by(CNVR_ID) %>% count(CNV_Value, name = "Count")
     cnvr_type2 <- reshape2::dcast(cnvr_type, CNVR_ID ~ CNV_Value, value.var = "Count")
