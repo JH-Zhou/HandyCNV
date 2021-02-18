@@ -6,12 +6,14 @@
 Formatting CNV results from PennCNV and CNVPartition to the standard format
 Call CNVR, summary individual CNVR type, report CNVR frequeny and type}
 \usage{
-call_cnvr(clean_cnv, roh = NULL)
+call_cnvr(clean_cnv, roh = NULL, chr_set = 29)
 }
 \arguments{
 \item{clean_cnv}{the clean cnv file was generate by clean_cnv function}
 
 \item{roh}{roh file from clean_cnv function, only CNVPartition results will generate the roh results}
+
+\item{chr_set}{set the maximum number of chromosome in CNV list}
 }
 \value{
 

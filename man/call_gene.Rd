@@ -4,15 +4,10 @@
 \alias{call_gene}
 \title{Title call_gene}
 \usage{
-call_gene(
-  refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt",
-    package = "HandyCNV"),
-  interval = NULL,
-  clean_cnv = NULL
-)
+call_gene(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL)
 }
 \arguments{
-\item{refgene}{The reference genes list corresponding to your data}
+\item{refgene}{internal reference genelist are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data}
 
 \item{interval}{Could be CNV, ROH, QTL or any interval list. At least comprised by four columns Interval_ID, Chr, Start and End}
 

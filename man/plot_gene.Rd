@@ -5,8 +5,7 @@
 \title{Title plot_gene}
 \usage{
 plot_gene(
-  gene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt",
-    package = "HandyCNV"),
+  refgene = "ARS_ens",
   chr_id,
   start,
   end,
@@ -15,7 +14,7 @@ plot_gene(
 )
 }
 \arguments{
-\item{gene}{reference gene list.}
+\item{refgene}{reference gene list.}
 
 \item{chr_id}{chromosome ID, should be the integer only, like 1 or 29}
 

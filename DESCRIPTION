@@ -14,16 +14,11 @@ Imports:
     scales,
     tidyr,
     ggrepel,
+    grDevices,
     gaston,
     ggplotify,
     rgl,
-    graphics,
-    base2grob,
     cowplot,
-    grDevices,
-    grid,
-    gridGraphics,
-    rvcheck,
     scatterplot3d,
     utils
 License: GPL-3
@@ -32,5 +27,9 @@ LazyData: true
 RoxygenNote: 7.1.0
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    graphics,
+    grid,
+    gridGraphics,
+    rvcheck
 VignetteBuilder: knitr

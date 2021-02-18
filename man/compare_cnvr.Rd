@@ -10,7 +10,9 @@ compare_cnvr(
   cnvr_ars,
   umd_ars_map = NULL,
   width_1 = 15,
-  height_1 = 15
+  height_1 = 15,
+  hjust_prop = 0,
+  hjust_num = 1.5
 )
 }
 \arguments{
@@ -23,6 +25,10 @@ compare_cnvr(
 \item{width_1}{number to set the width of final plot size, unit is 'cm'}
 
 \item{height_1}{number to set the height of final plot size, unit is 'cm'}
+
+\item{hjust_prop}{default value is 0.0. used to adjust horizontal position of the number of overlapped CNVR in the plot}
+
+\item{hjust_num}{default value is 1.5. used to adjust horizontal position of the number of overlapped CNVR in the plot}
 }
 \value{
 

@@ -7,8 +7,9 @@
 #' @param sample_size the total number of unique samples in cnvr list
 #' @param common_cnv_threshold two decimal places, combine with sample_size to set the common threshold
 #'
-#' @import gaston graphics cowplot base2grob
+#' @import gaston graphics cowplot
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
+#' @importFrom ggplotify base2grob
 #'
 #' @return
 #' @export

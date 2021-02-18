@@ -7,6 +7,8 @@
 cnvr_plot(
   cnvr,
   assembly = "ARS",
+  legend_x = 127,
+  legend_y = 30,
   cnv_annotation = NULL,
   sample_size = NULL,
   common_cnv_threshold = 0.05
@@ -17,6 +19,10 @@ cnvr_plot(
 
 \item{assembly}{which reference genome assenbly used in the data, each chromosome has different length between various assembly, now only support Bovine UMD3.1 and ARS1.2}
 
+\item{legend_x}{the x coordinate of legend, relative to the maximum length of Chromosome, unit is 'Mb'}
+
+\item{legend_y}{the y coordinate of legend}
+
 \item{cnv_annotation}{gene annotated cnv file, generated from call_gene function}
 
 \item{sample_size}{integer, the total number of unique samples in the cnv result. combine with common_cnv_threshold to plot all CNVs which passed the threshold}
@@ -24,7 +30,8 @@ cnvr_plot(
 \item{common_cnv_threshold}{two decimal places, cobine with sample_size to plot all CNVs passed the common threshold}
 }
 \value{
-
+A figture of CNVR distribution map and plot parameters.
+If given cnv_annotation file, will plot all CNVRs which are passed common threhold.
 }
 \description{
 Title

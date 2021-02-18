@@ -15,6 +15,7 @@ cnv_visual(
   individual_id = NULL,
   max_chr_length = 160,
   plot_gene = NULL,
+  refgene = "ARS_ens",
   plot_title = NULL,
   report_id = NULL,
   pedigree = NULL,
@@ -41,6 +42,8 @@ cnv_visual(
 \item{max_chr_length}{the maximum length of chromosome, default unit is 'Mb'}
 
 \item{plot_gene}{if ture, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function}
+
+\item{refgene}{internal reference genelist are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data}
 
 \item{plot_title}{set the title of final plot}
 
