@@ -80,7 +80,7 @@ convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMa
     geom_point() +
     theme_bw() +
     theme(strip.background = element_blank(),
-          legend.position = c(0.85, 0.07)) +
+          legend.position = c(0.90, 0.07)) +
     scale_y_continuous(labels = unit_format(unit = "", scale = 1e-6)) +
     scale_x_continuous(labels = unit_format(unit = "", scale = 1e-6)) +
     facet_wrap(~Chr_tar) +
@@ -111,11 +111,10 @@ convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMa
 
   print("Writing converted map for PennCNV and Plink formats...")
   fwrite(def_tar_map, file = "convert_map/def_tar_map.map", sep ="\t", quote = FALSE)
-  fwrite(snp_tar_def, file = "convert_map/number_of_snp_on_chromosome.txt", sep ="\t", quote = FALSE)
   fwrite(penncnv_map_tar, file = "convert_map/target_penncnv.map", sep = "\t", quote = FALSE, col.names = TRUE)
   fwrite(penncnv_map_def, file = "convert_map/default_penncnv.map", sep = "\t", quote = FALSE, col.names = TRUE)
   fwrite(plink_map_tar, file = "convert_map/target_plink.map", sep = "\t", quote = FALSE, col.names = FALSE)
-  fwrite(comparasion_snp, file = "diffirence_in_two_map.txt", sep ="\t", quote = FALSE, col.names = TRUE)
+  fwrite(comparasion_snp, file = "convert_map/diffirence_in_two_map.txt", sep ="\t", quote = FALSE, col.names = TRUE)
 
   if (file.exists("convert_map/target_penncnv.map") & file.exists("convert_map/default_penncnv.map") & file.exists("convert_map/target_plink.map")) {
     print("Target map was converted to PennCNV map file...")
@@ -137,6 +136,8 @@ convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMa
   snp_tar_def$Difference <- abs(snp_tar_def$SNP_Freq_tar - snp_tar_def$SNP_Freq_def)
   snp_tar_def$Chr <- as.factor(snp_tar_def$Chr)
 
+  fwrite(snp_tar_def, file = "convert_map/number_of_snp_on_chromosome.txt", sep ="\t", quote = FALSE)
+
   print("Plotting the Difference of SNPs between two versions of map...")
   #snp_ars_umd$Chr <- as.numeric(snp_ars_umd$Chr)
   snp_diff <- ggplot(snp_tar_def, aes(x = Chr)) +
@@ -146,7 +147,7 @@ convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMa
     theme_classic() +
     labs(x = "Chromosome", y = "Number of SNP", shape = NULL, fill = NULL, caption = "**The number represents the number of different SNPS in the two versions") +
     theme(legend.position = c(0.9, 0.9)) # legend position - 0 is left/bottom, 1 is top/right
-  ggsave(plot = snp_diff, filename = "convert_map/SNP_difference_by_chromosome.png", height = 12, width = 22, units = "cm", dpi = 300)
+  ggsave(plot = snp_diff, filename = "convert_map/SNP_difference_by_chromosome.png", height = 12, width = 24, units = "cm", dpi = 300)
   if(file.exists("convert_map/SNP_difference_by_chromosome.png")){
     print("SNP difference plot was saved in working directory.")
   }
