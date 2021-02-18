@@ -17,6 +17,13 @@ cnv_summary_plot <- function(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL) {
     dir.create("cnv_summary_plot")
   }
   cnv_input <- fread(file = clean_cnv)
+
+  #check input data compeleteness
+  if(!("Length" %in% colnames(cnv_input))){
+    print("Input data don't have Length column, it will be generated automatically")
+    cnv_input <- cnv_input %>%
+                 mutate(Length = End - Start + 1)
+  }
   cnv_input$group <- NA  #add a new column to make group of length
   cnv_input$group[cnv_input$Length <= 50000] <- "1-50kb"
   cnv_input$group[cnv_input$Length > 50000 & cnv_input$Length <= 100000] <- "50-100kb"
