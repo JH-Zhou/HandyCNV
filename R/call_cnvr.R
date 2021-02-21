@@ -4,19 +4,20 @@
 #'
 #' @param clean_cnv the clean cnv file was generate by clean_cnv function
 #' @param roh roh file from clean_cnv function, only CNVPartition results will generate the roh results
-#' @param  chr_set set the maximum number of chromosome in CNV list
+#' @param chr_set set the maximum number of chromosome in CNV list
+#' @param folder text, set the name of folder
 #' @import dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps
 #' @importFrom reshape2 dcast
 #' @importFrom grDevices dev.off pdf png
 #'
-#' @return
+#' @return Four or five tables. Including CNVR lsit, brife summary and individual cnv and CNVR ID.
 #' @export call_cnvr
 #'
 #' @examples
-call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29) {
-  if(!file.exists("call_cnvr")){
-    dir.create("call_cnvr")
+call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
+  if(!file.exists(paste0("call_cnvr_", folder))){
+    dir.create(paste0("call_cnvr_", folder))
   }
 
   clean_cnv <- data.table::fread(file = clean_cnv, sep = "\t", header = TRUE)
@@ -64,7 +65,7 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29) {
   #add frequent of CNVR
   cnvr_frequent <- cnv_cnvr %>% group_by(CNVR_ID) %>% count(CNVR_ID, name = "Frequent")
   cnvr_union_f <- merge(cnvr_union, cnvr_frequent, by = "CNVR_ID", sort = F)
-  fwrite(cnvr_union_f, file = "call_cnvr/no_freq_cnvr.txt", sep = "\t", quote = FALSE)
+  fwrite(cnvr_union_f, file = paste0("call_cnvr_", folder, "/no_freq_cnvr.txt"), sep = "\t", quote = FALSE)
 
   if (is.null(roh)) {
     #add type of CNVR
@@ -103,21 +104,21 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29) {
     print("Partial summary of CNVR on each Chromosome as following:")
     print(cnvr_chr_summary)
 
-    fwrite(cnv_cnvr, file = "call_cnvr/individual_cnv_cnvr.txt", sep = "\t", quote = FALSE)
-    fwrite(cnvr_f_type, file = "call_cnvr/cnvr.txt", sep = "\t", quote = FALSE)
-    fwrite(cnvr_summary, file = "call_cnvr/cnvr_summary.txt", sep = "\t", quote = FALSE, col.names = TRUE)
-    fwrite(cnvr_chr_summary, file = "call_cnvr/cnvr_chr_summary.txt", sep = "\t", quote = FALSE, col.names = TRUE)
+    fwrite(cnv_cnvr, file = paste0("call_cnvr_", folder, "/individual_cnv_cnvr.txt"), sep = "\t", quote = FALSE)
+    fwrite(cnvr_f_type, file = paste0("call_cnvr_", folder, "/cnvr.txt"), sep = "\t", quote = FALSE)
+    fwrite(cnvr_summary, file = paste0("call_cnvr_", folder, "/cnvr_summary.txt"), sep = "\t", quote = FALSE, col.names = TRUE)
+    fwrite(cnvr_chr_summary, file = paste0("call_cnvr_", folder, "/cnvr_chr_summary.txt"), sep = "\t", quote = FALSE, col.names = TRUE)
 
-    if(file.exists("call_cnvr/cnvr.txt") & file.exists("call_cnvr/individual_cnv_cnvr.txt")) {
+    if(file.exists(paste0("call_cnvr_", folder,"/cnvr.txt")) & file.exists(paste0("call_cnvr_", folder, "/individual_cnv_cnvr.txt"))) {
       print("Task done, CNVR results saved in the working directory.")
     } else {print("WARNING, lack of output file, please check format of your input file!!")}
   }
 
   else {
     cnvr_union_f$length <- cnvr_union_f$End - cnvr_union_f$Start + 1
-    fwrite(cnvr_union_f, file = "call_cnvr/roh.txt", sep = "\t", quote = FALSE)
+    fwrite(cnvr_union_f, file = paste0("call_cnvr_", folder, "/roh.txt"), sep = "\t", quote = FALSE)
 
-    if(file.exists("call_cnvr/roh.txt")) {
+    if(file.exists(paste0("call_cnvr_", folder, "/roh.txt"))) {
       print("Task done, ROH results saved in the working directory.")
     } else {print("WARNING, lack of output file, please check format of your input file!!")}
   }
