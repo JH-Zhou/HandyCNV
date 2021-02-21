@@ -27,7 +27,7 @@ clean_ensgene <- function(refgene , ens_id){
 
 #' Title clean_ucsc
 #' clean refgene for UCSC gene
-#' @param refgene reference gene list with UCSC verison which download from UCSC website
+#' @param refgene reference gene list with UCSC version which download from UCSC website
 #'
 #' @return formated gene list.
 #' @export clean_ucsc
@@ -46,17 +46,17 @@ clean_ucsc <- function(refgene){
 
 #' Title get_refgene
 #' Download and make standard format of reference gene from UCSC website
-#' @param gene_verison The verison of reference gene 'HandyCNV' support to download, if now don't have the version of the gene you want, please feel free to cotact the Maintainer to help you updating this function.
+#' @param gene_version The version of reference gene 'HandyCNV' support to download, if now don't have the version of the gene you want, please feel free to cotact the Maintainer to help you updating this function.
 #'
 #' @return Standard formatted reference gene list
 #' @export get_refgene
 #'
 #' @examples
-get_refgene <- function(gene_verison = NULL){
+get_refgene <- function(gene_version = NULL){
   support_ver <- c("cow_ARS_UCSC", "cow_ARS_ENS", "cow_UMD_UCSC", "pig_susScr11_UCSC", "pig_susScr11_ENS", "Human_hg38")
-  support_verison <- data.frame(verison = c("cow_ARS_UCSC",
+  support_version <- data.frame(version = c("cow_ARS_UCSC",
                                             "cow_ARS_ENS",
-                                            "cow_ARS_Ens_id",
+                                            "cow_ARS_ENS_id",
                                             "cow_UMD_UCSC",
                                             "pig_susScr11_UCSC",
                                             "pig_susScr11_ENS",
@@ -64,7 +64,7 @@ get_refgene <- function(gene_verison = NULL){
                                             "Human_hg38"),
                                 URL = c("http://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/database/ensGene.txt.gz",
-                                        "http://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/database/ensemblToGeneName.txt",
+                                        "http://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/database/ensemblToGeneName.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/bosTau8/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/susScr11/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/susScr11/database/ensGene.txt.gz",
@@ -73,7 +73,7 @@ get_refgene <- function(gene_verison = NULL){
                                         ))
 
   #remind what's version we support to automatic download and formatting
-  if(missing(gene_verison)){
+  if(missing(gene_version)){
     cat("Now we support to download some of reference gene list of Bovine, Pig and Human from UCSC website. \nPlease select which version to download from following list:\n")
     print(support_ver)
   } else {
@@ -83,17 +83,24 @@ get_refgene <- function(gene_verison = NULL){
     }
 
     #call clean function, check if it is ENS reference list?
-   if(length(grep("ENS", gene_verison)) == 1L){
-      line <- which(gene_verison %in% support_verison$verison)
-      refgene <- fread(input = as.character(support_verison$URL[line]), header = FALSE)
-      ens_id <- fread(input = paste0(verison, "_id"))
-      gene_verison_clean <- clean_ensgene(refgene = ref, ens_id = ens_id)
-      fwrite(gene_verison_clean, file = paste0("refgene/", gene_verison, ".txt"), sep = "\t", quote = FALSE, col.names = TRUE)
+   if(length(grep("ENS", gene_version)) == 1L){
+      print("Converting formmat...")
+      line <- which(support_version$version == gene_version)
+      line_for_id <- which(support_version$version == paste0(gene_version, "_id"))
+      refgene <- fread(input = as.character(support_version$URL[line]), header = FALSE)
+      ens_id <- fread(input = as.character(support_version$URL[line_for_id]), header = FALSE)
+      gene_version_clean <- clean_ensgene(refgene = refgene, ens_id = ens_id)
+      fwrite(gene_version_clean, file = paste0("refgene/", gene_version, ".txt"), sep = "\t", quote = FALSE, col.names = TRUE)
     } else {
-      line <- which(gene_verison %in% support_verison$verison)
-      refgene <- fread(input = as.character(support_verison$URL[line]), header = FALSE)
-      gene_verison_clean <- clean_ucsc(refgene = refgene)
-      fwrite(x = gene_verison_clean, file = paste0("refgene/", gene_verison, ".txt"), sep = "\t", quote = FALSE, col.names = TRUE)
+      print("Converting formmat...")
+      line <- which(support_version$version == gene_version)
+      refgene <- fread(input = as.character(support_version$URL[line]), header = FALSE)
+      gene_version_clean <- clean_ucsc(refgene = refgene)
+      fwrite(x = gene_version_clean, file = paste0("refgene/", gene_version, ".txt"), sep = "\t", quote = FALSE, col.names = TRUE)
+    }
+
+    if(file.exists(paste0("refgene/", gene_version, ".txt"))){
+      print("Task done.")
     }
   }
 }
