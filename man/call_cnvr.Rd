@@ -6,7 +6,7 @@
 Formatting CNV results from PennCNV and CNVPartition to the standard format
 Call CNVR, summary individual CNVR type, report CNVR frequeny and type}
 \usage{
-call_cnvr(clean_cnv, roh = NULL, chr_set = 29)
+call_cnvr(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD")
 }
 \arguments{
 \item{clean_cnv}{the clean cnv file was generate by clean_cnv function}
@@ -14,9 +14,11 @@ call_cnvr(clean_cnv, roh = NULL, chr_set = 29)
 \item{roh}{roh file from clean_cnv function, only CNVPartition results will generate the roh results}
 
 \item{chr_set}{set the maximum number of chromosome in CNV list}
+
+\item{folder}{text, set the name of folder}
 }
 \value{
-
+Four or five tables. Including CNVR lsit, brife summary and individual cnv and CNVR ID.
 }
 \description{
 Title clean CNV

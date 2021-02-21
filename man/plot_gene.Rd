@@ -5,7 +5,7 @@
 \title{Title plot_gene}
 \usage{
 plot_gene(
-  refgene = "ARS_ens",
+  refgene = NULL,
   chr_id,
   start,
   end,

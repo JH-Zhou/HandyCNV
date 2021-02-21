@@ -9,7 +9,7 @@ cnv_visual(
   clean_cnv,
   max_chr = NULL,
   chr_id = NULL,
-  chr_length = NULL,
+  species = NULL,
   start_position = NULL,
   end_position = NULL,
   individual_id = NULL,
@@ -21,7 +21,8 @@ cnv_visual(
   pedigree = NULL,
   show_name = c(0, 160),
   width_1 = 13,
-  height_1 = 10
+  height_1 = 10,
+  folder = "cnv"
 )
 }
 \arguments{
@@ -30,8 +31,6 @@ cnv_visual(
 \item{max_chr}{the maximum number of chromosomes to plot, it used for plot all chromosomes at once}
 
 \item{chr_id}{the number of chromosome want to plot}
-
-\item{chr_length}{set the length for single chromosome}
 
 \item{start_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
 
@@ -56,6 +55,8 @@ cnv_visual(
 \item{width_1}{number to set the width of final plot size, unit is 'cm'}
 
 \item{height_1}{number to set the height of final plot size, unit is 'cm'}
+
+\item{chr_length}{set the length for single chromosome}
 }
 \value{
 CNV distribution plot
