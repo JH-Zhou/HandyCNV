@@ -30,22 +30,26 @@
 #' @examples
 #'
 
-cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, refgene = "ARS_ens", plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10) {
-  #myAgr <- formals(cnv_visual)
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, refgene = "ARS_ens", plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv") {
   #prepare for population data
   cnv <- fread(file = clean_cnv)
   standard_col <- c("Sample_ID", "Chr", "Start", "End")
+  standard_col_anot <- c("Sample_ID", "Chr", "CNV_Start", "CNV_End")
   if(all(standard_col %in% colnames(cnv))){
     print("Input data passed requirment check...")
-  } else {
+  } else if(all(standard_col_anot %in% colnames(cnv))){
+    cnv <- cnv %>%
+           rename(Start = CNV_Start, End = CNV_End)
+    print("Renamed 'CNV_Start' and 'CNV_End' as 'Start' and 'End', input data passed requirment check...")
+  } else{
     print("Missing mandatory columns, please conform that input file at least has four columns: 'Sample_ID', 'Chr', 'Start', 'End' ")
   }
 
-  id_coord <- data.frame("Sample_ID" = sort(unique(cnv$Sample_ID))) #extract unique ID prepare coordinate
-  id_coord$Order <- seq(1,nrow(id_coord),1)
-  id_coord$x <- 160
-  id_coord$y <- (id_coord$Order-1)*5 + 1
-  cnv_coord <- merge(cnv, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
+  #id_coord <- data.frame("Sample_ID" = sort(unique(cnv$Sample_ID))) #extract unique ID prepare coordinate
+  #id_coord$Order <- seq(from = 1, to = nrow(id_coord), by = 1)
+  #id_coord$x <- 160
+  #id_coord$y <- (id_coord$Order-1)*5 + 1
+  #cnv_coord <- merge(cnv, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
 
 
   #set length of chr
@@ -55,25 +59,71 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, chr_length = NU
                                                                 85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
                                                                 103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
                                                                 120.089316, 120.000601, 121.005158, 136.231102, 158.53411))
-  #names(chr_length_ars) <- c("Chr", "Length")
   chr_length_ars <- chr_length_ars[order(chr_length_ars$Chr),]
 
+  #plot CNVs on specific chr
+  plot_cnv_chr <- function(clean_cnv = NULL, chr_id = NULL, folder = folder, width_1 = 23, height_1 = 13.5){
+    #2.plot for specific chromosome
+    cnv <- clean_cnv
+    cnv_chr <- cnv[cnv$Chr == chr_id, ]
+    if(nrow(cnv_chr) == 0){
+      print("The ID of chromosome not found in the input data, please check and reset the number of Chromosome!")
+    }
+    id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr$Sample_ID))) #extract unique ID prepare coordinate
+    id_coord$Order <- seq(1,nrow(id_coord),1)
+    id_coord$x <- chr_length_ars[chr_id, 2]
+    id_coord$y <- (id_coord$Order-1)*5 + 1
+    cnv_chr <- merge(cnv_chr, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
+
+    chr_name <- paste0("Chr", chr_id, ".png")
+    id_number <- nrow(id_coord)
+    chr_title <- paste0("CNV on Chromosome ", chr_id, " with ", id_number, " Individuals")
+    png(res = 300, filename = paste0(folder,"/", chr_name), width = width_1, height = height_1, units = "cm")
+    chr_plot <- ggplot(cnv_chr, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
+      geom_rect(aes(fill = as.factor(CNV_Value))) +
+      #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
+      theme_bw() +
+      scale_y_continuous(labels = NULL) +
+      scale_x_continuous(breaks = seq(0, chr_length_ars[chr_id, 2], by = 5), limits = c(0, chr_length_ars[chr_id, 2])) +
+      labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "CNV_Num")
+    print(chr_plot)
+    dev.off()
+  }
+
+  #plot CNVs on each chr
   if(is.null(max_chr) == "FALSE") {
+    if(!file.exists(paste0(folder))){
+      dir.create(paste0(folder))
+      print(paste0("A new folder '", folder, "' was created in working directory."))
+    }
+
+    if(missing(width_1) & missing(height_1)){
+      width_1 = 23
+      height_1 = 13.5
+    }
+
+    for(i in 1:max_chr){
+      plot_cnv_chr(clean_cnv = cnv, chr_id = i, folder = folder, width_1 = width_1, height_1 = height_1)
+      print(paste0("Plotting the CNVs on Chromosome ", i))
+    }
+
+    print("Task done")
+
   #1.plot all CNV on all chromosome on population level
-  cnv_pop <- cnv_coord
-  cnv_pop <- dplyr::filter(cnv_pop, cnv_pop$Chr >=1 & cnv_pop$Chr <= max_chr )
-  png(res = 300, filename = "1_chr_all.png", width = 4000, height = 20000)
-  popu_plot <- ggplot(cnv_pop, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
-    geom_rect(aes(fill = as.factor(CNV_Value))) +
-    #geom_text(aes(x,y, label = Sample_ID), size = 1.5) +
-    theme_classic() +
-    scale_y_continuous(labels = NULL) +
-    scale_x_continuous(breaks = seq(0, max_chr_length +10, by = 10)) +
-    facet_wrap(~as.numeric(Chr), nrow = 10) +
-    labs(x = "Physical Position", y = "Individual ID", title = "CNV Distribution on Population Level", fill = "CNV_Num")
-  print(popu_plot)
-  dev.off()
-  print("Task done, plot was stored in working directory.")
+  #cnv_pop <- cnv_coord
+  #cnv_pop <- dplyr::filter(cnv_pop, cnv_pop$Chr >=1 & cnv_pop$Chr <= max_chr )
+  #png(res = 300, filename = "1_chr_all.png", width = 4000, height = 20000)
+  #popu_plot <- ggplot(cnv_pop, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
+  #  geom_rect(aes(fill = as.factor(CNV_Value))) +
+  #  #geom_text(aes(x,y, label = Sample_ID), size = 1.5) +
+  #  theme_classic() +
+  #  scale_y_continuous(labels = NULL) +
+  #  scale_x_continuous(breaks = seq(0, max_chr_length +10, by = 10)) +
+  #  facet_wrap(~as.numeric(Chr), nrow = 10) +
+  #  labs(x = "Physical Position", y = "Individual ID", title = "CNV Distribution on Population Level", fill = "CNV_Num")
+  #print(popu_plot)
+  #dev.off()
+  #print("Task done, plot was stored in working directory.")
   }
 
   else if(is.null(chr_id) == "FALSE" & is.null(start_position) & is.null(plot_gene)){
