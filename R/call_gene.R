@@ -15,14 +15,14 @@
 #' @export
 #'
 #' @examples
-call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL){
-  if(!file.exists("call_gene")){
-    dir.create("call_gene")
-    print("A new folder 'call_gene' was created in working directory.")
+call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, folder = "ARS"){
+  if(!file.exists(paste0("call_gene_", folder))){
+    dir.create(paste0("call_gene_", folder))
+    print(paste0("A new folder ",  "call_gene_", folder, " was created in working directory."))
   }
 
   #if(missing(refgene)){
-  #  gene <- fread(file = refgene, header = TRUE)
+    gene <- fread(file = refgene, header = TRUE)
   #} else{
   #  gene <- fread(file = refgene, header = FALSE)
   #  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
@@ -30,27 +30,27 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL){
   #                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
   #}
 
-  if(refgene == "ARS_ens"){
-    refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV")
-    gene <- fread(file = refgene, header = TRUE)
-  } else if(refgene == "ARS_UCSC"){
-    refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV")
-    gene <- fread(file = refgene, header = FALSE)
-    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
-                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
-                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
-  } else if(refgene == "UMD_UCSC"){
-    refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_umd3.1.txt", package = "HandyCNV")
-    gene <- fread(file = refgene, header = FALSE)
-    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
-                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
-                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
-  } else{
-    gene <- fread(file = refgene, header = FALSE)
-      names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
-                       "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
-                       "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
-  }
+  #if(refgene == "ARS_ens"){
+  #  refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV")
+  #  gene <- fread(file = refgene, header = TRUE)
+  #} else if(refgene == "ARS_UCSC"){
+  #  refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV")
+  #  gene <- fread(file = refgene, header = FALSE)
+  #  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+  #                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+  #                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  #} else if(refgene == "UMD_UCSC"){
+  #  refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_umd3.1.txt", package = "HandyCNV")
+  #  gene <- fread(file = refgene, header = FALSE)
+  #  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+  #                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+  #                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  #} else{
+  #  gene <- fread(file = refgene, header = FALSE)
+  #    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+  #                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+  #                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  #}
 
   #else{
   # print("Wrong argument input. Defaults refgene can only be 'ARS_ens' or 'ARS_UCSC' or 'UMD_UCSC'")
@@ -83,7 +83,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL){
   #report gene as list format for annotation use in David Annotation
   gene_list <- cnvr_gene %>%
                select(c("ID", "Chr", "name2"))
-  fwrite(gene_list, file = "call_gene/gene_list.annotation", sep = "\t", quote = F)
+  fwrite(gene_list, file = paste0("call_gene_", folder, "/gene_list.annotation"), sep = "\t", quote = F)
 
   #summarise results group by ID then paste all gene into one cell
   window_gene <- cnvr_gene %>%
@@ -94,10 +94,10 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL){
     mutate(num_gene = lengths(strsplit(gene_name, split = ","))) %>%#count the number of genes in window
     select(ID, Chr, i.Start, i.End, num_gene, gene_name)
 
-  fwrite(window_gene, file = "call_gene/interval_gene_summarise_table.txt", sep = "\t", quote = F)
+  fwrite(window_gene, file = paste0("call_gene_", folder, "/interval_gene_summarise_table.txt"), sep = "\t", quote = F)
 
-  fwrite(cnvr_gene, file = "call_gene/interval_annotation.txt", sep = "\t", quote = FALSE)
-  fwrite(gene_summary, file = "call_gene/call_gene_summary.txt", sep = "\t", quote = FALSE)
+  fwrite(cnvr_gene, file = paste0("call_gene_", folder, "/interval_annotation.txt"), sep = "\t", quote = FALSE)
+  fwrite(gene_summary, file = paste0("call_gene_", folder, "/call_gene_summary.txt"), sep = "\t", quote = FALSE)
 
   ###########################################################3
   #when the input of clean_cnv provided, run the rest of codes
@@ -142,15 +142,15 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL){
     gene_freq_location <- gene_freq_location %>%
                           arrange(-Frequency)
 
-    fwrite(cnv_annotation, file = "call_gene/cnv_annotation.txt", sep = "\t", quote = FALSE)
-    fwrite(gene_freq_location, file = "call_gene/gene_freq_cnv.txt", sep = "\t", quote = FALSE)
-    if(file.exists("call_gene/interval_annotation.txt") & file.exists("call_gene/call_gene_summary.txt") & file.exists("call_gene/cnv_annotation.txt") & file.exists("call_gene/gene_freq_cnv.txt")) {
+    fwrite(cnv_annotation, file = paste0("call_gene_", folder, "/cnv_annotation.txt"), sep = "\t", quote = FALSE)
+    fwrite(gene_freq_location, file = paste0("call_gene_", folder, "/gene_freq_cnv.txt"), sep = "\t", quote = FALSE)
+    if(file.exists(paste0("call_gene_", folder, "/interval_annotation.txt")) & file.exists(paste0("call_gene_", folder, "/call_gene_summary.txt")) & file.exists(paste0("call_gene_", folder, "/cnv_annotation.txt")) & file.exists(paste0("call_gene_", folder, "/gene_freq_cnv.txt"))) {
       print("Task done. CNV, CNVR Annotation, summary files and the Frequency of Gene in CNV Region have been saved in Working directory.")
     } else {
       print("Task failed, please check your input file format carefully!!")
     }
   } else {
-    if(file.exists("call_gene/interval_annotation.txt") & file.exists("call_gene/call_gene_summary.txt")) {
+    if(file.exists(paste0("call_gene_", folder, "/interval_annotation.txt")) & file.exists(paste0("call_gene_", folder, "/call_gene_summary.txt"))) {
       print("Task done. Annotation and summary files have been saved in Working directory.")
     } else {
       print("Task failed, please check your input file format carefully!!")
