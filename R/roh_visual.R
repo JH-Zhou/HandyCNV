@@ -16,29 +16,31 @@
 #' @export plot_gene
 #'
 #' @examples
-plot_gene <- function(refgene = "ARS_ens", chr_id, start, end, show_name = c(0,160), cnv = NULL){
+plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), cnv = NULL){
+  ###
   #read gene
-  if(refgene == "ARS_ens"){
-    refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV")
-    gene <- fread(file = refgene, header = TRUE)
-  } else if(refgene == "ARS_UCSC"){
-    refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV")
-    gene <- fread(file = refgene, header = FALSE)
-    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
-                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
-                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
-  } else if(refgene == "UMD_UCSC"){
-    refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_umd3.1.txt", package = "HandyCNV")
-    gene <- fread(file = refgene, header = FALSE)
-    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
-                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
-                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
-  } else{
-    gene <- fread(file = refgene, header = FALSE)
-    names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
-                     "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
-                     "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
-  }
+  #if(refgene == "ARS_ens"){
+  #  refgene = system.file("extdata", "Demo_data/gene_annotation/ensGene_ars_210202.txt", package = "HandyCNV")
+  #  gene <- fread(file = refgene, header = TRUE)
+  #} else if(refgene == "ARS_UCSC"){
+  #  refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_ars1.2.txt", package = "HandyCNV")
+  #  gene <- fread(file = refgene, header = FALSE)
+  #  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+  #                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+  #                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  #} else if(refgene == "UMD_UCSC"){
+  #  refgene = system.file("extdata", "Demo_data/gene_annotation/refGene_umd3.1.txt", package = "HandyCNV")
+  #  gene <- fread(file = refgene, header = FALSE)
+  #  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+  #                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+  #                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  #}else{
+  gene <- fread(file = refgene, header = TRUE)
+   #gene <- refgene
+   # names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
+    #                 "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
+    #                 "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
+  #}
 
   #if(missing(gene)){
   #  gene <- fread(file = gene, header = T)
@@ -85,7 +87,7 @@ plot_gene <- function(refgene = "ARS_ens", chr_id, start, end, show_name = c(0,1
         filter(Start > coord_name[1] & End < coord_name[2] | Start > coord_name[3] & End < coord_name[4] | Start > coord_name[5] & End < coord_name[6])
     }
 
-    #if plot for roh
+    #check if plot for roh or CNV, the diferrence is when gene figure combine to interval reduce the distance between the middle (from top to bottom) are reduced when set 'cnv'
     if(is.null(cnv)){
       ggplot() +
         geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
