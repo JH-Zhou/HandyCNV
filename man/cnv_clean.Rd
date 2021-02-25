@@ -13,7 +13,7 @@ cnv_clean(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/")
 
 \item{penncnv}{the default CNV results from PennCNV}
 
-\item{penn_id_sep}{the sepatator in the column of Sample ID in PennCNV results, if the ID bind with the path, need to separate by this argument}
+\item{penn_id_sep}{the separator in the column of Sample ID in PennCNV results, if the ID bind with the path, need to separate by this argument}
 }
 \value{
 

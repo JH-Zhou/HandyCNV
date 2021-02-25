@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_cnv_intensity.R
 \name{plot_cnv_intensity}
 \alias{plot_cnv_intensity}
-\title{Title}
+\title{Title plot_cnv_intensity}
 \usage{
 plot_cnv_intensity(
   cnvr,
@@ -16,9 +16,9 @@ plot_cnv_intensity(
 \arguments{
 \item{cnvr}{cnvr list, standard file was generated from call_cnvr function}
 
-\item{cnv_annotation}{standard file was generaed from call_gene function}
+\item{cnv_annotation}{standard file was generated from call_gene function}
 
-\item{intensity}{the signal inyensity file contains LRR and BAF}
+\item{intensity}{the signal intensity file contains LRR and BAF}
 
 \item{map}{the map corresponding to the reference genome in cnvr file, standard file was generated from convert_map function}
 
@@ -30,5 +30,5 @@ plot_cnv_intensity(
 
 }
 \description{
-Title
+Title plot_cnv_intensity
 }

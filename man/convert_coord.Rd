@@ -12,7 +12,7 @@ convert_coord(input_ars = NULL, input_umd = NULL, map)
 
 \item{input_umd}{the interval list with UMD3.1 coordinates, not limited on UMD once given the right map file}
 
-\item{map}{map file contains coordinats in both version of map. default file is generated from convert_map function}
+\item{map}{map file contains coordinates in both version of map. default file is generated from convert_map function}
 }
 \value{
 

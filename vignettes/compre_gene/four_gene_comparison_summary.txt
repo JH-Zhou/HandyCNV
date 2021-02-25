@@ -1,0 +1,4 @@
+Common_check	Number_Gene
+Common_high	5
+Common_low	3160
+High_and_Low	64

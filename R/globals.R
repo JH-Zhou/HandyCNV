@@ -8,4 +8,4 @@ utils::globalVariables(c(".", "..count..", "ARS_Density", "B Allele Freq", "CNVR
                          "V2", "V3", "V4", "V5", "V6", "V7", "V8", "callrate", "data.table", "g_End", "g_Start", "gene_name", "group", "hz", "i.End",
                          "i.Start", "n_CNV", "name2", "name2_1", "num", "num_CNVR", "num_gene", "number_roh", "origi_length", "overlap_len", "percent_group",
                          "percent_total", "pos", "prop_overlap_len", "prop_roh", "three_gene_summary", "total_length", "value", "variable", "window_id",
-                         "x", "y", "y_max", "y_min", "Frequency", "chr_top", "all_of"))
+                         "x", "y", "y_max", "y_min", "Frequency", "chr_top", "all_of", "name", "gene", "CNV_Start", "CNV_End", 'SNP Name', 'Var1', 'Var2'))

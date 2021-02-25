@@ -2,10 +2,15 @@
 % Please edit documentation in R/cnv_summary.R
 \name{cnv_summary_plot}
 \alias{cnv_summary_plot}
-\title{Title summarise CNVs
-Make graphes for CNVs}
+\title{Title summarize CNVs
+Make graphs for CNVs}
 \usage{
-cnv_summary_plot(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL)
+cnv_summary_plot(
+  clean_cnv,
+  plot_sum_1 = NULL,
+  plot_sum_2 = NULL,
+  folder = "cnv_summary_plot"
+)
 }
 \arguments{
 \item{clean_cnv}{the clean cnv file was generate by clean_cnv function}
@@ -13,11 +18,13 @@ cnv_summary_plot(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL)
 \item{plot_sum_1}{first type of combination of summary plot}
 
 \item{plot_sum_2}{second type of combination of summary plot}
+
+\item{folder}{set name of new create folder which used to save the results}
 }
 \value{
-
+Some summary pictures
 }
 \description{
-Title summarise CNVs
-Make graphes for CNVs
+Title summarize CNVs
+Make graphs for CNVs
 }

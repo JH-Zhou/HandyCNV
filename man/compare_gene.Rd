@@ -4,7 +4,7 @@
 \alias{compare_gene}
 \title{Title compare_gene
 Do comparison of genes between two annotated gene frequency list. The default genelist file was generate by call_gene function.
-If the users coustomize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)}
+If the users customize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)}
 \usage{
 compare_gene(
   gene_freq_1,
@@ -17,7 +17,8 @@ compare_gene(
   title_3 = "list_3",
   title_4 = "list_4",
   height_1 = 10,
-  width_1 = 14
+  width_1 = 14,
+  folder = "compre_gene"
 )
 }
 \arguments{
@@ -31,17 +32,19 @@ compare_gene(
 
 \item{common_gene_threshold}{integer input.could calculate by multiplying The Number of Sample by 0.05 or 0.1, et al}
 
-\item{title_1}{custom title(two and three lists) or label(four lists) in figture}
+\item{title_1}{set title(two and three lists) or label(four lists) in figure}
 
-\item{title_2}{custom title(two and three lists) or label(four lists) in figture}
+\item{title_2}{set title(two and three lists) or label(four lists) in figure}
 
-\item{title_3}{custom title(two and three lists) or label(four lists) in figture}
+\item{title_3}{set title(two and three lists) or label(four lists) in figure}
 
-\item{title_4}{custom title(two and three lists) or label(four lists) in figture}
+\item{title_4}{set title(two and three lists) or label(four lists) in figure}
 
-\item{height_1}{custom the height to save figure}
+\item{height_1}{customize the height to save figure}
 
-\item{width_1}{custom the width to save figure}
+\item{width_1}{customize the width to save figure}
+
+\item{folder}{set the name of folder to save results}
 }
 \value{
 
@@ -49,5 +52,5 @@ compare_gene(
 \description{
 Title compare_gene
 Do comparison of genes between two annotated gene frequency list. The default genelist file was generate by call_gene function.
-If the users coustomize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)
+If the users customize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)
 }

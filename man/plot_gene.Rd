@@ -2,7 +2,8 @@
 % Please edit documentation in R/roh_visual.R
 \name{plot_gene}
 \alias{plot_gene}
-\title{Title plot_gene}
+\title{Title plot_gene
+The function used for plotting gene}
 \usage{
 plot_gene(
   refgene = NULL,
@@ -20,7 +21,7 @@ plot_gene(
 
 \item{start}{the start physical position used in the plot, the unit is Mb}
 
-\item{end}{the end physical position used in plotm, the unit is Mb}
+\item{end}{the end physical position used in plot, the unit is Mb}
 
 \item{show_name}{default value is show_name = c(0, 160). accept the vectors only, unit is Mb. for example show_name = c(11.2, 12.4, 15.3, 18.4), means only plot the genes within the given interval}
 
@@ -32,4 +33,5 @@ interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three}
 }
 \description{
 Title plot_gene
+The function used for plotting gene
 }

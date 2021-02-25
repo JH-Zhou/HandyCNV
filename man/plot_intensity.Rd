@@ -20,9 +20,9 @@ plot_intensity(
 \arguments{
 \item{cnvr}{cnvr list, standard file was generated from call_cnvr function}
 
-\item{cnv_annotation}{standard file was generaed from call_gene function}
+\item{cnv_annotation}{standard file was generated from call_gene function}
 
-\item{intensity}{the signal inyensity file contains LRR and BAF}
+\item{intensity}{the signal intensity file contains LRR and BAF}
 
 \item{map}{the map corresponding to the reference genome in cnvr file, standard file was generated from convert_map function}
 

@@ -1,2 +1,0 @@
-Num of CNVR Has Gene	Num of CNVR Without Gene	Total Number of Genes
-462	416	1330

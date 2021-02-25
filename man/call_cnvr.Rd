@@ -4,7 +4,7 @@
 \alias{call_cnvr}
 \title{Title clean CNV
 Formatting CNV results from PennCNV and CNVPartition to the standard format
-Call CNVR, summary individual CNVR type, report CNVR frequeny and type}
+Call CNVR, summary individual CNVR type, report CNVR frequency and type}
 \usage{
 call_cnvr(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD")
 }
@@ -18,10 +18,10 @@ call_cnvr(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD")
 \item{folder}{text, set the name of folder}
 }
 \value{
-Four or five tables. Including CNVR lsit, brife summary and individual cnv and CNVR ID.
+Four or five tables. Including CNVR list, brief summary and individual cnv and CNVR ID.
 }
 \description{
 Title clean CNV
 Formatting CNV results from PennCNV and CNVPartition to the standard format
-Call CNVR, summary individual CNVR type, report CNVR frequeny and type
+Call CNVR, summary individual CNVR type, report CNVR frequency and type
 }

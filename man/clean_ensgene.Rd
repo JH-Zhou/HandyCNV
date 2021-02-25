@@ -12,10 +12,10 @@ clean_ensgene(refgene, ens_id)
 \arguments{
 \item{refgene}{ensembl reference gene download from UCSC website}
 
-\item{ens_id}{enseml id download from UCSC website}
+\item{ens_id}{ensembl id download from UCSC website}
 }
 \value{
-formated gene list.
+formatted gene list.
 }
 \description{
 Title clean_ensgene

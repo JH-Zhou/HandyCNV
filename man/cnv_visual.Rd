@@ -22,7 +22,7 @@ cnv_visual(
   show_name = c(0, 160),
   width_1 = 13,
   height_1 = 10,
-  folder = "cnv"
+  folder = "cnv_visual"
 )
 }
 \arguments{
@@ -32,6 +32,8 @@ cnv_visual(
 
 \item{chr_id}{the number of chromosome want to plot}
 
+\item{species}{which species in the input data, unused at the moment}
+
 \item{start_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
 
 \item{end_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
@@ -40,15 +42,15 @@ cnv_visual(
 
 \item{max_chr_length}{the maximum length of chromosome, default unit is 'Mb'}
 
-\item{plot_gene}{if ture, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function}
+\item{plot_gene}{if true, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function}
 
-\item{refgene}{internal reference genelist are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data}
+\item{refgene}{internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data}
 
 \item{plot_title}{set the title of final plot}
 
 \item{report_id}{report the sample ID while plotting}
 
-\item{pedigree}{pedigree list, requir at least three columns, Sample_Id, Sire and Dam}
+\item{pedigree}{pedigree list, require at least three columns, Sample_Id, Sire and Dam}
 
 \item{show_name}{default value is show_name = c(0, 160). accept the vectors only, unit is Mb. for example show_name = c(11.2, 12.4, 15.3, 18.4), means only plot the genes within the given interval}
 
@@ -56,7 +58,7 @@ cnv_visual(
 
 \item{height_1}{number to set the height of final plot size, unit is 'cm'}
 
-\item{chr_length}{set the length for single chromosome}
+\item{folder}{set the name of folder to save results}
 }
 \value{
 CNV distribution plot

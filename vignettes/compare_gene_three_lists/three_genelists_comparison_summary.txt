@@ -1,0 +1,4 @@
+Common_Gene	Number_Gene
+Common_High	5
+Common_Low	3160
+High_and_Low	64

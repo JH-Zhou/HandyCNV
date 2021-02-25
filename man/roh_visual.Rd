@@ -35,15 +35,15 @@ roh_visual(
 
 \item{end_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
 
-\item{individual_id}{reproting ID of individuals while plotting}
+\item{individual_id}{reporting ID of individuals while plotting}
 
-\item{gene}{if ture, will plot gene above roh plot}
+\item{gene}{if true, will plot gene above roh plot}
 
-\item{plot_title}{add title in the polt}
+\item{plot_title}{add title in the plot}
 
 \item{report_id}{report the sample ID while plotting}
 
-\item{pedigree}{pedigree list, requir at least three columns, Sample_Id, Sire and Dam}
+\item{pedigree}{pedigree list, require at least three columns, Sample_Id, Sire and Dam}
 
 \item{show_name}{default value is show_name = c(0, 160). accept the vectors only, unit is Mb. for example show_name = c(11.2, 12.4, 15.3, 18.4), means only plot the genes within the given interval}
 

@@ -1,0 +1,8 @@
+Type.Var1	Type.Freq
+Both unknown Chromosome	344
+Different Chromosome	859
+Same Chromosome	122420
+Unfound in Default map	2038
+Unfound in Target map	6
+Unknown Chromosome in Default map	13771
+Unknown Chromosome in Target map	545

@@ -12,17 +12,19 @@ call_gene(
 )
 }
 \arguments{
-\item{refgene}{internal reference genelist are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data}
+\item{refgene}{internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data}
 
 \item{interval}{Could be CNV, ROH, QTL or any interval list. At least comprised by four columns Interval_ID, Chr, Start and End}
 
 \item{clean_cnv}{The output data from cnv_clean function}
+
+\item{folder}{set the name of folder to save results}
 }
 \value{
 
 }
 \description{
 This function used for annotating genes for any interval by giving the interval list and reference gene list.
-The interval file requirs at least consists of four cloumns, they are ID, Chr, Start and End.
+The interval file requires at least consists of four columns, they are ID, Chr, Start and End.
 The first column must be the ID column, the column of Chr should only contain the number of chromosome, the units of Start and End columns are the basepair.
 }

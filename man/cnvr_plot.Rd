@@ -2,7 +2,7 @@
 % Please edit documentation in R/cnvr_plot.R
 \name{cnvr_plot}
 \alias{cnvr_plot}
-\title{Title}
+\title{Title cnvr_plot}
 \usage{
 cnvr_plot(
   cnvr,
@@ -12,13 +12,17 @@ cnvr_plot(
   clean_cnv = NULL,
   sample_size = NULL,
   common_cnv_threshold = 0.05,
-  refgene = "ARS"
+  refgene = "ARS",
+  gain_col = "red",
+  loss_col = "green",
+  mixed_col = "blue",
+  folder = "cnvr_plot"
 )
 }
 \arguments{
 \item{cnvr}{cnvr file generated from call_cnvr function}
 
-\item{assembly}{which reference genome assenbly used in the data, each chromosome has different length between various assembly, now only support Bovine UMD3.1 and ARS1.2}
+\item{assembly}{which reference genome assembly used in the data, each chromosome has different length between various assembly, now only support Bovine UMD3.1 and ARS1.2}
 
 \item{legend_x}{the x coordinate of legend, relative to the maximum length of Chromosome, unit is 'Mb'}
 
@@ -28,14 +32,22 @@ cnvr_plot(
 
 \item{sample_size}{integer, the total number of unique samples in the cnv result. combine with common_cnv_threshold to plot all CNVs which passed the threshold}
 
-\item{common_cnv_threshold}{two decimal places, cobine with sample_size to plot all CNVs passed the common threshold}
+\item{common_cnv_threshold}{two decimal places, combine with sample_size to plot all CNVs passed the common threshold}
 
-\item{refgene}{referece gene list, use for plot gene}
+\item{refgene}{reference gene list, use for plot gene}
+
+\item{gain_col}{set color for type of gain CNVR}
+
+\item{loss_col}{set color for type of loss CNVR}
+
+\item{mixed_col}{set colof for type of mixed CNVR}
+
+\item{folder}{set name of folder to save results}
 }
 \value{
-A figture of CNVR distribution map and plot parameters.
-If given clean_cnv file, will plot all CNVRs which are passed common threhold.
+A figure of CNVR distribution map and plot parameters.
+If given clean_cnv file, will plot all CNVRs which are passed common threshold.
 }
 \description{
-Title
+Title cnvr_plot
 }

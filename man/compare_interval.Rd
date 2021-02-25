@@ -13,7 +13,7 @@ compare_interval(interval_1, interval_2, map = NULL)
 
 \item{interval_2}{the interval list with UMD3.1 coordinates, not limited on UMD once given the right map file}
 
-\item{map}{map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
+\item{map}{map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
 }
 \value{
 overlap

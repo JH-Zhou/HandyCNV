@@ -13,7 +13,7 @@ generate_interval_decimal(i, j)
 \arguments{
 \item{i}{the start value, it must be A Decimal number, such as 0.1}
 
-\item{j}{the end value, it must be A Decimal number, such sa 0.2}
+\item{j}{the end value, it must be A Decimal number, such as 0.2}
 }
 \value{
 interval

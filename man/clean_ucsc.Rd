@@ -11,7 +11,7 @@ clean_ucsc(refgene)
 \item{refgene}{reference gene list with UCSC version which download from UCSC website}
 }
 \value{
-formated gene list.
+formatted gene list.
 }
 \description{
 Title clean_ucsc

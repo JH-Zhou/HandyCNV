@@ -3,18 +3,18 @@
 \name{compare_cnv}
 \alias{compare_cnv}
 \title{Title compare_cnv
-The idea to compare CNV between ars and umd are find out how many differents are there
+The idea to compare CNVs between different results are find out how many different are there
 we defined 6 comparison standards of CNV
-1) overlaped
+1) overlapped
 1.same start and end, same SNP inside, fully overlap
-2.same start and end, diffrent snp number, fully overlap
-3.different start or end, overlaped, partial overlap
+2.same start and end, different snp number, fully overlap
+3.different start or end, overlapped, partial overlap
 2) non-overlap
 4.missing start or end position
 5.End <= start
 6.different start or end, non-overlap
-according to the codintion, the first thing is to match coordinates for both version
-then find overlap cnv and non overlapcnv
+according to the condition, the first thing is to match coordinates for both version
+then find overlap cnv and non overlap cnv
 then summarize how many CNVs are in above standards}
 \usage{
 compare_cnv(
@@ -24,7 +24,8 @@ compare_cnv(
   width_1 = 14,
   height_1 = 11,
   legend_x = 0.9,
-  legend_y = 0.9
+  legend_y = 0.9,
+  folder = "compare_cnv"
 )
 }
 \arguments{
@@ -32,32 +33,34 @@ compare_cnv(
 
 \item{cnv_ars}{second cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function}
 
-\item{umd_ars_map}{map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
+\item{umd_ars_map}{map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
 
 \item{width_1}{integer, default value is 14, number to set the width of final plot size, unit is 'cm'}
 
 \item{height_1}{integer, default value is 14,number to set the height of final plot size, unit is 'cm'}
 
-\item{legend_x}{decial digit, default value is 0.9, consistent with ggplot manual coordinates of legend}
+\item{legend_x}{decimal digit, default value is 0.9, consistent with ggplot manual coordinates of legend}
 
-\item{legend_y}{decial digit, default value is 0.9, consistent with ggplot manual coordinates of legend}
+\item{legend_y}{decimal digit, default value is 0.9, consistent with ggplot manual coordinates of legend}
+
+\item{folder}{set name of folder to save results}
 }
 \value{
-
+Details comparison results of CNVs between input lists.
 }
 \description{
 Title compare_cnv
-The idea to compare CNV between ars and umd are find out how many differents are there
+The idea to compare CNVs between different results are find out how many different are there
 we defined 6 comparison standards of CNV
-1) overlaped
+1) overlapped
 1.same start and end, same SNP inside, fully overlap
-2.same start and end, diffrent snp number, fully overlap
-3.different start or end, overlaped, partial overlap
+2.same start and end, different snp number, fully overlap
+3.different start or end, overlapped, partial overlap
 2) non-overlap
 4.missing start or end position
 5.End <= start
 6.different start or end, non-overlap
-according to the codintion, the first thing is to match coordinates for both version
-then find overlap cnv and non overlapcnv
+according to the condition, the first thing is to match coordinates for both version
+then find overlap cnv and non overlap cnv
 then summarize how many CNVs are in above standards
 }

@@ -3,7 +3,7 @@
 \name{compare_cnvr}
 \alias{compare_cnvr}
 \title{Title compare_cnvr
-#The idea to compare CNV between ars and umd are find out how many differents are there}
+#The idea to compare CNVR between different results are find out how many differences are there}
 \usage{
 compare_cnvr(
   cnvr_umd,
@@ -12,7 +12,8 @@ compare_cnvr(
   width_1 = 15,
   height_1 = 15,
   hjust_prop = 0,
-  hjust_num = 1.5
+  hjust_num = 1.5,
+  folder = "compare_cnvr"
 )
 }
 \arguments{
@@ -20,7 +21,7 @@ compare_cnvr(
 
 \item{cnvr_ars}{second cnvr list, not limited on umd or ars, default file is the result from call_cnvr function}
 
-\item{umd_ars_map}{map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
+\item{umd_ars_map}{map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
 
 \item{width_1}{number to set the width of final plot size, unit is 'cm'}
 
@@ -29,11 +30,13 @@ compare_cnvr(
 \item{hjust_prop}{default value is 0.0. used to adjust horizontal position of the number of overlapped CNVR in the plot}
 
 \item{hjust_num}{default value is 1.5. used to adjust horizontal position of the number of overlapped CNVR in the plot}
+
+\item{folder}{set name of folder to save results}
 }
 \value{
-
+Details comparison results of CNVRs between input lists
 }
 \description{
 Title compare_cnvr
-#The idea to compare CNV between ars and umd are find out how many differents are there
+#The idea to compare CNVR between different results are find out how many differences are there
 }
