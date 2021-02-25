@@ -3,7 +3,7 @@
 #' only need Chr, Start and End
 #' @param input_ars the interval list with ARS1.2 coordinates, not limited on ARS once given the right map file
 #' @param input_umd the interval list with UMD3.1 coordinates, not limited on UMD once given the right map file
-#' @param map map file contains coordinats in both version of map. default file is generated from convert_map function
+#' @param map map file contains coordinates in both version of map. default file is generated from convert_map function
 #'
 #' @import dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -32,13 +32,13 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
       select(c("CNVR_ID", "Chr", "Start", "End", "Start_UMD", "End_UMD", "Start_Match", "End_Match")) %>%
       unique()
 
-    #replace the missing poistion as 'Unfound'
+    #replace the missing position as 'Unfound'
     cnvr_new_coord <- cnvr_new_coord %>%
                       replace(., is.na(.), values = "Unfound")
 
     #assign the nearest location for the missing position
     #if missing of Start, assign the most nearest smaller position within 200 kb distance
-    #if missing of End, assign the moost neasrest larger position within 200 kb distance
+    #if missing of End, assign the most nearest larger position within 200 kb distance
     missing_start <- which(cnvr_new_coord$Start_UMD == "Unfound")
     if(!(length(missing_start) == 0)){
       print(paste0(length(missing_start), " of start position unfound in target map file, the most nearest larger position will be assigned"))
@@ -67,7 +67,7 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
       }
     }
 
-    #summary the quality of convertion
+    #summary the quality of conversion
     print("The quality of converion of Start Position as below: FALSE means not match between two version.")
     print(table(cnvr_new_coord$Start_Match))
     print("The quality of converion of End Position as below: FALSE means not match between two version.")
@@ -96,13 +96,13 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
       select(c("CNVR_ID", "Chr", "Start", "End", "Start_ARS", "End_ARS", "Start_Match", "End_Match")) %>%
       unique()
 
-    #replace the missing poistion as 'Unfound'
+    #replace the missing position as 'Unfound'
     cnvr_new_coord <- cnvr_new_coord %>%
                       replace(., is.na(.), values = "Unfound")
 
     #assign the nearest location for the missing position
     #if missing of Start, assign the most nearest larger position within 200 kb distance
-    #if missing of End, assign the moost neasrest larger position within 200 kb distance
+    #if missing of End, assign the most nearest larger position within 200 kb distance
     missing_start <- which(cnvr_new_coord$Start_ARS == "Unfound")
     if(!(length(missing_start) == 0)){
       print(paste0(length(missing_start), " of start position unfound in target map file, the most nearest larger position will be assigned"))
@@ -131,7 +131,7 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
       }
     }
 
-    #summary the quality of convertion
+    #summary the quality of conversion
     print("The quality of converion of Start Position as below: FALSE means not match between two version.")
     print(table(cnvr_new_coord$Start_Match))
     print("The quality of converion of End Position as below: FALSE means not match between two version.")
@@ -155,7 +155,7 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
 #' the Chr column should be the number only, for example: 1 not chr1
 #' @param interval_1 the interval list with ARS1.2 coordinates, not limited on ARS once given the right map file
 #' @param interval_2 the interval list with UMD3.1 coordinates, not limited on UMD once given the right map file
-#' @param map map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
+#' @param map map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
 #'
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'

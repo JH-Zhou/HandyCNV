@@ -33,7 +33,7 @@ generate_interval_integer <- function(i, j){
 #' the intervals must has order, the start number must smaller than the end
 #' generate all non-duplicated intervals combination
 #' @param i the start value, it must be A Decimal number, such as 0.1
-#' @param j the end value, it must be A Decimal number, such sa 0.2
+#' @param j the end value, it must be A Decimal number, such as 0.2
 #'
 #' @return interval
 #' @export generate_interval_decimal
@@ -52,7 +52,7 @@ generate_interval_decimal <- function(i, j){
     end_list <- c(end_list, end_i)
   }
   interval <- unique(data.table(start_list, end_list))
-  interval <- interval[-c(0:(distance*10+1)),] #here is the distace between two value time 10, plus 1 empty
+  interval <- interval[-c(0:(distance*10+1)),] #here is the distance between two value time 10, plus 1 empty
   interval$start_list <-  as.numeric(interval$start_list)/10
   interval$end_list <- as.numeric(interval$end_list)/10
   return(interval)

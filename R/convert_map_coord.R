@@ -7,6 +7,12 @@
 #' @param defMap_title customize the title of default map in plot
 #' @param tarMap_title customize the title of target map in plot
 #' @param species the name of species
+#' @param col_1 set color for the type of Match in SNP comparison plot
+#' @param col_2 set color for the type of Unmatch in SNP comparison plot
+#' @param col_3 set color for the bar of Target_Map in SNP density plot
+#' @param col_4 set color for line of Target_map in density plot
+#' @param col_5 set color for point of Default_Map in SNP density plot
+#' @param col_6 set color for line of Default_map in SNP density plot
 #'
 #' @import ggplot2 dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -15,7 +21,7 @@
 #' @export convert_map
 #'
 #' @examples
-convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMap_title = "ARS .12", species = "Bovine"){
+convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMap_title = "ARS .12", species = "Bovine", col_1 = "green4", col_2 = "red1", col_3 = "deeppink2", col_4 = "deeppink2", col_5 ="turquoise3", col_6 = "turquoise3"){
   if(!dir.exists(paths = "convert_map")){
     dir.create(path = "convert_map")
     print("New folder convert_map was created.")
@@ -76,8 +82,12 @@ convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMa
   } else {
     note = ""
   }
+  #add manual color
+  color_point <- c("Match" = col_1,
+                   "Unmatch" = col_2)
   comparison_snp <- ggplot(def_tar_map, aes(x = Position_def, y = Position_tar, color = Match)) +
     geom_point() +
+    scale_color_manual(values = color_point) +
     theme_bw() +
     theme(strip.background = element_blank(),
           legend.position = c(0.90, 0.07)) +
@@ -142,7 +152,8 @@ convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMa
   #snp_ars_umd$Chr <- as.numeric(snp_ars_umd$Chr)
   snp_diff <- ggplot(snp_tar_def, aes(x = Chr)) +
     geom_bar(aes(y = SNP_Freq_tar, fill = tarMap_title), stat = "identity", position = "identity") +
-    geom_point(aes(y = SNP_Freq_def, shape = defMap_title), stat = "identity", position = "identity", size = 4, color = "turquoise3") +
+    scale_fill_manual(values = col_3) +
+    geom_point(aes(y = SNP_Freq_def, shape = defMap_title), stat = "identity", position = "identity", size = 4, color = col_5) +
     geom_text(aes(y = SNP_Freq_tar + 500, label = Difference)) +
     theme_classic() +
     labs(x = "Chromosome", y = "Number of SNP", shape = NULL, fill = NULL, caption = "**The number represents the number of different SNPS in the two versions") +
@@ -171,12 +182,17 @@ convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMa
 
   second_y_value <- max(snp_tar_def_density$SNP_Freq_def) / max(snp_tar_def_density$ARS_Density,na.rm = TRUE)
   png("convert_map/SNP_difference_density.png", res = 300, width = 3500, height = 2000)
+
+  #add manual color for bar
+  #bar_name = as.factor(tarMap_title)
+  #color_bar <- c(bar_name = col_3)
   diff_density <- ggplot(snp_tar_def_density, aes(x = Chr)) +
-    geom_bar(aes(y = SNP_Freq_tar, fill = tarMap_title), stat = "identity", position = "identity") +
-    geom_point(aes(y = SNP_Freq_def, shape = defMap_title), stat = "identity", position = "identity", size = 4, color = "turquoise3") +
+    geom_bar(aes(y = SNP_Freq_tar, fill = as.factor(tarMap_title)), stat = "identity", position = "identity") +
+    scale_fill_manual(values = col_3) +
+    geom_point(aes(y = SNP_Freq_def, shape = defMap_title), stat = "identity", position = "identity", size = 4, color = col_5) +
     geom_text(aes(y = SNP_Freq_tar + 500, label = Difference)) +
-    geom_line(aes(y = UMD_Density * second_y_value, group = 1), lwd = 1.2, color = "turquoise3") +
-    geom_line(aes(y = ARS_Density * second_y_value, group = 1), lwd = 1.2, color = "red") +
+    geom_line(aes(y = UMD_Density * second_y_value, group = 1), lwd = 1.2, color = col_6) +
+    geom_line(aes(y = ARS_Density * second_y_value, group = 1), lwd = 1.2, color = col_4) +
     geom_text(aes(y = ARS_Density * second_y_value, label = ARS_Density)) +
     geom_text(aes(y = UMD_Density * second_y_value, label = UMD_Density)) +
     scale_y_continuous(name = "Number of SNP", sec.axis = sec_axis(~./ second_y_value, name = "SNP Density")) +

@@ -3,9 +3,11 @@
 #' Main works are add column names for table, add gene names to new table, replace missing gene names
 #' with Ensembl ID then remove duplicated gene, then return the clean formatted gene list.
 #' @param refgene ensembl reference gene download from UCSC website
-#' @param ens_id enseml id download from UCSC website
+#' @param ens_id ensembl id download from UCSC website
 #'
-#' @return formated gene list.
+#' @import dplyr
+#'
+#' @return formatted gene list.
 #' @export clean_ensgene
 #'
 #' @examples
@@ -18,10 +20,11 @@ clean_ensgene <- function(refgene , ens_id){
   names(ens_id) <- c("name", "name2")
   refgene <- merge(refgene, ens_id, by = "name", all.x = T)
   refgene_t <- refgene %>%
-    mutate(gene = coalesce(name2, name)) %>% #fill the unkown gene names by Ensemble ID
-    select(-name2) %>%
-    rename(name2 = gene) %>%
-    distinct(Chr, name2, .keep_all = T) #there are lots of duplicated genes with slightly different position, retain one only
+               mutate(gene = coalesce(name2, name)) %>% #fill the unknown gene names by Ensemble ID
+               select(-name2) %>%
+               rename(name2 = gene) %>%
+               distinct(Chr, name2, .keep_all = T) #there are lots of duplicated genes with slightly different position, retain one only
+  refgene_t$name2 <- sub("ENSBTAT000000", "", refgene_t$name2)
   return(refgene_t)
 }
 
@@ -29,7 +32,9 @@ clean_ensgene <- function(refgene , ens_id){
 #' clean refgene for UCSC gene
 #' @param refgene reference gene list with UCSC version which download from UCSC website
 #'
-#' @return formated gene list.
+#' @import dplyr
+#'
+#' @return formatted gene list.
 #' @export clean_ucsc
 #'
 #' @examples
@@ -47,6 +52,9 @@ clean_ucsc <- function(refgene){
 #' Title get_refgene
 #' Download and make standard format of reference gene from UCSC website
 #' @param gene_version The version of reference gene 'HandyCNV' support to download, if now don't have the version of the gene you want, please feel free to cotact the Maintainer to help you updating this function.
+#'
+#' @importFrom R.utils gunzip gunzip.default
+#' @importFrom data.table fread
 #'
 #' @return Standard formatted reference gene list
 #' @export get_refgene

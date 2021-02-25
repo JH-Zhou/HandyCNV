@@ -1,8 +1,8 @@
 #' Title
 #'
 #' @param cnvr cnvr list, standard file was generated from call_cnvr function
-#' @param cnv_annotation standard file was generaed from call_gene function
-#' @param intensity the signal inyensity file contains LRR and BAF
+#' @param cnv_annotation standard file was generated from call_gene function
+#' @param intensity the signal intensity file contains LRR and BAF
 #' @param map the map corresponding to the reference genome in cnvr file, standard file was generated from convert_map function
 #' @param sample_size the total number of unique samples in cnvr list
 #' @param common_cnv_threshold two decimal places, combine with sample_size to set the common threshold
@@ -18,7 +18,7 @@
 plot_inten <- function(cnvr, cnv_annotation, intensity, map, sample_size, common_cnv_threshold = 0.05) {
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)
-  cnvr <- unite(cnvr, "title", names(cnvr[, c(2:4, 10)]), remove = FALSE) #generate a new columns names
+  cnvr <- unite(cnvr, "title", names(cnvr[, c(2:4, 10)]), remove = FALSE) #generate a new columns name
   high_freq <- filter(cnvr, Frequent >= sample_size * common_cnv_threshold)
   #2.read cnv
   cnv <- fread(file = cnv_annotation)

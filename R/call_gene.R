@@ -1,12 +1,13 @@
 #' Title call_gene
 #'
 #' This function used for annotating genes for any interval by giving the interval list and reference gene list.
-#' The interval file requirs at least consists of four cloumns, they are ID, Chr, Start and End.
+#' The interval file requires at least consists of four columns, they are ID, Chr, Start and End.
 #' The first column must be the ID column, the column of Chr should only contain the number of chromosome, the units of Start and End columns are the basepair.
 #'
-#' @param refgene internal reference genelist are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
+#' @param refgene internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
 #' @param interval Could be CNV, ROH, QTL or any interval list. At least comprised by four columns Interval_ID, Chr, Start and End
 #' @param clean_cnv The output data from cnv_clean function
+#' @param folder set the name of folder to save results
 #' @import dplyr
 #'
 #' @importFrom  data.table fread fwrite setkey foverlaps
@@ -57,15 +58,19 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
   #}
 
   gene$Chr <- suppressWarnings(as.integer(sub("chr", "", gene$Chr))) #convert Chr to integer in order to use foverlap in next step
-  interval <- fread(file = interval)
-  names(interval)[1] = "ID"    #Repalce names of table in order to the summarise in the final step,
-                               #It requied provide the Interval ID in the first column
+  interval <- fread(file = interval, header = TRUE)
+  if(ncol(interval) < 4){
+    cat("Not enought columns provide in 'interval' list, \nat least four columns required:\n'Interval_ID' 'Chr' 'Start' 'End'
+        ")
+  }
+  names(interval)[1] = "ID"    #Replace names of table in order to the summarize in the final step,
+                               #It required provide the Interval ID in the first column
                                #And at least four columns, Interval_ID (CNVR or ROH or QTL), Chr, Start and End
   setkey(gene, Chr, Start, End)
-  cnvr_gene <- foverlaps(interval, gene)
+  cnvr_gene <- foverlaps(interval, gene, by.x = c("Chr", "Start", "End"), type = "any")
 
   print("Starting to check gene annotation status in interval file....")
-  #Summarise how many CNVRs got gene annotated
+  #Summarize how many CNVRs got gene annotated
   cnvr_gene <- cnvr_gene %>%
                mutate(Check_gene = if_else(is.na(Start) & is.na(End), true = "Non_gene", false = "Has_gene"))
 
@@ -74,7 +79,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
   num_CNVR_has_gene <- nrow(unique(cnvr_has_gene[,c("Chr", "i.Start", "i.End")])) #count the number of unique CNVR which got gene annotation
   num_CNVR_no_gene <- nrow(unique(cnvr_gene[,c("Chr", "i.Start", "i.End")])) - num_CNVR_has_gene #"i.Start" and "i.End" are the location of Chr
 
-  gene_summary <- data.frame(matrix(nrow = 1, ncol = 3)) #creat a data table to save summary results
+  gene_summary <- data.frame(matrix(nrow = 1, ncol = 3)) #create a data table to save summary results
   names(gene_summary) <- c("Interval_Has_Gene", "Invertal_Without_Gene", "Total_Number_of_Genes") #assign columns name
   gene_summary[1, 1:3] <- c(num_CNVR_has_gene, num_CNVR_no_gene, gene_number) #assign relative value into table
   print("The summary of annotation results as shown below:")
@@ -85,7 +90,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
                select(c("ID", "Chr", "name2"))
   fwrite(gene_list, file = paste0("call_gene_", folder, "/gene_list.annotation"), sep = "\t", quote = F)
 
-  #summarise results group by ID then paste all gene into one cell
+  #summarize results group by ID then paste all gene into one cell
   window_gene <- cnvr_gene %>%
     group_by(ID) %>%
     summarise(gene_name = paste(unique(name2), collapse = ",")) %>% #collapse the gene name into windows
@@ -121,10 +126,10 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
     print(paste0(nrow(gene_freq), " genes were matched in the CNV and CNVR, top 10 frequent genes as below: "))
     print(gene_freq[1:10, ])
 
-    # assin CNVR ID and positions into gene frequency list
+    # assign CNVR ID and positions into gene frequency list
     cnvr_has_gene_unique <- unique(subset(cnvr_has_gene, select = c("name2", "ID", "Chr", "i.Start", "i.End")))
     # in this file still has some duplicated genes which located in multiple CNVRs, here we need to report its out
-    # the function check_dup_gene is used to reprot all duplicated genes
+    # the function check_dup_gene is used to report all duplicated genes
     check_dup_gene <- function(cnvr_has_gene_unique) {
       from_top <- which(duplicated(cnvr_has_gene_unique$name2))
       from_last <- which(duplicated(cnvr_has_gene_unique$name2, fromLast = TRUE))

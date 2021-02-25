@@ -4,21 +4,22 @@
 #' @param clean_cnv cnv list file, standard file was generated from cnv_clean function
 #' @param max_chr_length the maximum length of chromosome, default unit is 'Mb'
 #' @param chr_id the number of chromosome want to plot
-#' @param chr_length set the length for single chromosome
 #' @param start_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param end_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param individual_id the ID of individual in cnv list, used to plot all chromosome for specific Individual
-#' @param plot_gene if ture, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function
-#' @param refgene internal reference genelist are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
+#' @param plot_gene if true, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function
+#' @param refgene internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
 #' @param plot_title set the title of final plot
 #' @param max_chr the maximum number of chromosomes to plot, it used for plot all chromosomes at once
 #' @param report_id report the sample ID while plotting
-#' @param pedigree pedigree list, requir at least three columns, Sample_Id, Sire and Dam
+#' @param pedigree pedigree list, require at least three columns, Sample_Id, Sire and Dam
 #' @param show_name default value is show_name = c(0, 160). accept the vectors only, unit is Mb. for example show_name = c(11.2, 12.4, 15.3, 18.4), means only plot the genes within the given interval
 #' @param width_1 number to set the width of final plot size, unit is 'cm'
 #' @param height_1 number to set the height of final plot size, unit is 'cm'
+#' @param species which species in the input data, unused at the moment
+#' @param folder set the name of folder to save results
 #'
-#' @import dplyr ggplot2 tidyr ggrepel scales
+#' @import dplyr ggplot2 tidyr ggrepel scales grDevices
 #'
 #' @importFrom data.table fread fwrite
 #'
@@ -30,7 +31,12 @@
 #' @examples
 #'
 
-cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, refgene = "ARS_ens", plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv") {
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, refgene = "ARS_ens", plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual") {
+  if(!file.exists(paste0(folder))){
+    dir.create(paste0(folder))
+    print(paste0("A new folder '", folder, "' was created in working directory."))
+  }
+
   #prepare for population data
   cnv <- fread(file = clean_cnv)
   standard_col <- c("Sample_ID", "Chr", "Start", "End")
@@ -92,10 +98,6 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
 
   #plot CNVs on each chr
   if(is.null(max_chr) == "FALSE") {
-    if(!file.exists(paste0(folder))){
-      dir.create(paste0(folder))
-      print(paste0("A new folder '", folder, "' was created in working directory."))
-    }
 
     if(missing(width_1) & missing(height_1)){
       width_1 = 23
@@ -138,7 +140,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   chr_name <- paste0("Chr", chr_id, ".png")
   id_number <- nrow(id_coord)
   chr_title <- paste0("CNV on Chromosome ", chr_id, " with ", id_number, " Individuals")
-  png(res = 300, filename = chr_name, width = 3500, height = 2000)
+  png(res = 300, filename = paste0(folder, "/", chr_name), width = 3500, height = 2000)
   #png(res = 300, filename = "10_chr.png", width = 3500, height = 2000)
   chr_plot <- ggplot(cnv_chr, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
     geom_rect(aes(fill = as.factor(CNV_Value))) +
@@ -164,7 +166,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   id_coord$y <- (id_coord$Order-1)*5 + 1
   cnv_chr_zoom <- merge(cnv_chr_zoom, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
   cnv_chr_zoom$zoom_x <- end_position
-  zoom_name <- paste0("Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
+  zoom_name <- paste0(folder, "/Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
   id_number <- nrow(id_coord)
   zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
   png(res = 300, filename = zoom_name, width = 3500, height = 2000)
@@ -179,63 +181,66 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   dev.off()
   print("Task done, plot was stored in working directory.")
   if(!is.null(report_id)) {
-    indiv_id <- cnv_chr_zoom$Sample_ID
+    indiv_id <- unique(cnv_chr_zoom$Sample_ID)
     print("Individual ID in this CNVRs as following: ")
     print(indiv_id)
+    return(indiv_id)
     #assign("indiv_id", value = cnv_chr_zoom, envir = .GlobalEnv)
     indiv <- cnv_chr_zoom
     #cnv_visual(clean_cnv = "clean_cnv/penncnv_clean.cnv", chr_id = 5, start_position = 93.6, end_position = 93.7, report_id = 1)
-    pedb <- fread(pedigree)
-    if (exists("pedb")) {
-      print("Pedigree was read in.")
-    }
-    indiv_id_ped <- merge(indiv, pedb, by.x = "Sample_ID", by.y = "Chip_ID", all.x = TRUE)
-    #print(colnames(indiv_id_ped))
+    if(!(is.null(pedigree))){
+      pedb <- fread(pedigree)
+      if (exists("pedb")) {
+        print("Pedigree was read in.")
+      }
+      indiv_id_ped <- merge(indiv, pedb, by.x = "Sample_ID", by.y = "Chip_ID", all.x = TRUE)
+      #print(colnames(indiv_id_ped))
 
-    if ("Herd" %in% colnames(indiv_id_ped)){
-      herd_cnv <- ggplot(indiv_id_ped, aes(x = as.factor(Herd), fill = as.factor(CNV_Value))) +
-        geom_bar() +
-        theme_classic()+
-        theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
-        labs(x = "Name of Herd", y = "Number of CNV", fill = "Copy of CNV")
-    }
+      if ("Herd" %in% colnames(indiv_id_ped)){
+        herd_cnv <- ggplot(indiv_id_ped, aes(x = as.factor(Herd), fill = as.factor(CNV_Value))) +
+          geom_bar() +
+          theme_classic()+
+          theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
+          labs(x = "Name of Herd", y = "Number of CNV", fill = "Copy of CNV")
+      }
 
-    if ("Sire_Source" %in% colnames(indiv_id_ped)){
-      source_cnv <- ggplot(indiv_id_ped, aes(x = Sire_Source, fill = as.factor(CNV_Value))) +
-        geom_bar() +
-        theme_classic()+
-        theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
-        labs(x = "Bull Source", y = "Number of CNV", fill = "Copy of CNV")
-    }
+      if ("Sire_Source" %in% colnames(indiv_id_ped)){
+        source_cnv <- ggplot(indiv_id_ped, aes(x = Sire_Source, fill = as.factor(CNV_Value))) +
+          geom_bar() +
+          theme_classic()+
+          theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
+          labs(x = "Bull Source", y = "Number of CNV", fill = "Copy of CNV")
+      }
 
-    if ("Sire_ID" %in% colnames(indiv_id_ped)){
-      sire_cnv <- ggplot(indiv_id_ped, aes(x = Sire_ID, fill = as.factor(CNV_Value))) +
-        geom_bar()+
-        theme_classic()+
-        theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
-        labs(x = "Sire ID", y = "Number of CNV", fill = "Copy of CNV")
-    }
+      if ("Sire_ID" %in% colnames(indiv_id_ped)){
+        sire_cnv <- ggplot(indiv_id_ped, aes(x = Sire_ID, fill = as.factor(CNV_Value))) +
+          geom_bar()+
+          theme_classic()+
+          theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
+          labs(x = "Sire ID", y = "Number of CNV", fill = "Copy of CNV")
+      }
 
-    png(filename = paste0(zoom_name, "source.png"), res = 300, bg = "transparent", height = 2000, width = 2500)
-    if (exists("herd_cnv") & exists("source_cnv") & exists("sire_cnv")){
-      cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
-      print(cnv_source)
-      dev.off()
-    } else if (exists("herd_cnv") & exists("source_cnv")) {
-      cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
-      print(cnv_source)
-      dev.off()
-    } else if (exists("herd_cnv") & exists("sire_cnv")) {
-      cnv_source <- plot_grid(herd_cnv, sire_cnv, ncol = 1)
-      print(cnv_source)
-      dev.off()
-    } else if (exists("source_cnv") & exists("sire_cnv")) {
-      cnv_source <- plot_grid(source_cnv, sire_cnv, ncol = 1)
-      print(cnv_source)
-      dev.off()
-    } else {
-      print(sire_cnv)
-      dev.off()
+      png(filename = paste0(folder, "/", zoom_name, "source.png"), res = 300, bg = "transparent", height = 2000, width = 2500)
+      if (exists("herd_cnv") & exists("source_cnv") & exists("sire_cnv")){
+        cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
+        print(cnv_source)
+        dev.off()
+      } else if (exists("herd_cnv") & exists("source_cnv")) {
+        cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
+        print(cnv_source)
+        dev.off()
+      } else if (exists("herd_cnv") & exists("sire_cnv")) {
+        cnv_source <- plot_grid(herd_cnv, sire_cnv, ncol = 1)
+        print(cnv_source)
+        dev.off()
+      } else if (exists("source_cnv") & exists("sire_cnv")) {
+        cnv_source <- plot_grid(source_cnv, sire_cnv, ncol = 1)
+        print(cnv_source)
+        dev.off()
+      } else {
+        print(sire_cnv)
+        dev.off()
+      }
     }
   }
   }
@@ -298,7 +303,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
 
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
-    ggsave(filename = zoom_name, width = width_1, height = height_1, units = "cm", dpi = 300)
+    ggsave(filename = paste0(folder, "/", zoom_name), width = width_1, height = height_1, units = "cm", dpi = 300)
 
     print(zoom_plot)
     dev.off()
@@ -310,7 +315,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   #plot on individual level
     #cnv_indiv <- cnv_p[which(cnv_p$Sample_ID == "204806050057_R01C01")]
   cnv_indiv <- cnv[which(cnv$Sample_ID == individual_id),]
-  chr_coord <- data.frame("Chr" = seq(1,29,1))
+  chr_coord <- data.frame("Chr" = seq(1,max(cnv_indiv$Chr),1))
   chr_coord$x <- 160 #adjust x for geom_text
   chr_coord$y <- (chr_coord$Chr-1)*5 + 1 #adjust y for geom_text
   cnv_indiv_coord <- merge(cnv_indiv, chr_coord, all.x = TRUE, sort = FALSE)
@@ -318,7 +323,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   #4.
   indiv_name <- paste0("CNV_of_", individual_id,".png")
   indiv_title <- paste0("CNV Distribution of Individual ", individual_id)
-  png(res = 300, filename = indiv_name, width = 3500, height = 2000)
+  png(res = 300, filename = paste0(folder,"/", indiv_name), width = 3500, height = 2000)
   indiv_plot <- ggplot(cnv_indiv_coord, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Chr-1)*5, ymax = (Chr-1)*5 + 3)) +
     geom_rect(aes(fill = as.factor(CNV_Value))) +
     geom_text(aes(x, y, label = Chr), size = 4) + theme_bw() +

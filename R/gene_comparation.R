@@ -1,18 +1,23 @@
 #' Title compare_gene
 #' Do comparison of genes between two annotated gene frequency list. The default genelist file was generate by call_gene function.
-#' If the users coustomize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)
+#' If the users customize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)
 #'
 #' @param gene_freq_1 first genelist, the default file was generated from call_gene function
 #' @param gene_freq_2 second genelist, the default file was generated from call_gene function
 #' @param gene_freq_3 third genelist, the default file was generated from call_gene function
 #' @param gene_freq_4 fourth genelist, the default file was generated from call_gene function
 #' @param common_gene_threshold integer input.could calculate by multiplying The Number of Sample by 0.05 or 0.1, et al
-#' @param title_1 custom title(two and three lists) or label(four lists) in figture
-#' @param title_2 custom title(two and three lists) or label(four lists) in figture
-#' @param title_3 custom title(two and three lists) or label(four lists) in figture
-#' @param title_4 custom title(two and three lists) or label(four lists) in figture
-#' @param height_1 custom the height to save figure
-#' @param width_1 custom the width to save figure
+#' @param title_1 set title(two and three lists) or label(four lists) in figure
+#' @param title_2 set title(two and three lists) or label(four lists) in figure
+#' @param title_3 set title(two and three lists) or label(four lists) in figure
+#' @param title_4 set title(two and three lists) or label(four lists) in figure
+#' @param height_1 customize the height to save figure
+#' @param width_1 customize the width to save figure
+#' @param folder set the name of folder to save results
+#' @param col_1 set color for common_high in two gene lists comparison plot
+#' @param col_2 set color for common_low in two gene lists comparison plot
+#' @param col_3 set color for High_Freq_list_1 in two gene lists comparison plot
+#' @param col_4 set color for High_Freq_list_2 in two gene lists comparison plot
 #'
 #' @import dplyr ggplot2 scatterplot3d
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -21,14 +26,14 @@
 #' @export compare_gene
 #'
 #' @examples
-compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq_4 = NULL, common_gene_threshold = 3, title_1 = "list_1", title_2 = "list_2", title_3 = "list_3", title_4 = "list_4", height_1 = 10, width_1 =14){
-  #check and creatfolder
-  if(!file.exists("compare_gene")){
-     dir.create("compare_gene")
+compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq_4 = NULL, common_gene_threshold = 3, title_1 = "list_1", title_2 = "list_2", title_3 = "list_3", title_4 = "list_4", height_1 = 10, width_1 =14, folder = "compre_gene", col_1 = "red", col_2 = "dodgerblue", col_3 = "yellow3", col_4 = "pink2"){
+  #check and create folder
+  if(!file.exists(folder)){
+     dir.create(folder)
     }
 
   if (is.null(gene_freq_3) & is.null(gene_freq_4)){
-    #Comparation of gene frequancy between two CNV annoation results
+    #Comparison of gene frequency between two CNV annotation results
     list_1 <- fread(gene_freq_1)
     colnames(list_1) <- paste(colnames(list_1), "1", sep = "_")
 
@@ -36,9 +41,9 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
     colnames(list_2) <- paste(colnames(list_2), "2", sep = "_")
 
     two_list <- merge(list_1, list_2, by.x = "name2_1", by.y = "name2_2", all = TRUE) #combine all gene together between two version of results
-    two_list[is.na(two_list)] <- 0 #replece all missing value as 0
+    two_list[is.na(two_list)] <- 0 #replace all missing value as 0
 
-    #adding new column to indicate the diffirence between two Gene frequent within CNVs
+    #adding new column to indicate the difference between two Gene frequent within CNVs
     print("Clustering common gene between the two input files...")
     two_list <- two_list %>%
                 mutate(Common_Gene = case_when(Frequency_1 < common_gene_threshold & Frequency_2 < common_gene_threshold ~ "Common_Low",
@@ -49,19 +54,25 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
     gene_summary <- two_list %>% group_by(Common_Gene) %>% count(Common_Gene)
     print("Brief summary of comparison as below:")
     print(gene_summary)
-    fwrite(gene_summary, file = "compare_gene/two_lists_comparison_summary.txt", sep = "\t", quote = FALSE)
-    fwrite(two_list, file = "compare_gene/two_lists_comparison.txt", sep = "\t", quote = FALSE)
+    fwrite(gene_summary, file = paste0(folder, "/two_lists_comparison_summary.txt"), sep = "\t", quote = FALSE)
+    fwrite(two_list, file = paste0(folder, "/two_lists_comparison.txt"), sep = "\t", quote = FALSE)
 
     #plot comparison
+    #add manual color
+    color_point <- c("Common_High" = col_1,
+                     "Common_Low" = col_2,
+                     "High_Freq_list_1" = col_3,
+                     "High_Freq_list_2" = col_4)
     compare_plot <- ggplot(data = two_list, aes(x = Frequency_1, y = Frequency_2, color = Common_Gene)) +
       geom_point(pch = 19, size = 3, position = position_jitter(height = 0.15, width = 0.15)) +
+      scale_color_manual(values = color_point) +
       geom_text_repel(data = subset(two_list, Common_Gene == "Common_High"), aes(label = name2_1), nudge_x = 0.3) +
       theme_classic() +
       theme(legend.position = c(0.85, 0.85)) +
       labs( x = title_1, y = title_2, color = NULL)
-    ggsave(filename = "compare_gene/two_lists_comparison.png", plot = compare_plot, width = width_1, height = height_1, units = "cm", dpi = 300)
+    ggsave(filename = paste0(folder, "/two_lists_comparison.png"), plot = compare_plot, width = width_1, height = height_1, units = "cm", dpi = 300)
 
-    if(file.exists("compare_gene/two_lists_comparison_summary.txt") & file.exists("compare_gene/two_lists_comparison.txt") & file.exists("compare_gene/two_lists_comparison.png")) {
+    if(file.exists(paste0(folder, "/two_lists_comparison_summary.txt")) & file.exists(paste0(folder, "/two_lists_comparison.txt")) & file.exists(paste0(folder, "/two_lists_comparison.png"))) {
       print("Gene comparison list, brife summary and comparison plot was saved in working directory.")
     } else{
       print("Checking outputs files was faild, please check the input files and resetting a working directory!")
@@ -99,7 +110,7 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
     print("Brief summary:")
     print(three_list_summary)
 
-    pdf("compare_gene/three_list_comparison.pdf", width = width_1, height = height_1, onefile = T)
+    pdf(paste0(folder, "/three_list_comparison.pdf"), width = width_1, height = height_1, onefile = T)
     #par(mfrow = c(2,2))
     three_list$Common_Gene <- as.factor(three_list$Common_Gene) #set color for factors
     color_custom = c("red", "orange", "blue")[three_list$Common_Gene] #set color for factors
@@ -114,9 +125,9 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
     legend("top", legend = c("Common High", "Common Low", "High and Low"), col =  c("red", "orange", "blue"), pch = 16, inset = -0.1, xpd = TRUE, horiz = TRUE, bty = "n")
     dev.off()
 
-      fwrite(three_list, file = "compare_gene/three_genelists_comparison.txt", sep = "\t", quote = FALSE)
-    fwrite(three_list_summary, file = "compare_gene/three_genelists_comparison_summary.txt", sep = "\t", quote = FALSE)
-    if(file.exists("compare_gene/three_genelists_comparison.txt") & file.exists("compare_gene/three_genelists_comparison_summary.txt") & file.exists("compare_gene/three_list_comparison.pdf")){
+    fwrite(three_list, file = paste0(folder, "/three_genelists_comparison.txt"), sep = "\t", quote = FALSE)
+    fwrite(three_list_summary, file = paste0(folder, "/three_genelists_comparison_summary.txt"), sep = "\t", quote = FALSE)
+    if(file.exists(paste0(folder, "/three_genelists_comparison.txt")) & file.exists(paste0(folder, "/three_genelists_comparison_summary.txt")) & file.exists(paste0(folder, "/three_list_comparison.pdf"))){
       print("Gene comparison list, brife summary and comparison plot was saved in working directory.")
     } else{
       print("Checking outputs files was faild, please check the input files and resetting a working directory!")
@@ -168,11 +179,11 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
       theme_classic() +
       scale_x_discrete(labels = c(title_1, title_2, title_3, title_4)) +
       labs(x = NULL, y = "Gene", fill = "Quantity")
-    ggsave(filename = "compare_gene/four_gene_heatmap.png", dpi = 300, height = height_1, width = width_1, units = "cm")
+    ggsave(filename = paste0(folder, "/four_gene_heatmap.png"), dpi = 300, height = height_1, width = width_1, units = "cm")
 
-    fwrite(four_gene, file = "compare_gene/four_gene_comparison.txt", sep = "\t", quote = FALSE)
-    fwrite(four_gene_summary, file = "compare_gene/four_gene_comparison_summary.txt", sep = "\t", quote = FALSE)
-    if(file.exists("compare_gene/four_gene_comparison.txt") & file.exists("compare_gene/four_gene_comparison_summary.txt") & file.exists("compare_gene/four_gene_heatmap.png")){
+    fwrite(four_gene, file = paste0(folder, "/four_gene_comparison.txt"), sep = "\t", quote = FALSE)
+    fwrite(four_gene_summary, file = paste0(folder, "/four_gene_comparison_summary.txt"), sep = "\t", quote = FALSE)
+    if(file.exists(paste0(folder, "/four_gene_comparison.txt")) & file.exists(paste0(folder, "/four_gene_comparison_summary.txt")) & file.exists(paste0(folder, "/four_gene_heatmap.png"))){
       print("Gene comparison list, brife summary and comparison plot was saved in working directory.")
     } else{
       print("Checking outputs files was faild, please check the input files and resetting a working directory!")

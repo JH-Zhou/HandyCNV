@@ -1,14 +1,16 @@
-#' Title
+#' Title plot_cnvr_panorama
 #'
 #' @param cnvr cnvr list, standard file was generated from call_cnvr function
-#' @param cnv_annotation standard file was generaed from call_gene function
-#' @param intensity the signal inyensity file contains LRR and BAF
+#' @param cnv_annotation standard file was generated from call_gene function
+#' @param intensity the signal intensity file contains LRR and BAF
 #' @param map the map corresponding to the reference genome in cnvr file, standard file was generated from convert_map function
 #' @param prefix_bed the prefix of bed, bim and fam file in plink format
 #' @param sample_size the total number of unique samples in cnvr list
 #' @param common_cnv_threshold two decimal places, combine with sample_size to set the common threshold
-#' @param width_1 default value is 14, unit is 'cm', set the width of final polt
-#' @param height_1 default value is 30, unit is 'cm', set the height of final polt
+#' @param width_1 default value is 14, unit is 'cm', set the width of final plot
+#' @param height_1 default value is 30, unit is 'cm', set the height of final plot
+#' @param ld_heat If TRUE, will plot LD by heatmap, If false will plotting by Classical Inverted Triangle, heatmap is fatser, triagnle may mot work well.
+#' @param folder set name of folder to save results
 #'
 #' @import dplyr ggrepel ggplot2 tidyr gaston cowplot scales
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -17,14 +19,14 @@
 #' @export plot_cnvr_panorama
 #'
 #' @examples
-plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30) {
-  if(!file.exists("cnvr_panorama")){
-    dir.create("cnvr_panorama")
-    print("A new folder 'cnvr_panorama' was created in working directory.")
+plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama") {
+  if(!file.exists(folder)){
+    dir.create(folder)
+    print(paste0("A new folder ", folder,  "was created in working directory."))
   }
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)
-  cnvr <- unite(cnvr, "title", names(cnvr[, c(2:4, 10)]), remove = FALSE) #generate a new columns names
+  cnvr <- unite(cnvr, "title", names(cnvr[, c(2:4, 10)]), remove = FALSE) #generate a new columns name
   high_freq <- cnvr %>%
                filter(Frequent >= sample_size * common_cnv_threshold) %>%
                arrange(Length)
@@ -45,10 +47,11 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
   default_title <- c("SNP Name", "Sample ID",	"B Allele Freq", "Log R Ratio")
   intensity <- fread(file = intensity, skip = 9, header = TRUE)
   intensity <- intensity %>%
-               select(all_of(default_title))
+               select(c(default_title))
 
-  #4.read map
-  map <-fread(file = map, header = TRUE)
+  #4.read map plink format
+  map <-fread(file = map, header = FALSE)
+  names(map) <- c("Chr", "SNP Name", "MorganPos", "Position")
   map$Chr <- suppressWarnings(as.character(map$Chr))
   names(map)[names(map) == "Name"] <- 'SNP Name'
   inten_chr <- merge(intensity, map, by = "SNP Name", all.x =TRUE, sort =F) #add location information to intensity file
@@ -143,9 +146,23 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
     ld_x[is.na(ld_x)] <- 0
     snp_info <- x@snps[c(which(x@snps$id == sub_inten$`SNP Name`[1]):which(x@snps$id == sub_inten$`SNP Name`[nrow(sub_inten)])),]
     #snp_info <- x@snps[c(which(x@snps$id == sub_inten$`SNP Name`[1]):which(x@snps$id == sub_inten$`SNP Name`[10])),]
-    ld <- ggplotify::as.ggplot(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, graphical.par = list(mar = c(0,0,0,0)), below.space = 0))
-    ###ld <- ggplotify::base2grob(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE))
 
+    #select to plot Classical inverted triangle LD or heatmap of LD
+    if(ld_heat == FALSE){
+      try(ld <- ggplotify::as.ggplot(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, graphical.par = list(mar = c(0,0,0,0)), below.space = 0)), silent = TRUE)
+      ###ld <- ggplotify::base2grob(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE))
+    } else{
+      #plot ld and genotype in an interested region
+      ld_table <- reshape2::melt(ld_x) #convert
+      heat_map <-ggplot(ld_table, aes(Var1, Var2, fill = value)) +
+        geom_tile() +
+        scale_fill_gradientn(colours = c("lightblue", "yellow", "red"), na.value = "black") +
+        scale_x_discrete(labels = NULL) +
+        scale_y_discrete(labels = NULL) +
+        theme(legend.position = "top") + #top right
+        labs(x = "SNP Ordered by Position", y = "SNP Ordered by Position", fill = "r^2")
+      #dev.off() #save plot in working directory
+    }
 
     baf <- ggplot(sub_inten, aes(x = Position, y =`B Allele Freq`, color = as.factor(CNV_Value))) +
       scale_color_manual(values = c("#F8766D", "#A3A500","grey", "#00B0F6", "#E76BF3")) +
@@ -185,11 +202,17 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
     dir <- paste( b, ".png", sep = "")
     #png(dir, res = 300, width = 2000, height = 5000, bg = "transparent")
     #plot_grid(zoom,zoom2, maf, baf, lrr, align = "v", axis = "t", ncol = 1, rel_heights = c(1,1,1,1,1))
-    final_plot <- plot_grid(zoom_plot, baf, lrr, maf, ld, align = "v", ncol = 1,
-                            rel_heights = c(1.5, 1, 1, 1, 1.6))
+    if(ld_heat == TRUE){
+      final_plot <- plot_grid(zoom_plot, baf, lrr, maf, heat_map, align = "v", ncol = 1,
+                              rel_heights = c(1.5, 1, 1, 1, 1.5))
+    } else{
+      try(final_plot <- plot_grid(zoom_plot, baf, lrr, maf, ld, align = "v", ncol = 1,
+                              rel_heights = c(1.5, 1, 1, 1, 1.6)))
+    }
+
     #print(final_plot)
     #dev.off()
-    ggsave(plot = final_plot, path = "cnvr_panorama/", filename = dir, width = width_1, height = height_1, dpi = 300, units = "cm")
+    ggsave(plot = final_plot, path = paste0(folder, "/"), filename = dir, width = width_1, height = height_1, dpi = 300, units = "cm")
     print(paste0("Plot ", i, " was stored in working directory."))
   }
 }

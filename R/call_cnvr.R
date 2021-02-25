@@ -1,6 +1,6 @@
 #' Title clean CNV
 #' Formatting CNV results from PennCNV and CNVPartition to the standard format
-#' Call CNVR, summary individual CNVR type, report CNVR frequeny and type
+#' Call CNVR, summary individual CNVR type, report CNVR frequency and type
 #'
 #' @param clean_cnv the clean cnv file was generate by clean_cnv function
 #' @param roh roh file from clean_cnv function, only CNVPartition results will generate the roh results
@@ -11,7 +11,7 @@
 #' @importFrom reshape2 dcast
 #' @importFrom grDevices dev.off pdf png
 #'
-#' @return Four or five tables. Including CNVR lsit, brife summary and individual cnv and CNVR ID.
+#' @return Four or five tables. Including CNVR list, brief summary and individual cnv and CNVR ID.
 #' @export call_cnvr
 #'
 #' @examples
@@ -54,7 +54,7 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
     print(paste0("Choromsome ", i, " was processed."))
   }
 
-  #extraxt CNVR inofrmation, recode for CNVR
+  #extract CNVR information, recode for CNVR
   cnvr_union <- cnvr[, c("Chr", "Start", "End")]
   cnvr_union$CNVR_ID <- paste0("CNVR_", seq(1, nrow(cnvr_union), 1))
   data.table::setkey(cnvr_union, Chr, Start, End)

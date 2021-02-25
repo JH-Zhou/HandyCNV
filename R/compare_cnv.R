@@ -1,34 +1,40 @@
 #' Title compare_cnv
-#'The idea to compare CNV between ars and umd are find out how many differents are there
+#'The idea to compare CNVs between different results are find out how many different are there
 #' we defined 6 comparison standards of CNV
-#' 1) overlaped
+#' 1) overlapped
 #' 1.same start and end, same SNP inside, fully overlap
-#' 2.same start and end, diffrent snp number, fully overlap
-#' 3.different start or end, overlaped, partial overlap
+#' 2.same start and end, different snp number, fully overlap
+#' 3.different start or end, overlapped, partial overlap
 #' 2) non-overlap
 #' 4.missing start or end position
 #' 5.End <= start
 #' 6.different start or end, non-overlap
-#' according to the codintion, the first thing is to match coordinates for both version
-#' then find overlap cnv and non overlapcnv
+#' according to the condition, the first thing is to match coordinates for both version
+#' then find overlap cnv and non overlap cnv
 #' then summarize how many CNVs are in above standards
 #'
 #' @param cnv_umd first cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function
 #' @param cnv_ars second cnv list, not limit on umd or ars, defaults file is the result from clean_cnv function
-#' @param umd_ars_map map file contains coordinats in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
+#' @param umd_ars_map map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
 #' @param width_1 integer, default value is 14, number to set the width of final plot size, unit is 'cm'
 #' @param height_1 integer, default value is 14,number to set the height of final plot size, unit is 'cm'
-#' @param legend_x decial digit, default value is 0.9, consistent with ggplot manual coordinates of legend
-#' @param legend_y decial digit, default value is 0.9, consistent with ggplot manual coordinates of legend
+#' @param legend_x decimal digit, default value is 0.9, consistent with ggplot manual coordinates of legend
+#' @param legend_y decimal digit, default value is 0.9, consistent with ggplot manual coordinates of legend
+#' @param folder set name of folder to save results
 #' @import dplyr scales ggplot2
 #'
 #' @importFrom data.table fread fwrite setkey foverlaps
 #'
-#' @return
+#' @return Details comparison results of CNVs between input lists.
 #' @export compare_cnv
 #'
 #' @examples
-compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, height_1 = 11, legend_x = 0.9, legend_y = 0.9) {
+compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, height_1 = 11, legend_x = 0.9, legend_y = 0.9, folder = "compare_cnv", col_1 = "pink", col_2 = "lightblue") {
+  if(!file.exists(folder)){
+    dir.create(folder)
+    print(paste0("A new folder ", folder, " was created in working directory."))
+  }
+
   #default plot function
   plot_comparison <- function(cnv_checkover, title_fig, width_1 =14, height_1 =11, legend_x = 0.9, legend_y = 0.9) {
     cnv <- cnv_checkover
@@ -40,9 +46,13 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
 
     cnv_freq <- cnv_cal %>% group_by(CNV_Value) %>% summarise(percent_total  = sum(percent_total), num = sum(n))
 
-    png(res = 300, filename = paste0(title_f, ".png"), width = width_1, height = height_1, bg = "transparent", units = "cm")
+    # manual add color
+    color_bar <- c("Non-Overlap" = col_1,
+                   "Overlap" = col_2)
+    png(res = 300, filename = paste0(folder, "/", title_f, ".png"), width = width_1, height = height_1, bg = "transparent", units = "cm")
     compare_plot <- ggplot(cnv_cal, aes(x = CNV_Value, y = percent_total, fill = Check_overlap)) +
       geom_col() +
+      scale_fill_manual(values = color_bar) +
       geom_text(data = subset(cnv_cal, Check_overlap == "Overlap"), aes(label = scales::percent(percent_group)), color = "blue", position = position_stack(0.5)) +
       geom_text(inherit.aes = FALSE, data = cnv_freq, aes(x = CNV_Value, y = percent_total, label = num), vjust = -0.5, hjust = 1.3) +
       geom_text(inherit.aes = FALSE, data = cnv_freq, aes(x = CNV_Value, y = percent_total, label = scales::percent(percent_total)), vjust = -0.5, hjust  =-0.5) +
@@ -52,15 +62,15 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
       labs(x = "CNV Value", y = "Percentage of CNV Number", caption = "Note: The integer and percentage on the top of bar plot indicates the total number and percentage of CNV.\nPercentage with blue color indicates the percent of Overlapped CNVs within a CNV Value group.")
     print(compare_plot)
     dev.off()
-    fwrite(cnv_cal, file = paste0(title_f, ".summary"), sep = "\t", quote = FALSE)
+    fwrite(cnv_cal, file = paste0(folder, "/", title_f, ".summary"), sep = "\t", quote = FALSE)
   }
 
   #dealing with data
   if (is.null(umd_ars_map)) {
     cnv_ars <- fread(cnv_ars)
-    cnv_ars$version <- "Verision_ARS" # add verision in dataframe
+    cnv_ars$version <- "Verision_ARS" # add version in dataframe
     colnames(cnv_ars) <- paste(colnames(cnv_ars), "ARS", sep = "_") #add suffix to all colnames
-    ars_colnames <- colnames(cnv_ars) #set original column names use for extarting columns after matching
+    ars_colnames <- colnames(cnv_ars) #set original column names use for extracting columns after matching
 
     cnv_umd <- fread(cnv_umd)
     cnv_umd$version <- "Version_UMD"
@@ -68,7 +78,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     umd_colnames <- colnames(cnv_umd)
 
     #######compare results in UMD at first-------------------------------------------------------------------------
-    #1. find overlaped CNV between UCD and ARS
+    #1. find overlapped CNV between UCD and ARS
     setkey(cnv_ars, Sample_ID_ARS, Chr_ARS, Start_ARS, End_ARS)
     overlap_umd <- foverlaps(cnv_umd, cnv_ars, by.x = c("Sample_ID_UMD", "Chr_UMD", "Start_UMD", "End_UMD"), type = "any", nomatch = NULL)
 
@@ -76,7 +86,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     # or some CNV in UMD larger than ARS caused by the SNP position and density
     uniq_overlap_umd <- subset(overlap_umd, select = umd_colnames)
 
-    #find out non-overlap CNV, original CNV - overlaped CNV
+    #find out non-overlap CNV, original CNV - overlapped CNV
     final_overlap_umd <- unique(uniq_overlap_umd)
 
     #2. find non-overlap CNV between UND and ARS
@@ -86,12 +96,12 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
       print("These two input data are completely same, comparison will stoped.")
     }
 
-    #3. cheking if overlap and non-overlap results are correct by counting the total number
+    #3. checking if overlap and non-overlap results are correct by counting the total number
     if (nrow(non_overlap_umd) + nrow(final_overlap_umd) == nrow(cnv_umd)) {
       print(paste0("Comparison Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total ", nrow(cnv_umd)))
     } else {print("Comparison failed in validation, please use the original output files from HandyCNV as the input files")}
 
-    #merge all cnv results then make compasion plot
+    #merge all cnv results then make comparison plot
     final_overlap_umd$Check_overlap <- "Overlap"
     non_overlap_umd$Check_overlap <- "Non-Overlap"
     checkover_indiv_1 <- rbind(final_overlap_umd, non_overlap_umd)
@@ -100,9 +110,9 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     plot_comparison(cnv_checkover = checkover_indiv_1, title_fig = "checkover_indiv_1", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
     #4. write out the overlap and non-overlap CNVs
-    fwrite(final_overlap_umd, file = "overlap_cnv_1.indiv", sep = "\t", quote = FALSE)
-    fwrite(non_overlap_umd, file = "non_overlap_cnv_1.indiv", sep = "\t", quote = FALSE)
-    fwrite(checkover_indiv_1, file = "cnv_all_inidv_1.checkoverlap", sep = "\t", quote = FALSE)
+    fwrite(final_overlap_umd, file = paste0(folder, "/overlap_cnv_1.indiv"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_umd, file = paste0(folder, "/non_overlap_cnv_1.indiv"), sep = "\t", quote = FALSE)
+    fwrite(checkover_indiv_1, file = paste0(folder, "/cnv_all_inidv_1.checkoverlap"), sep = "\t", quote = FALSE)
 
     #5.summarize difference
     overlap_percent_indiv_1 <- round(nrow(final_overlap_umd) / nrow(cnv_umd), 3) * 100
@@ -122,8 +132,8 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
       print(paste0("Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total of ", nrow(cnv_umd)))
     } else {print("Comparison to the first file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
-    fwrite(final_pop_overlap_umd, file = "overlap_cnv_1.popu", sep = "\t", quote = FALSE)
-    fwrite(non_overlap_pop_umd, file = "non_overlap_cnv_1.popu", sep = "\t", quote = FALSE)
+    fwrite(final_pop_overlap_umd, file = paste0(folder, "/overlap_cnv_1.popu"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_pop_umd, file = paste0(folder, "/non_overlap_cnv_1.popu"), sep = "\t", quote = FALSE)
 
     #make comparison plot
     final_pop_overlap_umd$Check_overlap <- "Overlap"
@@ -134,7 +144,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
 
     plot_comparison(cnv_checkover = checkover_pop_1, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
-    fwrite(checkover_pop_1, file = "cnv_all_population_1.checkoverlap", sep = "\t", quote = FALSE)
+    fwrite(checkover_pop_1, file = paste0(folder, "/cnv_all_population_1.checkoverlap"), sep = "\t", quote = FALSE)
 
     #5.summarize difference
     #UMD
@@ -148,12 +158,12 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
                                   "Population Level" = c(overlap_percent_pop, non_overlap_percent_pop))
     print("The final comparison results of the first file as follows: ")
     print(overlap_summary)
-    fwrite(overlap_summary, file = "overlap_cnv_1.summary", sep = "\t", quote = FALSE)
+    fwrite(overlap_summary, file = paste0(folder, "/overlap_cnv_1.summary"), sep = "\t", quote = FALSE)
     print("Comparison to the first file was finished.")
 
 
     ##########compare results in ARS at second-------------------------------------------------------------------
-    #1. find overlaped CNV between UCD and ARS
+    #1. find overlapped CNV between UCD and ARS
     setkey(cnv_umd, Sample_ID_UMD, Chr_UMD, Start_UMD, End_UMD)
     #because some snp cannot find in ARS map, so we removed these CNV used right_umd instead
     overlap_ars <- foverlaps(cnv_ars, cnv_umd, by.x = c("Sample_ID_ARS", "Chr_ARS", "Start_ARS", "End_ARS"), type = "any", nomatch = NULL)
@@ -162,27 +172,27 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     # or some CNV in UMD larger than ARS caused by the SNP position and density
     uniq_overlap_ars <- subset(overlap_ars, select = ars_colnames)
 
-    #find out non-overlap CNV, original CNV - overlaped CNV
+    #find out non-overlap CNV, original CNV - overlapped CNV
     final_overlap_ars <- unique(uniq_overlap_ars)
 
     #2. find non-overlap CNV between UND and ARS
     non_overlap_ars <- dplyr::setdiff(cnv_ars, final_overlap_ars)
 
-    #3. cheking if overlap and non-overlap results are correct by counting the total number
+    #3. checking if overlap and non-overlap results are correct by counting the total number
     if (nrow(non_overlap_ars) + nrow(final_overlap_ars) == nrow(cnv_ars)) {
       print(paste0("Comparison to second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total ", nrow(cnv_ars)))
     } else {print("Comparison to second file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
     #4. write out the overlap and non-overlap CNVs
-    fwrite(final_overlap_ars, file = "overlap_cnv_ars_2.indiv", sep = "\t", quote = FALSE)
-    fwrite(non_overlap_ars, file = "non_overlap_cnv_ars_2.indiv", sep = "\t", quote = FALSE)
+    fwrite(final_overlap_ars, file = paste0(folder, "/overlap_cnv_ars_2.indiv"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_ars, file = paste0(folder, "/non_overlap_cnv_ars_2.indiv"), sep = "\t", quote = FALSE)
 
     final_overlap_ars$Check_overlap <- "Overlap"
     non_overlap_ars$Check_overlap <- "Non-Overlap"
     checkover_indiv_2 <- rbind(final_overlap_ars, non_overlap_ars)
     colnames(checkover_indiv_2) <- sub("_ARS", "", colnames(checkover_indiv_2))
 
-    fwrite(checkover_indiv_2, file = "cnv_all_indiv_2.checkoverlap", sep = "\t", quote = FALSE)
+    fwrite(checkover_indiv_2, file = paste0(folder, "/cnv_all_indiv_2.checkoverlap"), sep = "\t", quote = FALSE)
 
     plot_comparison(cnv_checkover = checkover_indiv_2, title_fig = "checkover_indiv_2", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
@@ -204,8 +214,8 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
       print(paste0("Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total of ", nrow(cnv_ars)))
     } else {print("Comparison to the second file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
-    fwrite(final_pop_overlap_ars, file = "overlap_cnv_ars.popu", sep = "\t", quote = FALSE)
-    fwrite(non_overlap_pop_ars, file = "non_overlap_cnv_ars.popu", sep = "\t", quote = FALSE)
+    fwrite(final_pop_overlap_ars, file = paste0(folder, "/overlap_cnv_ars.popu"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_pop_ars, file = paste0(folder, "/non_overlap_cnv_ars.popu"), sep = "\t", quote = FALSE)
 
     final_pop_overlap_ars$Check_overlap <- "Overlap"
     non_overlap_pop_ars$Check_overlap <- "Non-Overlap"
@@ -214,7 +224,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
 
 
     plot_comparison(cnv_checkover = checkover_pop_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
-    fwrite(checkover_pop_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
+    fwrite(checkover_pop_2, file = paste0(folder, "/checkover_pop_2.txt"), sep = "\t", quote = FALSE)
 
     #5.summarize difference
     #ARS
@@ -228,16 +238,16 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
                                     "Population Level" = c(overlap_percent_pop_2, non_overlap_percent_pop_2))
     print("The final comparison results of the second file as follows: ")
     print(overlap_summary_2)
-    fwrite(overlap_summary_2, file = "overlap_cnv_2.summary", sep = "\t", quote = FALSE)
+    fwrite(overlap_summary_2, file = paste0(folder, "/overlap_cnv_2.summary"), sep = "\t", quote = FALSE)
     print("Task done. Comparison results were saved in your working directory")
   }
 
   else {
     #convert coordinate for CNV and CNVR
     cnv_ars <- fread(cnv_ars)
-    cnv_ars$version <- "Verision_ARS" # add verision in dataframe
+    cnv_ars$version <- "Verision_ARS" # add version in dataframe
     colnames(cnv_ars) <- paste(colnames(cnv_ars), "ARS", sep = "_") #add suffix to all colnames
-    ars_colnames <- colnames(cnv_ars) #set original column names use for extarting columns after matching
+    ars_colnames <- colnames(cnv_ars) #set original column names use for extracting columns after matching
 
     cnv_umd <- fread(cnv_umd)
     cnv_umd$version <- "Version_UMD"
@@ -250,11 +260,11 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     #cnv_umd_ars <- merge(cnv_umd, two_map, by.x = c("Chr", "Start"), by.y = c("Chr_UMD", "Position_UMD"), all.x = TRUE)
 
     #1. convert the umd result to ars
-    #matching the start position by snp name, validating by matching the original position and new mathced position
+    #matching the start position by snp name, validating by matching the original position and new matched position
     #cnv_umd_ars <- merge(cnv_umd, two_map, by.x = "Start_SNP_UMD", by.y = "Name_Map", all.x = TRUE)
 
     #There are some duplicated rows after merge progress, because of there are some different SNP with same location in the map file
-    #To sovle this problem, we should check duplicated row after each merge step and remove the duplicates
+    #To solve this problem, we should check duplicated row after each merge step and remove the duplicates
     cnv_umd_ars <- merge(cnv_umd, two_map, by.x = c("Chr_UMD", "Start_UMD"), by.y = c("Chr_def_Map", "Position_def_Map"), all.x = TRUE)
     dup_index <- grep("TRUE", duplicated(cnv_umd_ars[, c("Chr_UMD", "Start_UMD", "Sample_ID_UMD")]))
     if (length(dup_index) > 0){
@@ -330,10 +340,10 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     ars_convert_colnames <- colnames(cnv_ars_umd)
 
     #write out CNV with converted coordinates
-    fwrite(cnv_umd_ars, file = "cleancnv_UtoA.coord", sep = "\t", quote = FALSE)
-    fwrite(cnv_ars_umd, file = "cleancnv_AtoU.coord", sep = "\t", quote = FALSE)
+    fwrite(cnv_umd_ars, file = paste0(folder, "/cleancnv_UtoA.coord"), sep = "\t", quote = FALSE)
+    fwrite(cnv_ars_umd, file = paste0(folder, "/cleancnv_AtoU.coord"), sep = "\t", quote = FALSE)
 
-    #two requrments for foverlap: 1) start <= end, 2) no NA in both start and end
+    #two requirements for foverlap: 1) start <= end, 2) no NA in both start and end
     cnv_umd_ars$End_ARS_Map[is.na(cnv_umd_ars$End_ARS_Map)] <- 0
     cnv_umd_ars$Start_ARS_Map[is.na(cnv_umd_ars$Start_ARS_Map)] <- 0
     wrong_umd <- cnv_umd_ars[which((cnv_umd_ars$End_ARS_Map - cnv_umd_ars$Start_ARS_Map) <= 0), ]
@@ -343,7 +353,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     right_ars <- setdiff(cnv_ars_umd, wrong_ars)
 
     #######compare results in UMD at first-------------------------------------------------------------------------
-    #1. find overlaped CNV between UCD and ARS
+    #1. find overlapped CNV between UCD and ARS
     setkey(cnv_ars_umd, Sample_ID_ARS, Chr_ARS, Start_ARS, End_ARS)
     #because some snp cannot find in ARS map, so we removed these CNV used right_umd instead
     overlap_umd <- foverlaps(right_umd, cnv_ars_umd, by.x = c("Sample_ID_UMD", "Chr_UMD", "Start_ARS_Map", "End_ARS_Map"), type = "any", nomatch = NULL)
@@ -352,7 +362,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     # or some CNV in UMD larger than ARS caused by the SNP position and density
     uniq_overlap_umd <- subset(overlap_umd, select = umd_convert_colnames)
 
-    #find out non-overlap CNV, original CNV - overlaped CNV
+    #find out non-overlap CNV, original CNV - overlapped CNV
     teamp_overlap_umd <- subset(overlap_umd, select = umd_convert_colnames)
     final_overlap_umd <- unique(teamp_overlap_umd)
 
@@ -365,8 +375,8 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     } else {print("Comparison failed in validation, please use the original output files from HandyCNV as the input files")}
 
     #4. write out the overlap and non-overlap CNVs
-    fwrite(final_overlap_umd, file = "overlap_cnv.indiv", sep = "\t", quote = FALSE)
-    fwrite(non_overlap_umd, file = "non_overlap_cnv.indiv", sep = "\t", quote = FALSE)
+    fwrite(final_overlap_umd, file = paste0(folder, "/overlap_cnv.indiv"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_umd, file = paste0(folder, "/non_overlap_cnv.indiv"), sep = "\t", quote = FALSE)
 
 
     final_overlap_umd$Check_overlap <- "Overlap"
@@ -394,8 +404,8 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
       print(paste0("Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total of ", nrow(cnv_umd_ars)))
     } else {print("Comparison to the first file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
-    fwrite(final_pop_overlap_umd, file = "overlap_cnv.popu", sep = "\t", quote = FALSE)
-    fwrite(non_overlap_pop_umd, file = "non_overlap_cnv.popu", sep = "\t", quote = FALSE)
+    fwrite(final_pop_overlap_umd, file = paste0(folder, "/overlap_cnv.popu"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_pop_umd, file = paste0(folder, "/non_overlap_cnv.popu"), sep = "\t", quote = FALSE)
 
     #plot comparison
     final_pop_overlap_umd$Check_overlap <- "Overlap"
@@ -406,7 +416,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
 
     plot_comparison(cnv_checkover = checkover_pop_1, title_fig = "checkover_pop_1", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
-    fwrite(checkover_pop_1, file = "cnv_all_population_1.checkoverlap", sep = "\t", quote = FALSE)
+    fwrite(checkover_pop_1, file = paste0(folder, "/cnv_all_population_1.checkoverlap"), sep = "\t", quote = FALSE)
 
     #5.summarize difference
     #UMD
@@ -420,7 +430,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
                                   "Population Level" = c(overlap_percent_pop, non_overlap_percent_pop))
     print("The final comparison results of the first file as follows: ")
     print(overlap_summary)
-    fwrite(overlap_summary, file = "overlap_cnv.summary", sep = "\t", quote = FALSE)
+    fwrite(overlap_summary, file = paste0(folder, "/overlap_cnv.summary"), sep = "\t", quote = FALSE)
     print("Comparison to the first file was finished.")
 
 
@@ -434,7 +444,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     # or some CNV in UMD larger than ARS caused by the SNP position and density
     uniq_overlap_ars <- subset(overlap_ars, select = ars_convert_colnames)
 
-    #find out non-overlap CNV, original CNV - overlaped CNV
+    #find out non-overlap CNV, original CNV - overlapped CNV
     teamp_overlap_ars <- subset(overlap_ars, select = ars_convert_colnames)
     final_overlap_ars <- unique(teamp_overlap_ars)
 
@@ -447,15 +457,15 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
     } else {print("Comparison to second file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
     #4. write out the overlap and non-overlap CNVs
-    fwrite(final_overlap_ars, file = "overlap_cnv_ars.indiv", sep = "\t", quote = FALSE)
-    fwrite(non_overlap_ars, file = "non_overlap_cnv_ars.indiv", sep = "\t", quote = FALSE)
+    fwrite(final_overlap_ars, file = paste0(folder, "/overlap_cnv_ars.indiv"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_ars, file = paste0(folder, "/non_overlap_cnv_ars.indiv"), sep = "\t", quote = FALSE)
 
     final_overlap_ars$Check_overlap <- "Overlap"
     non_overlap_ars$Check_overlap <- "Non-Overlap"
     checkover_indiv_2 <- rbind(final_overlap_ars, non_overlap_ars)
     colnames(checkover_indiv_2) <- sub("_ARS", "", colnames(checkover_indiv_2))
 
-    fwrite(checkover_indiv_2, file = "cnv_all_indiv_2.checkoverlap", sep = "\t", quote = FALSE)
+    fwrite(checkover_indiv_2, file = paste0(folder, "/cnv_all_indiv_2.checkoverlap"), sep = "\t", quote = FALSE)
 
     plot_comparison(cnv_checkover = checkover_indiv_2, title_fig = "checkover_indiv_2", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
 
@@ -477,8 +487,8 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
       print(paste0("Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total of ", nrow(cnv_ars_umd)))
     } else {print("Comparison to the second file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
-    fwrite(final_pop_overlap_ars, file = "overlap_cnv_ars.popu", sep = "\t", quote = FALSE)
-    fwrite(non_overlap_pop_ars, file = "non_overlap_cnv_ars.popu", sep = "\t", quote = FALSE)
+    fwrite(final_pop_overlap_ars, file = paste0(folder, "/overlap_cnv_ars.popu"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_pop_ars, file = paste0(folder, "/non_overlap_cnv_ars.popu"), sep = "\t", quote = FALSE)
 
 
     final_pop_overlap_ars$Check_overlap <- "Overlap"
@@ -488,7 +498,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
 
 
     plot_comparison(cnv_checkover = checkover_pop_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1, legend_x = legend_x, legend_y = legend_y)
-    fwrite(checkover_pop_2, file = "checkover_pop_2.txt", sep = "\t", quote = FALSE)
+    fwrite(checkover_pop_2, file = paste0(folder, "/checkover_pop_2.txt"), sep = "\t", quote = FALSE)
 
     #5.summarize difference
     #UMD
@@ -502,7 +512,7 @@ compare_cnv <- function(cnv_umd, cnv_ars, umd_ars_map = NULL, width_1 = 14, heig
                                     "Population Level" = c(overlap_percent_pop_2, non_overlap_percent_pop_2))
     print("The final comparison results of the second file as follows: ")
     print(overlap_summary_2)
-    fwrite(overlap_summary_2, file = "overlap_cnv_2.summary", sep = "\t", quote = FALSE)
+    fwrite(overlap_summary_2, file = paste0(folder, "/overlap_cnv_2.summary"), sep = "\t", quote = FALSE)
     print("Task done. Comparison results were saved in your working directory")
   }
 }

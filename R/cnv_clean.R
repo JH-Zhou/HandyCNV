@@ -4,7 +4,7 @@
 #'
 #' @param cnvpartition the default CNV results from CNVPartition
 #' @param penncnv the default CNV results from PennCNV
-#' @param penn_id_sep the sepatator in the column of Sample ID in PennCNV results, if the ID bind with the path, need to separate by this argument
+#' @param penn_id_sep the separator in the column of Sample ID in PennCNV results, if the ID bind with the path, need to separate by this argument
 #'
 #' @import dplyr
 #' @importFrom data.table fread fwrite
@@ -15,13 +15,13 @@
 #'
 #' @examples
 cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/") {
-  #creat a directory to store output files
+  #create a directory to store output files
   if (!file.exists("clean_cnv")){
     dir.create("clean_cnv")
   }
 
   if(!is.null(cnvpartition)) {
-    cnvpart <- fread(file = cnvpartition, skip = 7)
+    cnvpart <- fread(file = cnvpartition, skip = 7, header = FALSE)
     names(cnvpart) <- c("Sample_ID", "Chr", "Start", "End", "CNV_Value", "CNV_Conf", "Comment", "Empty")
     #cnvpart_pure <- cnvpart_pure[-c(grep("X", cnvpart_pure$Chr)), ] #delete cnv on the chr X
     cnvpart$Chr <- sub("X", "30", cnvpart$Chr)
@@ -29,7 +29,7 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/")
     cnvpart$End <- as.numeric(cnvpart$End)
     cnvpart$CNV_Conf <- as.numeric(cnvpart$CNV_Conf)
     cnvpart$Length <- cnvpart$End - cnvpart$Start + 1 #add a new column as Length
-    cnvpart <- cnvpart[cnvpart$CNV_Conf >= 35, ] #delete the confedence score lesser than 35
+    cnvpart <- cnvpart[cnvpart$CNV_Conf >= 35, ] #delete the confidence score lesser than 35
     cnvpart_roh <- cnvpart[c(grep("2", cnvpart$CNV_Value)),]
     cnvpart_pure <- cnvpart[-c(grep("2", cnvpart$CNV_Value)), ] #delete 2 copy cnv
     cnvpart_pure <- cnvpart_pure[cnvpart_pure$Length <= 5000000, ] #delete CNV larger than 5 Mb
