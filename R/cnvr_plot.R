@@ -123,7 +123,7 @@ cnvr_plot <- function(cnvr, assembly = "ARS", legend_x = 127, legend_y = 30, cle
 
     dev.off()
 
-    if (file.exists("cnvr_plot.png")) {
+    if (file.exists(paste0(folder, "/cnvr_plot.png"))) {
       print("Task done, CNVR Distribution Plot saved in working directory.")
     } else {
       print("Task faild, please check your CNVR input file carefully, the input cnvr file should be the CNVR results generated from call_cnvr function")
