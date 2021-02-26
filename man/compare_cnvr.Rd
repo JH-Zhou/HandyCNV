@@ -13,7 +13,9 @@ compare_cnvr(
   height_1 = 15,
   hjust_prop = 0,
   hjust_num = 1.5,
-  folder = "compare_cnvr"
+  folder = "compare_cnvr",
+  col_1 = "gray20",
+  col_2 = "springgreen4"
 )
 }
 \arguments{

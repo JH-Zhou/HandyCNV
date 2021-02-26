@@ -49,7 +49,7 @@ As above we mentioned, the functions in the package are four sectors: Conversion
 #Setting up working directory
 To start analysis, let's setup the working directory at first. Make sure all results are saving in the same directory.
 ```{r}
-#setwd(dir = "C:/Users/handy_test") #remember to repalce the path with your own 
+#setwd(dir = "C:/Users/handy_test") #remember to replace the path with your own 
 ```
 Now we can start to explore the functions of 'HandyCNV'
 
@@ -99,7 +99,7 @@ cnv_visual(clean_cnv = "clean_cnv/penncnv_clean.cnv",
 
 ### 2.3 How do we plotting all CNVs for an interested sample?
 Here we just need assign the Sample ID to 'individual_id' and CNV list to 'clean_cnv' in 'cnv_visual' function, then the individual CNV plot will saved in working directory. In the example, the sample "201094560076_R03C02" has the most CNVs in Penn results, let's try to plot it have a look. <br> Note: The 'individual_cnv_count.txt' file will generate at sector 3 when making summary plots, we can choose the interested individual in that file.
-```{r, fig.show='hide'}
+```{r fig.show='hide', warning=FALSE}
 cnv_visual(clean_cnv = "clean_cnv/penncnv_clean.cnv", 
            individual_id = "201094560076_R03C02",
            folder = "cnv_visual")
@@ -108,13 +108,13 @@ cnv_visual(clean_cnv = "clean_cnv/penncnv_clean.cnv",
 
 ## 3. After we formating the CNV results, how to make some summarises figure?
 Now we need the formatted clean_cnv.cnv file to use cnv_summary_plot function.<br> First, let's plotting for Part_cnv result.
-```{r cnv_summary_plot_penn, fig.show='hide'}
+```{r cnv_summary_plot_penn, fig.show='hide', warning=FALSE}
 cnv_summary_plot(clean_cnv = "clean_cnv/cnvpart_clean.cnv")
 ```
 ![Figure.5 Part CNV Summary Plot 1](cnv_summary_plot_Penn/cnv_summary_plot_1.png){width=300px}
 
 Second, let's plotting for Penn_CNV results. As we see the remind messages, we could make some integrate plots by cnv_summary_plot.<br> Let's add these two arguments to see what the results looks like? We can set the folder name by 'folder' argument to avoid the results replacing previous one.
-```{r cnv_summary_plot_part, fig.show='hide'}
+```{r cnv_summary_plot_part, fig.show='hide', warning=FALSE}
 cnv_summary_plot(clean_cnv = "clean_cnv/penncnv_clean.cnv", 
                  plot_sum_1 = "yes", 
                  plot_sum_2 = "yes", 
@@ -131,7 +131,7 @@ call_cnvr(clean_cnv = "clean_cnv/penncnv_clean.cnv",
 ```
 
 Secondly, let's generate CNVRs for Part CNV results. In order to avoid mixing the results among different files, we can set 'folder' arguments to assign a distinguish name of new generated folder. 
-```{r}
+```{r warning=FALSE}
 call_cnvr(clean_cnv = "clean_cnv/cnvpart_clean.cnv", 
           chr_set = '29', 
           folder = "Part")
@@ -194,8 +194,8 @@ The 'cnvr_plot' is used to make CNVR distribution plot. Only need to assign the 
 ```{r, fig.show='hide'}
 cnvr_plot(cnvr = "call_cnvr_Penn/cnvr.txt", 
           assembly = "ARS", 
-          loss_col = "yellow",
-          gain_col = "lightblue",
+          loss_col = "green2",
+          gain_col = "red",
           mixed_col = "black",
           folder = "cnvr_plot_penn")
 ```
@@ -242,7 +242,7 @@ compare_cnv(cnv_umd = "clean_cnv/cnvpart_clean.cnv",
             cnv_ars = "clean_cnv/penncnv_clean.cnv",
             folder = "compare_cnv_PartUMD_Vs_PennUMD")
 ```
-![Figure.11 Comparion of CNV on Individual and Population Level](compare_cnv_PartUMD_Vs_PennUMD/combine_figure.png){width=320px}
+![Figure.11 Comparion of CNV on Individual and Population Level](compare_cnv_PartUMD_Vs_PennUMD/checkover_pop_1.png){width=320px}
 
 ## 9. How to compare CNVR results between different results?
 The principle to make comparison of CNVRs is similar to 'compare_cnv', it's support to compare two CNVRs results with the same version of reference genome, and also can convert the coordinates to each input files if users provide the default and target map file to the 'def_tar_map' argument. Same as testing on 'compare_cnv' function, although here in our example the two CNVRs results are in ARS-UCD 1.2 and UMD 3.1 version, let pretending it in the same version, we only want to present how the 'compare_cnvr' function works for the input files are the same version. We will continue to talking about how to prepare the map file in Next heading.<br> Let's try to use 'compare_cnvr' now.
@@ -277,11 +277,11 @@ compare_gene(gene_freq_1 = "call_gene_Part/gene_freq_cnv.txt",
              gene_freq_2 = "call_gene_Penn_Ens/gene_freq_cnv.txt", 
              gene_freq_3 = "call_gene_Penn_UCSC/gene_freq_cnv.txt",
              title_1 = "Part", 
-             title_2 = "Penn_ENS",
-             title_3 = "Penn_UCSC",
+             title_2 = "ENS",
+             title_3 = "UCSC",
              common_gene_threshold = 20,
-             height_1 = 6,
-             width_1 = 6.5,
+             height_1 = 5.5,
+             width_1 = 5.5,
              folder = "compare_gene_three_lists")
 ```
 ![Figure.14 Compare Gene of Three List](compare_gene_three_lists/threegene.png){width=320px}
@@ -293,12 +293,12 @@ compare_gene(gene_freq_1 = "call_gene_Part/gene_freq_cnv.txt",
              gene_freq_3 = "call_gene_Part/gene_freq_cnv.txt",
              gene_freq_4 = "call_gene_Penn_UCSC/gene_freq_cnv.txt",
              title_1 = "Part", 
-             title_2 = "Penn_ENS",
-             title_3 = "Penn_UCSC",
-             title_4 = "Part_Again",
-             common_gene_threshold = 20,
-             height_1 = 30,
-             width_1 = 16, 
+             title_2 = "ENS", #penn
+             title_3 = "UCSC", #penn
+             title_4 = "PUCSC",
+             common_gene_threshold = 25,
+             height_1 = 7,
+             width_1 = 10, 
              folder = "compare_gene_four_lists")
 ```
 ![Figure.15 Compare Gene of Four Lists](compare_gene_four_lists/four_gene_heatmap.png){width=300}
@@ -347,7 +347,7 @@ compare_cnv(cnv_umd = "clean_cnv/cnvpart_clean.cnv",
             cnv_ars = "clean_cnv/penncnv_clean.cnv", 
             umd_ars_map = "convert_map/def_tar_map.map", 
             legend_x = 0.91, legend_y = 0.9, 
-            width_1 = 16, height_1 = 12,
+            width_1 = 14, height_1 = 11,
             folder = "UMD_Vs_ARS_CNV")
 ```
 ### 11.2 How to compare CNVR results between differenct version of reference genome?
@@ -404,5 +404,9 @@ plot_cnvr_panorama(cnvr = "call_cnvr_Penn/cnvr.txt",
 
 ## 14. How to compare our results to the others with different reference genome assembly?
 ## 15. How to plot genes in a specific region and save it as figure seperatly?   
+```{r, fig.show='hide'}
+plot_gene(refgene = "refgene/cow_ARS_UCSC.txt", chr_id = 7, start = 11, end = 12)
+```
+
 ## 16. How to prepare the demo data from Siginal Intensity and Plink Genotype and Map file?
 

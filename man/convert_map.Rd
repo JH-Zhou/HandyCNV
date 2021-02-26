@@ -11,7 +11,13 @@ convert_map(
   target_map,
   defMap_title = "UMD 3.1",
   tarMap_title = "ARS .12",
-  species = "Bovine"
+  species = "Bovine",
+  col_1 = "green4",
+  col_2 = "red1",
+  col_3 = "deeppink2",
+  col_4 = "deeppink2",
+  col_5 = "turquoise3",
+  col_6 = "turquoise3"
 )
 }
 \arguments{
@@ -24,6 +30,18 @@ convert_map(
 \item{tarMap_title}{customize the title of target map in plot}
 
 \item{species}{the name of species}
+
+\item{col_1}{set color for the type of Match in SNP comparison plot}
+
+\item{col_2}{set color for the type of Unmatch in SNP comparison plot}
+
+\item{col_3}{set color for the bar of Target_Map in SNP density plot}
+
+\item{col_4}{set color for line of Target_map in density plot}
+
+\item{col_5}{set color for point of Default_Map in SNP density plot}
+
+\item{col_6}{set color for line of Default_map in SNP density plot}
 }
 \value{
 

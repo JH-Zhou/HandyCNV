@@ -25,7 +25,9 @@ compare_cnv(
   height_1 = 11,
   legend_x = 0.9,
   legend_y = 0.9,
-  folder = "compare_cnv"
+  folder = "compare_cnv",
+  col_1 = "pink",
+  col_2 = "lightblue"
 )
 }
 \arguments{

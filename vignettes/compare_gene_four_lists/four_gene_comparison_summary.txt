@@ -1,4 +1,4 @@
 Common_check	Number_Gene
-Common_high	5
-Common_low	1638
-High_and_Low	13
+Common_high	3
+Common_low	1643
+High_and_Low	10

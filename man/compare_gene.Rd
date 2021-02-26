@@ -18,7 +18,11 @@ compare_gene(
   title_4 = "list_4",
   height_1 = 10,
   width_1 = 14,
-  folder = "compre_gene"
+  folder = "compre_gene",
+  col_1 = "red",
+  col_2 = "dodgerblue",
+  col_3 = "yellow3",
+  col_4 = "pink2"
 )
 }
 \arguments{
@@ -45,6 +49,14 @@ compare_gene(
 \item{width_1}{customize the width to save figure}
 
 \item{folder}{set the name of folder to save results}
+
+\item{col_1}{set color for common_high in two gene lists comparison plot}
+
+\item{col_2}{set color for common_low in two gene lists comparison plot}
+
+\item{col_3}{set color for High_Freq_list_1 in two gene lists comparison plot}
+
+\item{col_4}{set color for High_Freq_list_2 in two gene lists comparison plot}
 }
 \value{
 

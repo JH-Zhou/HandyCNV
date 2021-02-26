@@ -11,7 +11,9 @@ plot_gene(
   start,
   end,
   show_name = c(0, 160),
-  cnv = NULL
+  cnv = NULL,
+  height_1 = 2,
+  width_1 = 10
 )
 }
 \arguments{
@@ -27,6 +29,10 @@ plot_gene(
 
 \item{cnv}{is support for both CNV and ROH, set cnv argument as TRUE will plot gene for CNV, otherwise will plot gene for ROH
 interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three}
+
+\item{height_1}{set height for gene plot separately}
+
+\item{width_1set}{height for gene plot separately}
 }
 \value{
 
