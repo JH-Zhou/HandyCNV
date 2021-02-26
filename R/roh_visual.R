@@ -7,6 +7,8 @@
 #' @param show_name default value is show_name = c(0, 160). accept the vectors only, unit is Mb. for example show_name = c(11.2, 12.4, 15.3, 18.4), means only plot the genes within the given interval
 #' @param cnv is support for both CNV and ROH, set cnv argument as TRUE will plot gene for CNV, otherwise will plot gene for ROH
 #' interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three
+#' @param height_1 set height for gene plot separately
+#' @param width_1set height for gene plot separately
 #'
 #' @import ggplot2 dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -15,7 +17,7 @@
 #' @export plot_gene
 #'
 #' @examples
-plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), cnv = NULL){
+plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), cnv = NULL, height_1 = 2, width_1 = 10){
   ###
   #read gene
   #if(refgene == "ARS_ens"){
@@ -88,16 +90,34 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
 
     #check if plot for roh or CNV, the diferrence is when gene figure combine to interval reduce the distance between the middle (from top to bottom) are reduced when set 'cnv'
     if(is.null(cnv)){
-      ggplot() +
-        geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
-        #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
-        #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
-        geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
-        scale_x_continuous(limits = c(start, end)) +
-        #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
-        theme_bw() +
-        theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
-        labs(y = "Gene")
+      if(missing(height_1)){
+        ggplot() +
+          geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
+          #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
+          #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
+          geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
+          scale_x_continuous(limits = c(start, end)) +
+          #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
+          theme_bw() +
+          theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
+          labs(y = "Gene")
+      } else {
+        title_gene <- paste0("Chr", chr_id,"_", start,"_", end, ".png")
+        ggplot() +
+          geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
+          #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
+          #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
+          geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
+          scale_x_continuous(limits = c(start, end)) +
+          #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
+          theme_bw() +
+          theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
+          labs(y = "Gene")
+        ggsave(filename = title_gene, width = width_1, height = height_1, dpi = 350, units = "cm")
+      }
+
+
+
     } else {
       ggplot() +
         geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max), fill = "gray50", show.legend = F) +
