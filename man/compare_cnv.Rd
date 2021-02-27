@@ -46,6 +46,10 @@ compare_cnv(
 \item{legend_y}{decimal digit, default value is 0.9, consistent with ggplot manual coordinates of legend}
 
 \item{folder}{set name of folder to save results}
+
+\item{col_1}{set color for overlapped bar}
+
+\item{col_2}{set color for non-overlapped bar}
 }
 \value{
 Details comparison results of CNVs between input lists.

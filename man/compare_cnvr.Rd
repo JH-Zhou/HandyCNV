@@ -34,6 +34,10 @@ compare_cnvr(
 \item{hjust_num}{default value is 1.5. used to adjust horizontal position of the number of overlapped CNVR in the plot}
 
 \item{folder}{set name of folder to save results}
+
+\item{col_1}{set color for overlapped bar}
+
+\item{col_2}{set color for non-overlapped bar}
 }
 \value{
 Details comparison results of CNVRs between input lists

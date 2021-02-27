@@ -1,11 +1,11 @@
 Package: HandyCNV
 Type: Package
 Title: HandyCNV: An R package for Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH 
-Version: 0.1.0
-Author: JH Zhou and LY Liu
+Version: 1.0.0
+Author: Jinghang Zhou, Liyuan Liu, Yuangang Shi, Dorian Garrick
 Maintainer: JH Zhou <zjhang027@gmail.com>
-Description: Visualising CNV on both population and individual level for SNP chip data
-    Use four spaces when indenting paragraphs within the Description.
+Description: The package is aimed to provide a Standard, Reproducible and Time-saving pipelines for the post-analysis of CNV and CNVR.
+Depends: R (>= 3.5.0)
 Imports:
     data.table,
     dplyr,
