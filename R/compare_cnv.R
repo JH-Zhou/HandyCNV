@@ -20,6 +20,8 @@
 #' @param height_1 integer, default value is 14,number to set the height of final plot size, unit is 'cm'
 #' @param legend_x decimal digit, default value is 0.9, consistent with ggplot manual coordinates of legend
 #' @param legend_y decimal digit, default value is 0.9, consistent with ggplot manual coordinates of legend
+#' @param col_1 set color for overlapped bar
+#' @param col_2 set color for non-overlapped bar
 #' @param folder set name of folder to save results
 #' @import dplyr scales ggplot2
 #'
