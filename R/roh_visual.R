@@ -8,7 +8,7 @@
 #' @param cnv is support for both CNV and ROH, set cnv argument as TRUE will plot gene for CNV, otherwise will plot gene for ROH
 #' interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three
 #' @param height_1 set height for gene plot separately
-#' @param width_1set height for gene plot separately
+#' @param width_1 set height for gene plot separately
 #'
 #' @import ggplot2 dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
