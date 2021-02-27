@@ -20,6 +20,8 @@
 #' @param height_1 number to set the height of final plot size, unit is 'cm'
 #' @param hjust_prop default value is 0.0. used to adjust horizontal position of the number of overlapped CNVR in the plot
 #' @param hjust_num default value is 1.5. used to adjust horizontal position of the number of overlapped CNVR in the plot
+#' @param col_1 set color for overlapped bar
+#' @param col_2 set color for non-overlapped bar
 #' @param folder set name of folder to save results
 #' @import dplyr ggplot2
 #' @importFrom data.table fread fwrite setkey foverlaps
@@ -135,7 +137,8 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     print(paste0("The number of Non-overlaped CNVRs on population level is ", nrow(non_overlap_pop_umd), ", which is around ", non_overlap_percent_pop, " percent in first file"))
 
     #overlap length
-    overlap_length_1 <- sum(checkover_pop_length$Overlap_length, na.rm = TRUE)
+    overlap_length_1 <- sum(pop_overlap$Overlap_length, na.rm = TRUE)
+    #overlap_length_1 <- sum(checkover_pop_length$Overlap_length, na.rm = TRUE)
     cnvr_length_1 <- sum(checkover_pop_uniqe_1$Length, na.rm = TRUE)
     overlap_length_prop <- round((overlap_length_1 / cnvr_length_1),3) * 100
     print(paste0("The overlapping length is ", overlap_length_1, " bp, which is around ", overlap_length_prop, " percent in first file"))
@@ -188,7 +191,8 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     print(paste0("The number of Non-overlaped CNVRs in second file on population level are ", nrow(non_overlap_pop_ars), ", which is around ", non_overlap_percent_pop_2, " percent"))
 
     #overlap length
-    overlap_length_2 <- sum(checkover_pop_length_2$Overlap_length, na.rm = TRUE)
+    overlap_length_2 <- sum(pop_overlap_2$Overlap_length, na.rm = TRUE)
+    #overlap_length_2 <- sum(checkover_pop_length_2$Overlap_length, na.rm = TRUE)
     cnvr_length_2 <- sum(checkover_pop_uniqe_2$Length, na.rm = TRUE)
     overlap_length_prop_2 <- round((overlap_length_2 / cnvr_length_2),3) * 100
     print(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in first file"))
@@ -318,6 +322,8 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     #So we need to find out these CNVR with wrong position, then extarct the right CNVR for comparison
     wrong_umd <- subset(cnv_umd_ars, subset = (Start_ARS_Map == 0 | End_ARS_Map == 0 | is.na(Start_ARS_Map) | is.na(End_ARS_Map) | End_ARS_Map - Start_ARS_Map <= 0))
     right_umd <- subset(cnv_umd_ars, subset = !(Start_ARS_Map == 0 | End_ARS_Map == 0 | is.na(Start_ARS_Map) | is.na(End_ARS_Map) | End_ARS_Map - Start_ARS_Map <= 0))
+    print(paste0("There are ", nrow(right_umd), " CNVRs successful coordinates coversion in Input list 1"))
+    print(paste0("There are ", nrow(wrong_umd), " CNVRs failed to coordinates coversion in Input list 1"))
     #right_umd <- setdiff(x = cnv_umd_ars, y = wrong_umd)
     #which(cnv_umd_ars$Start_ARS_Map == 0)
     #which(cnv_umd_ars$End_ARS_Map == 0)
@@ -370,7 +376,8 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     print(paste0("The number of Non-overlaped CNVRs on population level is ", nrow(non_overlap_pop_umd), ", which is around ", non_overlap_percent_pop, " percent in first file"))
 
     #overlap length
-    overlap_length_1 <- sum(checkover_pop_length$Overlap_length, na.rm = TRUE)
+    overlap_length_1 <- sum(pop_overlap$Overlap_length, na.rm = TRUE)
+    #overlap_length_1 <- sum(checkover_pop_length$Overlap_length, na.rm = TRUE)
     cnvr_length_1 <- sum(checkover_pop_uniqe$Length, na.rm = TRUE)
     overlap_length_prop <- round((overlap_length_1 / cnvr_length_1),3) * 100
     print(paste0("The overlapping length is ", overlap_length_1, " bp, which is around ", overlap_length_prop, " percent in first file"))
@@ -428,7 +435,8 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     print(paste0("The number of Non-overlaped CNVRs in second file on population level are ", nrow(non_overlap_pop_ars), ", which is around ", non_overlap_percent_pop_2, " percent"))
 
     #overlap length
-    overlap_length_2 <- sum(checkover_pop_length_2$Overlap_length, na.rm = TRUE)
+    overlap_length_2 <- sum(pop_overlap_2$Overlap_length, na.rm = TRUE)
+    #overlap_length_2 <- sum(checkover_pop_length_2$Overlap_length, na.rm = TRUE)
     cnvr_length_2 <- sum(checkover_pop_uniqe_2$Length, na.rm = TRUE)
     overlap_length_prop_2 <- round((overlap_length_2 / cnvr_length_2),3) * 100
     print(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in first file"))
