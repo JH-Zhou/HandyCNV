@@ -7,8 +7,7 @@
 #' @param start_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param end_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param individual_id the ID of individual in cnv list, used to plot all chromosome for specific Individual
-#' @param plot_gene if true, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function
-#' @param refgene internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
+#' @param refgene if true, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function, internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
 #' @param plot_title set the title of final plot
 #' @param max_chr the maximum number of chromosomes to plot, it used for plot all chromosomes at once
 #' @param report_id report the sample ID while plotting
@@ -18,6 +17,11 @@
 #' @param height_1 number to set the height of final plot size, unit is 'cm'
 #' @param species which species in the input data, unused at the moment
 #' @param folder set the name of folder to save results
+#' @param col_0 set color for 0 copy of CNV
+#' @param col_1 set color for 1 copy of CNV
+#' @param col_2 set color for 2 copy of CNV (which might be ROH)
+#' @param col_3 set color for 3 copy of CNV
+#' @param col_4 set color for 4 copy of CNV
 #'
 #' @import dplyr ggplot2 tidyr ggrepel scales grDevices
 #'
@@ -26,12 +30,10 @@
 #' @return
 #' CNV distribution plot
 #'
-#' @export
-#'
-#' @examples
+#' @export cnv_visual
 #'
 
-cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, plot_gene = NULL, refgene = "ARS_ens", plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual") {
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "turquoise",  col_1 = "hotpink", col_2 = "deepbluesky", col_3 = "tomato", col_4= "purple") {
   if(!file.exists(paste0(folder))){
     dir.create(paste0(folder))
     print(paste0("A new folder '", folder, "' was created in working directory."))
@@ -59,13 +61,19 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
 
 
   #set length of chr
-  chr_length_ars <- data.frame("Chr" = c(29:1), "Length" = c( 51.098607, 45.94015, 45.612108, 51.992305,
-                                                                42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
-                                                                71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
-                                                                85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
-                                                                103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
-                                                                120.089316, 120.000601, 121.005158, 136.231102, 158.53411))
-  chr_length_ars <- chr_length_ars[order(chr_length_ars$Chr),]
+  # chr_length_ars <- data.frame("Chr" = c(29:1), "Length" = c( 51.098607, 45.94015, 45.612108, 51.992305,
+  #                                                               42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
+  #                                                               71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
+  #                                                               85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
+  #                                                               103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
+  #                                                               120.089316, 120.000601, 121.005158, 136.231102, 158.53411))
+  # chr_length_ars <- chr_length_ars[order(chr_length_ars$Chr),]
+
+  chr_length_ars <- cnv %>%
+                    group_by(Chr) %>%
+                    summarise(Length = max(End) / 1000000) %>%
+                    arrange(as.numeric(Chr)) %>%
+                    select(Chr, Length)
 
   #plot CNVs on specific chr
   plot_cnv_chr <- function(clean_cnv = NULL, chr_id = NULL, folder = folder, width_1 = 23, height_1 = 13.5){
@@ -77,20 +85,32 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     }
     id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr$Sample_ID))) #extract unique ID prepare coordinate
     id_coord$Order <- seq(1,nrow(id_coord),1)
-    id_coord$x <- chr_length_ars[chr_id, 2]
+    #id_coord$x <- chr_length_ars[chr_id, 2]
+    max_len = chr_length_ars %>%
+              filter(Chr == chr_id) %>%
+              select(Length)
+    id_coord$x <- max_len$Length
+
     id_coord$y <- (id_coord$Order-1)*5 + 1
     cnv_chr <- merge(cnv_chr, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
 
     chr_name <- paste0("Chr", chr_id, ".png")
     id_number <- nrow(id_coord)
     chr_title <- paste0("CNV on Chromosome ", chr_id, " with ", id_number, " Individuals")
-    png(res = 300, filename = paste0(folder,"/", chr_name), width = width_1, height = height_1, units = "cm")
+    png(res = 350, filename = paste0(folder,"/", chr_name), width = width_1, height = height_1, units = "cm")
+    #add manual color for cnv number
+    color_copy <- c("0" = col_0,
+                    "1" = col_1,
+                    "2" = col_2,
+                    "3" = col_3,
+                    "4" = col_4)
     chr_plot <- ggplot(cnv_chr, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
       geom_rect(aes(fill = as.factor(CNV_Value))) +
+      scale_fill_manual(values = color_copy) +
       #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
       theme_bw() +
       scale_y_continuous(labels = NULL) +
-      scale_x_continuous(breaks = seq(0, chr_length_ars[chr_id, 2], by = 5), limits = c(0, chr_length_ars[chr_id, 2])) +
+      scale_x_continuous(breaks = seq(0, max_len$Length, by = 5), limits = c(0, max_len$Length)) +
       labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "CNV_Num")
     print(chr_plot)
     dev.off()
@@ -128,26 +148,38 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   #print("Task done, plot was stored in working directory.")
   }
 
-  else if(is.null(chr_id) == "FALSE" & is.null(start_position) & is.null(plot_gene)){
+  else if(is.null(chr_id) == "FALSE" & is.null(start_position) & is.null(refgene)){
   #2.plot for specific chromosome
   cnv_chr <- cnv[cnv$Chr == chr_id, ]
   id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr$Sample_ID))) #extract unique ID prepare coordinate
   id_coord$Order <- seq(1,nrow(id_coord),1)
-  id_coord$x <- chr_length_ars[chr_id, 2]
+  max_len = chr_length_ars %>%
+            filter(Chr == chr_id) %>%
+            select(Length)
+  id_coord$x <- max_len$Length
+  #id_coord$x <- chr_length_ars[chr_id, 2]
   id_coord$y <- (id_coord$Order-1)*5 + 1
   cnv_chr <- merge(cnv_chr, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
 
   chr_name <- paste0("Chr", chr_id, ".png")
   id_number <- nrow(id_coord)
   chr_title <- paste0("CNV on Chromosome ", chr_id, " with ", id_number, " Individuals")
-  png(res = 300, filename = paste0(folder, "/", chr_name), width = 3500, height = 2000)
-  #png(res = 300, filename = "10_chr.png", width = 3500, height = 2000)
+  png(res = 350, filename = paste0(folder, "/", chr_name), width = width_1, height = height_1, units = "cm")
+
+  #add manual color for cnv number
+  color_copy <- c("0" = col_0,
+                  "1" = col_1,
+                  "2" = col_2,
+                  "3" = col_3,
+                  "4" = col_4)
+
   chr_plot <- ggplot(cnv_chr, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
     geom_rect(aes(fill = as.factor(CNV_Value))) +
+    scale_fill_manual(values = color_copy) +
     #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
     theme_bw() +
     scale_y_continuous(labels = NULL) +
-    scale_x_continuous(breaks = seq(0, chr_length_ars[chr_id, 2], by = 5), limits = c(0, chr_length_ars[chr_id, 2])) +
+    scale_x_continuous(breaks = seq(0, max_len$Length, by = 5), limits = c(0, max_len$Length)) +
     labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "CNV_Num")
   print(chr_plot)
   dev.off()
@@ -155,23 +187,34 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   }
 
   #else if(is.null(start_position & end_position) == "FALSE")
-  else if(is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(plot_gene))
+  else if(is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(refgene))
     {
   #3.zoom into specific region
   cnv_chr <- cnv[cnv$Chr == chr_id, ]
   cnv_chr_zoom <- filter(cnv_chr, Start >= start_position * 1000000 -1 & End <= end_position * 1000000 + 1)
   id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr_zoom$Sample_ID))) #extract unique ID prepare coordinate
   id_coord$Order <- seq(1,nrow(id_coord),1)
-  id_coord$x <- chr_length_ars[chr_id, 2]
+  #id_coord$x <- chr_length_ars[chr_id, 2]
+  max_len = chr_length_ars %>%
+            filter(Chr == chr_id) %>%
+            select(Length)
+  id_coord$x <- max_len$Length
   id_coord$y <- (id_coord$Order-1)*5 + 1
   cnv_chr_zoom <- merge(cnv_chr_zoom, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
   cnv_chr_zoom$zoom_x <- end_position
   zoom_name <- paste0(folder, "/Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
   id_number <- nrow(id_coord)
   zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
-  png(res = 300, filename = zoom_name, width = 3500, height = 2000)
+  png(res = 350, filename = zoom_name, width = width_1, height = height_1, units = "cm")
+  #add manual color for cnv number
+  color_copy <- c("0" = col_0,
+                  "1" = col_1,
+                  "2" = col_2,
+                  "3" = col_3,
+                  "4" = col_4)
   zoom_plot <- ggplot(cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
     geom_rect(aes(fill = as.factor(CNV_Value))) +
+    scale_fill_manual(values = color_copy) +
     #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
     theme_bw() +
     scale_y_continuous(labels = NULL) +
@@ -220,7 +263,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
           labs(x = "Sire ID", y = "Number of CNV", fill = "Copy of CNV")
       }
 
-      png(filename = paste0(folder, "/", zoom_name, "source.png"), res = 300, bg = "transparent", height = 2000, width = 2500)
+      png(filename = paste0(folder, "/", zoom_name, "source.png"), res = 350, bg = "transparent", height = height_1, width = width_1, units = "cm")
       if (exists("herd_cnv") & exists("source_cnv") & exists("sire_cnv")){
         cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
         print(cnv_source)
@@ -244,12 +287,17 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     }
   }
   }
-  else if (is.null(chr_id) == "FALSE" & is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(plot_gene) == "FALSE") {
+  else if (is.null(chr_id) == "FALSE" & is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(refgene) == "FALSE") {
     cnv_chr <- cnv[cnv$Chr == chr_id, ]
     cnv_chr_zoom <- filter(cnv_chr, Start >= start_position * 1000000 -1 & End <= end_position * 1000000 + 1)
     id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr_zoom$Sample_ID))) #extract unique ID prepare coordinate
     try(id_coord$Order <- seq(1, nrow(id_coord),1), silent = FALSE)
-    id_coord$x <- chr_length_ars[chr_id, 2]
+    #id_coord$x <- chr_length_ars[chr_id, 2]
+    max_len = chr_length_ars %>%
+      filter(Chr == chr_id) %>%
+      select(Length)
+    id_coord$x <- max_len$Length
+
     id_coord$y <- (id_coord$Order-1)*5 + 1
     cnv_chr_zoom <- merge(cnv_chr_zoom, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
     cnv_chr_zoom$zoom_x <- end_position
@@ -276,13 +324,19 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
     print(zoom_title)
     #png(res = 300, filename = zoom_name, width = 3500, height = 2000)
+    #add manual color for cnv number
+    color_copy <- c("0" = col_0,
+                    "1" = col_1,
+                    "2" = col_2,
+                    "3" = col_3,
+                    "4" = col_4)
     zoom_plot <- ggplot() +
       geom_rect(data = cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3, fill = as.factor(CNV_Value))) +
       #geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = "black") +
       #geom_text_repel(data = gene_coord_freq, aes(x = g_Start/1000000, y = (Order-1)*5 + 10, label = name2)) +
       #geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
-      #scale_color_manual(values = c("#F8766D", "#A3A500", "#00B0F6", "#E76BF3", "black")) +
+      scale_fill_manual(values = color_copy) +
       theme_bw() +
       theme(legend.key.size = unit(0.5,"line"),
             legend.title = element_text(size = 6),
@@ -303,7 +357,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
 
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
-    ggsave(filename = paste0(folder, "/", zoom_name), width = width_1, height = height_1, units = "cm", dpi = 300)
+    ggsave(filename = paste0(folder, "/", zoom_name), width = width_1, height = height_1, units = "cm", dpi = 350)
 
     print(zoom_plot)
     dev.off()
@@ -316,19 +370,27 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     #cnv_indiv <- cnv_p[which(cnv_p$Sample_ID == "204806050057_R01C01")]
   cnv_indiv <- cnv[which(cnv$Sample_ID == individual_id),]
   chr_coord <- data.frame("Chr" = seq(1,max(cnv_indiv$Chr),1))
-  chr_coord$x <- 160 #adjust x for geom_text
+  chr_coord$x <- max(cnv$End) #adjust x for geom_text
+
   chr_coord$y <- (chr_coord$Chr-1)*5 + 1 #adjust y for geom_text
   cnv_indiv_coord <- merge(cnv_indiv, chr_coord, all.x = TRUE, sort = FALSE)
 
   #4.
   indiv_name <- paste0("CNV_of_", individual_id,".png")
   indiv_title <- paste0("CNV Distribution of Individual ", individual_id)
-  png(res = 300, filename = paste0(folder,"/", indiv_name), width = 3500, height = 2000)
+  png(res = 350, filename = paste0(folder,"/", indiv_name), width = 3500, height = 2000)
+  #add manual color for cnv number
+  color_copy <- c("0" = col_0,
+                  "1" = col_1,
+                  "2" = col_2,
+                  "3" = col_3,
+                  "4" = col_4)
   indiv_plot <- ggplot(cnv_indiv_coord, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Chr-1)*5, ymax = (Chr-1)*5 + 3)) +
     geom_rect(aes(fill = as.factor(CNV_Value))) +
-    geom_text(aes(x, y, label = Chr), size = 4) + theme_bw() +
-    scale_y_continuous(breaks = seq(0, 160, by = 10),labels = NULL) +
-    scale_x_continuous(breaks = seq(0, 160, by = 10)) +
+    scale_fill_manual(values = color_copy) +
+    geom_text(aes(x/1000000, y, label = Chr), size = 4) + theme_bw() +
+    scale_y_continuous(breaks = seq(0, max(cnv$End)/1000000, by = 10),labels = NULL) +
+    scale_x_continuous(breaks = seq(0, max(cnv$End)/1000000, by = 10)) +
     labs(x = "Physical Position (Mb)", y ="Autosome", title = indiv_title,  fill= "CNV_Num")
   print(indiv_plot)
   dev.off()
