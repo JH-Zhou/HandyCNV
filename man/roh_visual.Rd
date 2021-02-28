@@ -13,13 +13,17 @@ roh_visual(
   start_position = NULL,
   end_position = NULL,
   individual_id = NULL,
-  gene = NULL,
+  refgene = NULL,
   plot_title = NULL,
   report_id = NULL,
   pedigree = NULL,
   show_name = c(0, 160),
   width_1 = 13,
-  height_1 = 10
+  height_1 = 10,
+  col_short = "deepskyblue",
+  col_mid = "black",
+  col_long = "deeppink2",
+  folder = "roh_visual"
 )
 }
 \arguments{
@@ -37,7 +41,7 @@ roh_visual(
 
 \item{individual_id}{reporting ID of individuals while plotting}
 
-\item{gene}{if true, will plot gene above roh plot}
+\item{refgene}{if true, will plot gene above roh plot}
 
 \item{plot_title}{add title in the plot}
 
@@ -50,6 +54,14 @@ roh_visual(
 \item{width_1}{number to set the width of final plot size, unit is 'cm'}
 
 \item{height_1}{number to set the height of final plot size, unit is 'cm'}
+
+\item{col_short}{set color to shorter length of roh in distribution plot}
+
+\item{col_mid}{set color to middle length of roh in distribution plot}
+
+\item{col_long}{set color to longer length of roh in distribution plot}
+
+\item{folder}{set new folder to save results}
 }
 \value{
 ROH distribution plot
@@ -57,7 +69,4 @@ ROH distribution plot
 \description{
 Title
 Visualizing ROH on both population level and individual level
-}
-\examples{
-
 }

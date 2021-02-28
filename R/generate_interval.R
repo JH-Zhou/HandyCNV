@@ -11,7 +11,6 @@
 #' @return interval
 #' @export generate_interval_integer
 #'
-#' @examples
 generate_interval_integer <- function(i, j){
   start_list = ""  #generate an empty list to store the output from for loop
   end_list = "" #generate an empty list to store the output from for loop
@@ -38,7 +37,6 @@ generate_interval_integer <- function(i, j){
 #' @return interval
 #' @export generate_interval_decimal
 #'
-#' @examples
 generate_interval_decimal <- function(i, j){
   start_list = ""
   end_list = ""

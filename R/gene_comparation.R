@@ -22,10 +22,9 @@
 #' @import dplyr ggplot2 scatterplot3d
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'
-#' @return
+#' @return Coparison summary results and plots.
 #' @export compare_gene
 #'
-#' @examples
 compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq_4 = NULL, common_gene_threshold = 3, title_1 = "list_1", title_2 = "list_2", title_3 = "list_3", title_4 = "list_4", height_1 = 10, width_1 =14, folder = "compre_gene", col_1 = "red", col_2 = "dodgerblue", col_3 = "yellow3", col_4 = "pink2"){
   #check and create folder
   if(!file.exists(folder)){

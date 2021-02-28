@@ -1,6 +1,6 @@
 #' Title convert_map
 #' Prepare map file for PennCNV and Plink with Default and Target assembly.
-#' Four colmuns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position
+#' Four columns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position
 #'
 #' @param default_map the map file to be converted
 #' @param target_map the map file used to convert
@@ -17,10 +17,9 @@
 #' @import ggplot2 dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'
-#' @return
+#' @return Details of comparison results between given map, and standard input map files used in PennCNV and Plink
 #' @export convert_map
 #'
-#' @examples
 convert_map <- function(default_map, target_map, defMap_title = "UMD 3.1", tarMap_title = "ARS .12", species = "Bovine", col_1 = "green4", col_2 = "red1", col_3 = "deeppink2", col_4 = "deeppink2", col_5 ="turquoise3", col_6 = "turquoise3"){
   if(!dir.exists(paths = "convert_map")){
     dir.create(path = "convert_map")

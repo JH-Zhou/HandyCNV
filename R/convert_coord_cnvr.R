@@ -8,10 +8,9 @@
 #' @import dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
 #'
-#' @return
+#' @return Interval with converted map
 #' @export convert_coord
 #'
-#' @examples
 convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
   map <- fread(map)
 
@@ -162,7 +161,6 @@ convert_coord <- function(input_ars =NULL, input_umd = NULL, map){
 #' @return overlap
 #' @export compare_interval
 #'
-#' @examples
 compare_interval <- function(interval_1, interval_2, map = NULL){
   cnvr_1 <- fread(interval_1)
   cnvr_1$Chr <- as.factor(cnvr_1$Chr)

@@ -59,7 +59,7 @@ compare_gene(
 \item{col_4}{set color for High_Freq_list_2 in two gene lists comparison plot}
 }
 \value{
-
+Coparison summary results and plots.
 }
 \description{
 Title compare_gene

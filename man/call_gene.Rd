@@ -21,7 +21,7 @@ call_gene(
 \item{folder}{set the name of folder to save results}
 }
 \value{
-
+Annotated file and brief summary
 }
 \description{
 This function used for annotating genes for any interval by giving the interval list and reference gene list.

@@ -14,15 +14,19 @@ cnv_visual(
   end_position = NULL,
   individual_id = NULL,
   max_chr_length = 160,
-  plot_gene = NULL,
-  refgene = "ARS_ens",
+  refgene = NULL,
   plot_title = NULL,
   report_id = NULL,
   pedigree = NULL,
   show_name = c(0, 160),
   width_1 = 13,
   height_1 = 10,
-  folder = "cnv_visual"
+  folder = "cnv_visual",
+  col_0 = "turquoise",
+  col_1 = "hotpink",
+  col_2 = "deepbluesky",
+  col_3 = "tomato",
+  col_4 = "purple"
 )
 }
 \arguments{
@@ -42,9 +46,7 @@ cnv_visual(
 
 \item{max_chr_length}{the maximum length of chromosome, default unit is 'Mb'}
 
-\item{plot_gene}{if true, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function}
-
-\item{refgene}{internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data}
+\item{refgene}{if true, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function, internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data}
 
 \item{plot_title}{set the title of final plot}
 
@@ -59,6 +61,16 @@ cnv_visual(
 \item{height_1}{number to set the height of final plot size, unit is 'cm'}
 
 \item{folder}{set the name of folder to save results}
+
+\item{col_0}{set color for 0 copy of CNV}
+
+\item{col_1}{set color for 1 copy of CNV}
+
+\item{col_2}{set color for 2 copy of CNV (which might be ROH)}
+
+\item{col_3}{set color for 3 copy of CNV}
+
+\item{col_4}{set color for 4 copy of CNV}
 }
 \value{
 CNV distribution plot
@@ -66,7 +78,4 @@ CNV distribution plot
 \description{
 Title visual CNV
 Visualizing CNV on both population level and individual level
-}
-\examples{
-
 }

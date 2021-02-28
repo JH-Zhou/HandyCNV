@@ -35,7 +35,7 @@ interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three}
 \item{width_1}{set height for gene plot separately}
 }
 \value{
-
+gene plot with given interval
 }
 \description{
 Title plot_gene

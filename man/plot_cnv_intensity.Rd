@@ -27,7 +27,7 @@ plot_cnv_intensity(
 \item{common_cnv_threshold}{two decimal places, combine with sample_size to set the common threshold}
 }
 \value{
-
+CNVR plots
 }
 \description{
 Title plot_cnv_intensity

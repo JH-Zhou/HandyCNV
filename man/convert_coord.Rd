@@ -15,7 +15,7 @@ convert_coord(input_ars = NULL, input_umd = NULL, map)
 \item{map}{map file contains coordinates in both version of map. default file is generated from convert_map function}
 }
 \value{
-
+Interval with converted map
 }
 \description{
 Title convert_coord

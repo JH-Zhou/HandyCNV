@@ -4,7 +4,7 @@
 \alias{convert_map}
 \title{Title convert_map
 Prepare map file for PennCNV and Plink with Default and Target assembly.
-Four colmuns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position}
+Four columns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position}
 \usage{
 convert_map(
   default_map,
@@ -44,10 +44,10 @@ convert_map(
 \item{col_6}{set color for line of Default_map in SNP density plot}
 }
 \value{
-
+Details of comparison results between given map, and standard input map files used in PennCNV and Plink
 }
 \description{
 Title convert_map
 Prepare map file for PennCNV and Plink with Default and Target assembly.
-Four colmuns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position
+Four columns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position
 }
