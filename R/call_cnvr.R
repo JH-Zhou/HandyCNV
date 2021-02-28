@@ -14,7 +14,6 @@
 #' @return Four or five tables. Including CNVR list, brief summary and individual cnv and CNVR ID.
 #' @export call_cnvr
 #'
-#' @examples
 call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
   if(!file.exists(paste0("call_cnvr_", folder))){
     dir.create(paste0("call_cnvr_", folder))
