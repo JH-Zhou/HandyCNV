@@ -11,10 +11,9 @@
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
 #' @importFrom ggplotify base2grob
 #'
-#' @return
-#' @export
+#' @return CNVR plots
+#' @export plot_cnv_intensity
 #'
-#' @examples
 plot_cnv_intensity <- function(cnvr, cnv_annotation, intensity, map, sample_size, common_cnv_threshold = 0.05) {
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)

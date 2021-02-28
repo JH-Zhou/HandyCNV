@@ -18,7 +18,6 @@
 #' @return cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...
 #' @export plot_cnvr_panorama
 #'
-#' @examples
 plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama") {
   if(!file.exists(folder)){
     dir.create(folder)

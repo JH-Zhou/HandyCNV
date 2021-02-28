@@ -14,7 +14,6 @@
 #' @return
 #' @export
 #'
-#' @examples
   plot_intensity <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, sample_size, common_cnv_threshold = 0.05, chr_id, start_position, end_position) {
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)

@@ -12,7 +12,6 @@
 #' @return Some summary pictures
 #' @export cnv_summary_plot
 #'
-#' @examples
 cnv_summary_plot <- function(clean_cnv, plot_sum_1 = NULL, plot_sum_2 = NULL, folder = 'cnv_summary_plot') {
   if (!file.exists(folder)){
     dir.create(folder)

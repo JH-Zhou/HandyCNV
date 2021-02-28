@@ -10,10 +10,9 @@
 #' @importFrom data.table fread fwrite
 #' @importFrom tidyr separate
 #'
-#' @return
+#' @return Formatted CNV results and brief summary files.
 #' @export cnv_clean
 #'
-#' @examples
 cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/") {
   #create a directory to store output files
   if (!file.exists("clean_cnv")){

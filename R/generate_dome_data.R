@@ -13,7 +13,6 @@
 #' @return Demo data of Intensity, Map, Ped file which appears only in CNVRs
 #' @export get_demo
 #'
-#' @examples
 get_demo <- function(intensity = NULL, ped = NULL, map = NULL, cnvr = NULL, freq_threshold = 0, folder = "demo_data"){
   if (!(file.exists(folder))){
     dir.create(folder)

@@ -21,7 +21,6 @@
 #' If given clean_cnv file, will plot all CNVRs which are passed common threshold.
 #' @export cnvr_plot
 #'
-#' @examples
 cnvr_plot <- function(cnvr, assembly = "ARS", legend_x = 127, legend_y = 30, clean_cnv = NULL, sample_size = NULL, common_cnv_threshold = 0.05, refgene = "ARS", gain_col = "red", loss_col = "green", mixed_col ="blue", folder ="cnvr_plot") {
   if(!file.exists(paste0(folder))){
     dir.create(paste0(folder))
@@ -139,7 +138,7 @@ cnvr_plot <- function(cnvr, assembly = "ARS", legend_x = 127, legend_y = 30, cle
     print(paste0("There ", nrow(high_freq), " high frequent CNVR passed the customized threshold."))
     for (i in 1:nrow(high_freq)) {
       print(paste0("Ploting CNVR ", i, "..." ))
-      cnv_visual(clean_cnv = clean_cnv, chr_id = high_freq$Chr[i], start_position = high_freq$Start[i]/1000000, end_position = high_freq$End[i]/1000000, plot_gene = 1, refgene = refgene, folder = folder)
+      cnv_visual(clean_cnv = clean_cnv, chr_id = high_freq$Chr[i], start_position = high_freq$Start[i]/1000000, end_position = high_freq$End[i]/1000000, refgene = refgene, folder = folder)
     }
   }
 }

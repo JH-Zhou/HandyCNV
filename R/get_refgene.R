@@ -10,7 +10,6 @@
 #' @return formatted gene list.
 #' @export clean_ensgene
 #'
-#' @examples
 clean_ensgene <- function(refgene , ens_id){
   refgene = refgene
   ens_id = ens_id
@@ -59,7 +58,6 @@ clean_ucsc <- function(refgene){
 #' @return Standard formatted reference gene list
 #' @export get_refgene
 #'
-#' @examples
 get_refgene <- function(gene_version = NULL){
   support_ver <- c("cow_ARS_UCSC", "cow_ARS_ENS", "cow_UMD_UCSC", "pig_susScr11_UCSC", "pig_susScr11_ENS", "Human_hg38")
   support_version <- data.frame(version = c("cow_ARS_UCSC",

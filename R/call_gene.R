@@ -12,10 +12,9 @@
 #'
 #' @importFrom  data.table fread fwrite setkey foverlaps
 #'
-#' @return
-#' @export
+#' @return Annotated file and brief summary
+#' @export call_gene
 #'
-#' @examples
 call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, folder = "ARS"){
   if(!file.exists(paste0("call_gene_", folder))){
     dir.create(paste0("call_gene_", folder))
