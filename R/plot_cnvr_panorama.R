@@ -149,8 +149,17 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       #scale_color_manual(values = c("#F8766D", "#A3A500", "#00B0F6", "#E76BF3", "black")) +
       theme_bw() +
-      {if(missing(intensity)) theme(legend.position = "right")} +
-      {if(!missing(intensity)) theme(legend.position = "top")} +
+      theme(legend.key.size = unit(0.5,"line"),
+            legend.title = element_text(size = 6),
+            legend.text  = element_text(size = 6),
+            legend.margin=margin(-10, 0, 0, 0),
+            legend.position = c(0.95, -0.087),
+            legend.justification='right',
+            legend.direction='horizontal',
+            plot.margin=unit(c(0,1,1,1), "cm"),
+            axis.ticks.y = element_blank()) +
+      #{if(missing(intensity)) theme(legend.position = "right")} +
+      #{if(!missing(intensity)) theme(legend.position = "top")} +
       #scale_y_continuous(labels = NULL) +
       #scale_x_continuous(breaks = seq(round(start_position,2), round(end_position,2), by = 0.2)) +
       labs(x = "Physical Position (Mb)", y ="Individual", title = zoom_title, fill = "Copy")
