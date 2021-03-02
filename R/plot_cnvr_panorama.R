@@ -24,30 +24,36 @@
 #' @return cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...
 #' @export plot_cnvr_panorama
 #'
-plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", col_gene = "black") {
+plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NULL, prefix_bed = NULL, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", col_gene = "black") {
   if(!file.exists(folder)){
     dir.create(folder)
     print(paste0("A new folder ", folder,  "was created in working directory."))
   }
-  #1.Read the CNVR result----
-  cnvr <- fread(file = cnvr)
-  cnvr <- unite(cnvr, "title", names(cnvr[, c("Chr", "Start", "End", "Type")]), remove = FALSE) #generate a new columns name
-  high_freq <- cnvr %>%
-    filter(Frequent >= sample_size * common_cnv_threshold) %>%
-    arrange(Length)
-  if(nrow(high_freq) == 0){
-    print("No CNVR passed the high frequency threshold, please reset your common_cnv_threshold!")
-  } else {
-    print(paste0(nrow(high_freq), " CNVRs passed the common frequency threshold."))
+
+  if(!(missing(cnvr))){
+    #1.Read the CNVR result----
+    cnvr <- fread(file = cnvr)
+    cnvr <- unite(cnvr, "title", names(cnvr[, c("Chr", "Start", "End", "Type")]), remove = FALSE) #generate a new columns name
+    high_freq <- cnvr %>%
+      filter(Frequent >= sample_size * common_cnv_threshold) %>%
+      arrange(Length)
+    if(nrow(high_freq) == 0){
+      print("No CNVR passed the high frequency threshold, please reset your common_cnv_threshold!")
+    } else {
+      print(paste0(nrow(high_freq), " CNVRs passed the common frequency threshold."))
+    }
   }
 
-  #2.read cnv
-  cnv <- fread(file = cnv_annotation)
-  names(cnv)[names(cnv) == "CNV_Start"] <- "Start"
-  names(cnv)[names(cnv) == "CNV_End"] <- "End"
-  #merge cnv and cnvr
-  setkey(cnv, Chr, Start, End)
-  cnv_cnvr <- foverlaps(cnvr, cnv)
+  if(!missing(cnv_annotation)){
+    #2.read cnv
+    cnv <- fread(file = cnv_annotation)
+    names(cnv)[names(cnv) == "CNV_Start"] <- "Start"
+    names(cnv)[names(cnv) == "CNV_End"] <- "End"
+    #merge cnv and cnvr
+    setkey(cnv, Chr, Start, End)
+    cnv_cnvr <- foverlaps(cnvr, cnv)
+  }
+
   #3. Read SNP intensity file----
   if(!(missing(intensity)) & !(missing(map))){
     default_title <- c("SNP Name", "Sample ID",	"B Allele Freq", "Log R Ratio")
@@ -126,7 +132,7 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
 
     #zoom_name <- paste0("Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
     id_number <- nrow(id_coord)
-    zoom_title <- paste0("Chr ", chr_id, ": ", round(start_position/1000000, 2)," - ", round(end_position/1000000, 2), " Mb", " with ", id_number," Samples")
+    zoom_title <- paste0("Chr", chr_id, ":", round(start_position/1000000, 2),"-", round(end_position/1000000, 2), "Mb", " with ", id_number," Samples")
     #png(res = 300, filename = zoom_name, width = 3500, height = 2000)
     color_copy <- c("0" = col_0,
                     "1" = col_1,
@@ -137,15 +143,16 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
       geom_rect(data = cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3, fill = as.factor(CNV_Value))) +
       scale_fill_manual(values = color_copy) +
       geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = col_gene) +
-      geom_text_repel(data = gene_coord, aes(x = g_Start/1000000, y = (Order-1)*5 + 4, label = name2)) +
+      geom_text_repel(data = gene_coord, aes(x = g_Start/1000000, y = (Order-1)*5 + 4, label = name2), size = 2.2) +
       geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       #scale_color_manual(values = c("#F8766D", "#A3A500", "#00B0F6", "#E76BF3", "black")) +
       theme_bw() +
-      theme(legend.position = "top") +
+      {if(missing(intensity)) theme(legend.position = "right")} +
+      {if(!missing(intensity)) theme(legend.position = "top")} +
       #scale_y_continuous(labels = NULL) +
       #scale_x_continuous(breaks = seq(round(start_position,2), round(end_position,2), by = 0.2)) +
-      labs(x = "Physical Position (Mb)", y ="Individual", title = zoom_title, fill = "CNV_Num")
+      labs(x = "Physical Position (Mb)", y ="Individual", title = zoom_title, fill = "Copy")
 
     if(!(missing(intensity)) & !(missing(map))){
       #5.6 Plot BAF, LRR, LF MAF----
