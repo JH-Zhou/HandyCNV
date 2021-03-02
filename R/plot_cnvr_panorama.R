@@ -17,6 +17,7 @@
 #' @param col_3 set color for 3 copy of CNV
 #' @param col_4 set color for 4 copy of CNV
 #' @param col_gene set color of gene in CNV plot
+#' @param gene_font_size set size of gene in CNV annotated plot
 #'
 #' @import dplyr ggrepel ggplot2 tidyr gaston cowplot scales
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -24,7 +25,7 @@
 #' @return cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...
 #' @export plot_cnvr_panorama
 #'
-plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NULL, prefix_bed = NULL, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", col_gene = "black") {
+plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NULL, prefix_bed = NULL, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", col_gene = "black", gene_font_size = 2.2) {
   if(!file.exists(folder)){
     dir.create(folder)
     print(paste0("A new folder ", folder,  "was created in working directory."))
@@ -143,7 +144,7 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
       geom_rect(data = cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3, fill = as.factor(CNV_Value))) +
       scale_fill_manual(values = color_copy) +
       geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = col_gene) +
-      geom_text_repel(data = gene_coord, aes(x = g_Start/1000000, y = (Order-1)*5 + 4, label = name2), size = 2.2) +
+      geom_text_repel(data = gene_coord, aes(x = g_Start/1000000, y = (Order-1)*5 + 4, label = name2), size = gene_font_size) +
       geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       #scale_color_manual(values = c("#F8766D", "#A3A500", "#00B0F6", "#E76BF3", "black")) +
