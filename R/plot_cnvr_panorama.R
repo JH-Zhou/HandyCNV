@@ -119,11 +119,14 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
     g_order_2 <- max(cnv_chr_zoom$Order) + 9
     g_order_3 <- max(cnv_chr_zoom$Order) + 12
     g_order_4 <- max(cnv_chr_zoom$Order) + 15
+
     gene_coord <- cnv_chr_zoom %>%
                   group_by(name2) %>%
                   drop_na(g_Start) %>%
                   arrange(g_Start) %>%
                   distinct(name2, .keep_all = T) %>%
+                  filter(str_detect(name2, "[:alpha:]")) %>% #drop the gene without a certain name
+                  #filter(!(name2 > 0)) %>%
                   ungroup() %>%
                     mutate(Order = case_when(length(Chr) <= 5 ~ rep_len(c(g_order, g_order_1),length.out = length(Chr)),
                                length(Chr) > 5 & length(name2) <= 15 ~ rep_len(c(g_order, g_order_1, g_order_2),length.out = length(Chr)),
