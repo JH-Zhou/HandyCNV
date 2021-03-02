@@ -33,7 +33,7 @@
 #' @export cnv_visual
 #'
 
-cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "turquoise",  col_1 = "hotpink", col_2 = "deepbluesky", col_3 = "tomato", col_4= "purple") {
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue") {
   if(!file.exists(paste0(folder))){
     dir.create(paste0(folder))
     print(paste0("A new folder '", folder, "' was created in working directory."))
@@ -187,106 +187,115 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   }
 
   #else if(is.null(start_position & end_position) == "FALSE")
-  else if(is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(refgene))
-    {
-  #3.zoom into specific region
-  cnv_chr <- cnv[cnv$Chr == chr_id, ]
-  cnv_chr_zoom <- filter(cnv_chr, Start >= start_position * 1000000 -1 & End <= end_position * 1000000 + 1)
-  id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr_zoom$Sample_ID))) #extract unique ID prepare coordinate
-  id_coord$Order <- seq(1,nrow(id_coord),1)
-  #id_coord$x <- chr_length_ars[chr_id, 2]
-  max_len = chr_length_ars %>%
-            filter(Chr == chr_id) %>%
-            select(Length)
-  id_coord$x <- max_len$Length
-  id_coord$y <- (id_coord$Order-1)*5 + 1
-  cnv_chr_zoom <- merge(cnv_chr_zoom, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
-  cnv_chr_zoom$zoom_x <- end_position
-  zoom_name <- paste0(folder, "/Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
-  id_number <- nrow(id_coord)
-  zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
-  png(res = 350, filename = zoom_name, width = width_1, height = height_1, units = "cm")
-  #add manual color for cnv number
-  color_copy <- c("0" = col_0,
-                  "1" = col_1,
-                  "2" = col_2,
-                  "3" = col_3,
-                  "4" = col_4)
-  zoom_plot <- ggplot(cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
-    geom_rect(aes(fill = as.factor(CNV_Value))) +
-    scale_fill_manual(values = color_copy) +
-    #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
-    theme_bw() +
-    scale_y_continuous(labels = NULL) +
-    scale_x_continuous(breaks = seq(start_position, end_position)) +
-    labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
-  print(zoom_plot)
-  dev.off()
-  print("Task done, plot was stored in working directory.")
-  if(!is.null(report_id)) {
-    indiv_id <- unique(cnv_chr_zoom$Sample_ID)
-    print("Individual ID in this CNVRs as following: ")
-    print(indiv_id)
-    return(indiv_id)
-    #assign("indiv_id", value = cnv_chr_zoom, envir = .GlobalEnv)
-    indiv <- cnv_chr_zoom
-    #cnv_visual(clean_cnv = "clean_cnv/penncnv_clean.cnv", chr_id = 5, start_position = 93.6, end_position = 93.7, report_id = 1)
-    if(!(is.null(pedigree))){
-      pedb <- fread(pedigree)
-      if (exists("pedb")) {
-        print("Pedigree was read in.")
-      }
-      indiv_id_ped <- merge(indiv, pedb, by.x = "Sample_ID", by.y = "Chip_ID", all.x = TRUE)
-      #print(colnames(indiv_id_ped))
+  else if(is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(refgene)){
+    #3.zoom into specific region
+    cnv_chr <- cnv[cnv$Chr == chr_id, ]
+    cnv_chr_zoom <- filter(cnv_chr, Start >= start_position * 1000000 -1 & End <= end_position * 1000000 + 1)
+    id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr_zoom$Sample_ID))) #extract unique ID prepare coordinate
+    id_coord$Order <- seq(1,nrow(id_coord),1)
+    #id_coord$x <- chr_length_ars[chr_id, 2]
+    max_len = chr_length_ars %>%
+      filter(Chr == chr_id) %>%
+      select(Length)
+    id_coord$x <- max_len$Length
+    id_coord$y <- (id_coord$Order-1)*5 + 1
+    cnv_chr_zoom <- merge(cnv_chr_zoom, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
+    cnv_chr_zoom$zoom_x <- end_position
+    zoom_name <- paste0(folder, "/Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
+    id_number <- nrow(id_coord)
+    zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
 
-      if ("Herd" %in% colnames(indiv_id_ped)){
-        herd_cnv <- ggplot(indiv_id_ped, aes(x = as.factor(Herd), fill = as.factor(CNV_Value))) +
-          geom_bar() +
-          theme_classic()+
-          theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
-          labs(x = "Name of Herd", y = "Number of CNV", fill = "Copy of CNV")
-      }
+    #add manual color for cnv number
+    color_copy <- c("0" = col_0,
+                    "1" = col_1,
+                    "2" = col_2,
+                    "3" = col_3,
+                    "4" = col_4)
+    zoom_plot <- ggplot(cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
+      geom_rect(aes(fill = as.factor(CNV_Value))) +
+      scale_fill_manual(values = color_copy) +
+      #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
+      theme_bw() +
+      scale_y_continuous(labels = NULL) +
+      scale_x_continuous(breaks = seq(start_position, end_position)) +
+      labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
+    if(is.null(report_id)){
+      png(res = 350, filename = zoom_name, width = width_1, height = height_1, units = "cm")
+      print(zoom_plot)
+      dev.off()
+      print("Task done, plot was stored in working directory.")
+    } else {
+      indiv_id <- unique(cnv_chr_zoom$Sample_ID)
+      print("Individual ID in this CNVRs as following: ")
+      print(indiv_id)
+      #assign("indiv_id", value = cnv_chr_zoom, envir = .GlobalEnv)
+      indiv <- cnv_chr_zoom
+      #cnv_visual(clean_cnv = "clean_cnv/penncnv_clean.cnv", chr_id = 5, start_position = 93.6, end_position = 93.7, report_id = 1)
+      if(!(is.null(pedigree))){
+        pedb <- fread(pedigree)
+        if (exists("pedb")) {
+          print("Pedigree was read in.")
+        }
+        indiv_id_ped <- merge(indiv, pedb, by.x = "Sample_ID", by.y = "Chip_ID", all.x = TRUE)
+        #print(colnames(indiv_id_ped))
+        color_copy <- c("0" = col_0,
+                        "1" = col_1,
+                        "2" = col_2,
+                        "3" = col_3,
+                        "4" = col_4)
+        if ("Herd" %in% colnames(indiv_id_ped)){
+          herd_cnv <- ggplot(indiv_id_ped, aes(x = as.factor(Herd), fill = as.factor(CNV_Value))) +
+            geom_bar(show.legend = FALSE) +
+            scale_fill_manual(values = color_copy) +
+            theme_classic()+
+            theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+            labs(x = "Name of Herd", y = "Number of CNV")
+        }
 
-      if ("Sire_Source" %in% colnames(indiv_id_ped)){
-        source_cnv <- ggplot(indiv_id_ped, aes(x = Sire_Source, fill = as.factor(CNV_Value))) +
-          geom_bar() +
-          theme_classic()+
-          theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
-          labs(x = "Bull Source", y = "Number of CNV", fill = "Copy of CNV")
-      }
+        if ("Sire_Source" %in% colnames(indiv_id_ped)){
+          source_cnv <- ggplot(indiv_id_ped, aes(x = Sire_Source, fill = as.factor(CNV_Value))) +
+            geom_bar(show.legend = FALSE) +
+            scale_fill_manual(values = color_copy) +
+            theme_classic()+
+            theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+            labs(x = "Bull Source", y = "Number of CNV")
+        }
 
-      if ("Sire_ID" %in% colnames(indiv_id_ped)){
-        sire_cnv <- ggplot(indiv_id_ped, aes(x = Sire_ID, fill = as.factor(CNV_Value))) +
-          geom_bar()+
-          theme_classic()+
-          theme(axis.text.x = element_text(angle = 45), legend.position = "top") +
-          labs(x = "Sire ID", y = "Number of CNV", fill = "Copy of CNV")
-      }
+        if ("Sire_ID" %in% colnames(indiv_id_ped)){
+          sire_cnv <- ggplot(indiv_id_ped, aes(x = Sire_ID, fill = as.factor(CNV_Value))) +
+            geom_bar(show.legend = FALSE)+
+            scale_fill_manual(values = color_copy) +
+            theme_classic()+
+            theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+            labs(x = "Sire ID", y = "Number of CNV")
+        }
 
-      png(filename = paste0(folder, "/", zoom_name, "source.png"), res = 350, bg = "transparent", height = height_1, width = width_1, units = "cm")
-      if (exists("herd_cnv") & exists("source_cnv") & exists("sire_cnv")){
-        cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
-        print(cnv_source)
-        dev.off()
-      } else if (exists("herd_cnv") & exists("source_cnv")) {
-        cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
-        print(cnv_source)
-        dev.off()
-      } else if (exists("herd_cnv") & exists("sire_cnv")) {
-        cnv_source <- plot_grid(herd_cnv, sire_cnv, ncol = 1)
-        print(cnv_source)
-        dev.off()
-      } else if (exists("source_cnv") & exists("sire_cnv")) {
-        cnv_source <- plot_grid(source_cnv, sire_cnv, ncol = 1)
-        print(cnv_source)
-        dev.off()
-      } else {
-        print(sire_cnv)
-        dev.off()
+        source_title <- paste0(folder, "/Chr", chr_id, "_",start_position,"-",end_position, "Mb_Source", ".png")
+        png(filename = paste0(source_title), res = 350, bg = "transparent", height = height_1, width = width_1, units = "cm")
+        if (exists("herd_cnv") & exists("source_cnv") & exists("sire_cnv")){
+          cnv_source <- plot_grid(zoom_plot, herd_cnv, source_cnv, sire_cnv, ncol = 1)
+          print(cnv_source)
+          dev.off()
+        } else if (exists("herd_cnv") & exists("source_cnv")) {
+          cnv_source <- plot_grid(zoom_plot, herd_cnv, source_cnv, sire_cnv, ncol = 1)
+          print(cnv_source)
+          dev.off()
+        } else if (exists("herd_cnv") & exists("sire_cnv")) {
+          cnv_source <- plot_grid(zoom_plot, herd_cnv, sire_cnv, ncol = 1)
+          print(cnv_source)
+          dev.off()
+        } else if (exists("source_cnv") & exists("sire_cnv")) {
+          cnv_source <- plot_grid(zoom_plot, source_cnv, sire_cnv, ncol = 1)
+          print(cnv_source)
+          dev.off()
+        } else {
+          print(sire_cnv)
+          dev.off()
+        }
       }
+      return(indiv_id)
     }
-  }
-  }
+    }
   else if (is.null(chr_id) == "FALSE" & is.null(start_position) == "FALSE" & is.null(end_position) == "FALSE" & is.null(refgene) == "FALSE") {
     cnv_chr <- cnv[cnv$Chr == chr_id, ]
     cnv_chr_zoom <- filter(cnv_chr, Start >= start_position * 1000000 -1 & End <= end_position * 1000000 + 1)
@@ -364,8 +373,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     print("Task done, plot was stored in working directory.")
   }
 
-  else if (is.null(individual_id) == "FALSE")
-    {
+  else if (is.null(individual_id) == "FALSE"){
   #plot on individual level
     #cnv_indiv <- cnv_p[which(cnv_p$Sample_ID == "204806050057_R01C01")]
   cnv_indiv <- cnv[which(cnv$Sample_ID == individual_id),]
