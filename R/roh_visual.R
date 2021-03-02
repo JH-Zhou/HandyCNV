@@ -223,7 +223,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     cnv_pop <- dplyr::filter(cnv_pop, cnv_pop$Chr >=1 & cnv_pop$Chr <= max_chr)
     png(res = 350, filename = paste0(folder, "/1_chr_all_roh.png"), width = width_1, height = height_1, units = "cm")
     popu_plot <- ggplot(cnv_pop, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
-      geom_rect(aes(fill = Length)) +
+      geom_rect(aes(fill = Length/1000000)) +
       scale_fill_gradientn(colours = c(col_short, col_mid, col_long)) +
       theme_classic() +
       scale_y_continuous(labels = NULL) +
@@ -252,10 +252,10 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     chr_name <- paste0(folder, "/Chr", chr_id, "_roh.png")
     id_number <- nrow(id_coord)
     chr_title <- paste0("ROH on Chromosome ", chr_id, " with ", id_number, " Individuals")
-    png(res = 350, filename = chr_name, width = width_1, height = height_1)
+    png(res = 350, filename = chr_name, width = width_1, height = height_1, units = "cm")
     #png(res = 300, filename = "10_chr.png", width = 3500, height = 2000)
     chr_plot <- ggplot(cnv_chr, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
-      geom_rect(aes(fill = Length)) +
+      geom_rect(aes(fill = Length/1000000), show.legend = FALSE) +
       scale_fill_gradientn(colours = c(col_short, col_mid, col_long)) +
       #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
       theme_bw() +
@@ -286,9 +286,9 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     zoom_name <- paste0(folder, "/Chr", chr_id, "_",start_position,"-",end_position, "Mb", "_roh.png")
     id_number <- nrow(id_coord)
     zoom_title <- paste0(folder, "/ROH on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
-    png(res = 350, filename = zoom_name, width = width_1, height = height_1)
+    png(res = 350, filename = zoom_name, width = width_1, height = height_1, units = "cm")
     zoom_plot <- ggplot(cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
-      geom_rect(aes(fill = Length)) +
+      geom_rect(aes(fill = Length/1000000)) +
       scale_fill_gradientn(colours = c(col_short, col_mid, col_long)) +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       theme_bw() +
@@ -339,7 +339,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
             labs(x = "Sire ID", y = "Number of ROH", fill = "Copy of ROH")
         }
 
-        png(filename = paste0(zoom_name, "source.png"), res = 350, bg = "transparent", height = height_1, width = width_1)
+        png(filename = paste0(zoom_name, "source.png"), res = 350, bg = "transparent", height = height_1, width = width_1, units = "cm")
         if (exists("herd_cnv") & exists("source_cnv") & exists("sire_cnv")){
           cnv_source <- plot_grid(herd_cnv, source_cnv, sire_cnv, ncol = 1)
           print(cnv_source)
@@ -420,7 +420,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     indiv_title <- paste0("ROH Distribution of Individual ", individual_id)
     png(res = 350, filename = indiv_name, width = width_1, height = height_1, units = "cm")
     indiv_plot <- ggplot(cnv_indiv_coord) +
-      geom_rect(aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Chr-1)*5, ymax = (Chr-1)*5 + 3, fill = Length)) +
+      geom_rect(aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Chr-1)*5, ymax = (Chr-1)*5 + 3, fill = Length/1000000)) +
       #scale_fill_gradient(low = col_short, high = col_long) +
       scale_fill_gradientn(colours = c(col_short, col_mid, col_long)) +
       geom_text(aes(x = x/1000000, y, label = Chr), size = 4) +

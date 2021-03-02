@@ -11,9 +11,12 @@ roh_window(
   threshold = 0.3,
   folder = "roh_window",
   col_higher = "red",
-  col_lower = "blue",
-  height_1 = 1800,
-  width_1 = 2100
+  col_lower = "black",
+  height_1 = 18,
+  width_1 = 21,
+  legend_x = 0.9,
+  legend_y = 0.1,
+  ncol_1 = 6
 )
 }
 \arguments{
@@ -32,9 +35,15 @@ and 1000*0.5 = 500, the value of histogram above 500 will be color as red and th
 
 \item{col_lower}{set the color of bar which frequency lower than threshold in high frequent ROH plot}
 
-\item{height_1}{set the height of final high frequent ROH plot}
+\item{height_1}{set the height of final high frequent ROH plot, units ='cm'}
 
-\item{width_1}{set the width of final high frequent ROH plot}
+\item{width_1}{set the width of final high frequent ROH plot, units = 'cm'}
+
+\item{legend_x}{set position of legend, 0 to 1 indicate from left to right}
+
+\item{legend_y}{set position of legend, 0 to 1 indicate from bottom to top}
+
+\item{ncol_1}{set how many columns to present in facet plot}
 }
 \value{
 Summary results of ROH by sliding windows across all chromosomes.

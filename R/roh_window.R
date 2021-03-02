@@ -16,8 +16,11 @@
 #' @param folder set name of new created folder
 #' @param col_higher set the color of bar which frequency higher than threshold in high frequent ROH plot
 #' @param col_lower set the color of bar which frequency lower than threshold in high frequent ROH plot
-#' @param height_1 set the height of final high frequent ROH plot
-#' @param width_1 set the width of final high frequent ROH plot
+#' @param height_1 set the height of final high frequent ROH plot, units ='cm'
+#' @param width_1 set the width of final high frequent ROH plot, units = 'cm'
+#' @param legend_x set position of legend, 0 to 1 indicate from left to right
+#' @param legend_y set position of legend, 0 to 1 indicate from bottom to top
+#' @param ncol_1 set how many columns to present in facet plot
 #'
 #' @import dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -26,7 +29,7 @@
 #' Summary results of ROH by sliding windows across all chromosomes.
 #' @export roh_window
 #'
-roh_window <- function(roh, window_size = 5, length_autosomal = 2489.386, threshold = 0.3, folder = "roh_window", col_higher = "red", col_lower = "blue", height_1 = 1800, width_1 = 2100) {
+roh_window <- function(roh, window_size = 5, length_autosomal = 2489.386, threshold = 0.3, folder = "roh_window", col_higher = "red", col_lower = "black", height_1 = 18, width_1 = 21, legend_x = 0.9, legend_y = 0.1, ncol_1 = 6) {
   if(!(dir.exists(folder))){
     dir.create(folder)
     print(paste0("New foler ", folder, " was create in working directory."))
@@ -82,7 +85,7 @@ roh_window <- function(roh, window_size = 5, length_autosomal = 2489.386, thresh
   }
 
   #plot roh
-  plot_roh <- function(roh_freq, threshold, col_higher = "red", col_lower = "blue"){
+  plot_roh <- function(roh_freq, threshold, col_higher = "red", col_lower = "blue", legend_x  = 0.9, legend_y = 0.2, ncol_1 = 6){
     roh_freq = roh_freq
     roh_freq <- roh_freq %>%
       mutate(Group = if_else(prop_roh >= threshold, true = "group_1", false = "group_2"))
@@ -92,11 +95,12 @@ roh_window <- function(roh, window_size = 5, length_autosomal = 2489.386, thresh
       geom_col() +
       #geom_hline(yintercept = 100) +
       theme_classic() +
+      theme(legend.position = c(legend_x, legend_y)) +
       scale_fill_manual(values = color_group,name = "Proportion",
                         labels = c(paste0(">=", threshold*100, "%"),
                                    paste0("<", threshold*100, "%"))) +
       scale_x_continuous(labels = scales::unit_format(scale = 1e-6, unit = NULL)) +
-      facet_wrap(~as.factor(Chr), scales =  "free_x", ncol = 6) +
+      facet_wrap(~as.factor(Chr), scales =  "free_x", ncol = ncol_1) +
       labs(x = "Physical Position (Mb)", y = "Number of ROH")
     #dev.off()
   }
@@ -151,8 +155,14 @@ roh_window <- function(roh, window_size = 5, length_autosomal = 2489.386, thresh
 
   #plot roh
   print("Plotting frequncy of ROH by windows...")
-  png(res = 350,filename = paste0(folder, "/roh_freq_windows.png"), width = width_1, height = height_1, bg = "transparent")
-  windows_plot <- plot_roh(roh_freq = roh_freq, threshold = threshold, col_higher = col_higher, col_lower = col_lower)
+  png(res = 350,filename = paste0(folder, "/roh_freq_windows.png"), width = width_1, height = height_1, bg = "transparent", units = "cm")
+  windows_plot <- plot_roh(roh_freq = roh_freq,
+                           threshold = threshold,
+                           col_higher = col_higher,
+                           col_lower = col_lower,
+                           legend_x = legend_x,
+                           legend_y = legend_y,
+                           ncol_1 = ncol_1)
   print(windows_plot)
   dev.off()
   #plot_roh(roh_freq = roh_freq, threshold = threshold)
