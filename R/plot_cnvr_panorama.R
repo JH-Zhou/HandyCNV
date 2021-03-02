@@ -11,6 +11,12 @@
 #' @param height_1 default value is 30, unit is 'cm', set the height of final plot
 #' @param ld_heat If TRUE, will plot LD by heatmap, If false will plotting by Classical Inverted Triangle, heatmap is fatser, triagnle may mot work well.
 #' @param folder set name of folder to save results
+#' @param col_0 set color for 0 copy of CNV
+#' @param col_1 set color for 1 copy of CNV
+#' @param col_2 set color for 2 copy of CNV (which might be ROH)
+#' @param col_3 set color for 3 copy of CNV
+#' @param col_4 set color for 4 copy of CNV
+#' @param col_gene set color of gene in CNV plot
 #'
 #' @import dplyr ggrepel ggplot2 tidyr gaston cowplot scales
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -18,17 +24,17 @@
 #' @return cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...
 #' @export plot_cnvr_panorama
 #'
-plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama") {
+plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", col_gene = "black") {
   if(!file.exists(folder)){
     dir.create(folder)
     print(paste0("A new folder ", folder,  "was created in working directory."))
   }
   #1.Read the CNVR result----
   cnvr <- fread(file = cnvr)
-  cnvr <- unite(cnvr, "title", names(cnvr[, c(2:4, 10)]), remove = FALSE) #generate a new columns name
+  cnvr <- unite(cnvr, "title", names(cnvr[, c("Chr", "Start", "End", "Type")]), remove = FALSE) #generate a new columns name
   high_freq <- cnvr %>%
-               filter(Frequent >= sample_size * common_cnv_threshold) %>%
-               arrange(Length)
+    filter(Frequent >= sample_size * common_cnv_threshold) %>%
+    arrange(Length)
   if(nrow(high_freq) == 0){
     print("No CNVR passed the high frequency threshold, please reset your common_cnv_threshold!")
   } else {
@@ -43,29 +49,39 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
   setkey(cnv, Chr, Start, End)
   cnv_cnvr <- foverlaps(cnvr, cnv)
   #3. Read SNP intensity file----
-  default_title <- c("SNP Name", "Sample ID",	"B Allele Freq", "Log R Ratio")
-  intensity <- fread(file = intensity, skip = 9, header = TRUE)
-  intensity <- intensity %>%
-               select(c(default_title))
+  if(!(missing(intensity)) & !(missing(map))){
+    default_title <- c("SNP Name", "Sample ID",	"B Allele Freq", "Log R Ratio")
+    intensity <- fread(file = intensity, skip = 9, header = TRUE)
+    intensity <- intensity %>%
+                 select(c(default_title))
 
   #4.read map plink format
-  map <-fread(file = map, header = FALSE)
-  names(map) <- c("Chr", "SNP Name", "MorganPos", "Position")
-  map$Chr <- suppressWarnings(as.character(map$Chr))
-  names(map)[names(map) == "Name"] <- 'SNP Name'
-  inten_chr <- merge(intensity, map, by = "SNP Name", all.x =TRUE, sort =F) #add location information to intensity file
+    map <-fread(file = map, header = FALSE)
+    names(map) <- c("Chr", "SNP Name", "MorganPos", "Position")
+    map$Chr <- suppressWarnings(as.character(map$Chr))
+    names(map)[names(map) == "Name"] <- 'SNP Name'
+    inten_chr <- merge(intensity, map, by = "SNP Name", all.x =TRUE, sort =F) #add location information to intensity file
+    }
 
-  #5. Read bed,bim and fam data from plink----
-  x <- read.bed.matrix(basename = prefix_bed, rds = NULL) #path and prefix
+  if(!(missing(prefix_bed))){
+    #5. Read bed,bim and fam data from plink----
+    x <- read.bed.matrix(basename = prefix_bed, rds = NULL) #path and prefix
+  }
 
   #zoom cnv, in order to match cnv value for each snp in Intensity
-  chr_length_ars <- data.frame("Chr" = c(29:1), "Length" = c( 51.098607, 45.94015, 45.612108, 51.992305,
-                                                                42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
-                                                                71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
-                                                                85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
-                                                                103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
-                                                                120.089316, 120.000601, 121.005158, 136.231102, 158.53411))
-  chr_length_ars <- chr_length_ars[order(chr_length_ars$Chr),]
+  # chr_length_ars <- data.frame("Chr" = c(29:1), "Length" = c( 51.098607, 45.94015, 45.612108, 51.992305,
+  #                                                               42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
+  #                                                               71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
+  #                                                               85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
+  #                                                               103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
+  #                                                               120.089316, 120.000601, 121.005158, 136.231102, 158.53411))
+  # chr_length_ars <- chr_length_ars[order(chr_length_ars$Chr),]
+
+  chr_length_ars <- cnv %>%
+    group_by(Chr) %>%
+    summarise(Length = max(End) / 1000000) %>%
+    arrange(as.numeric(Chr)) %>%
+    select(Chr, Length)
 
   print("Starting to make plot...")
   for (i in 1:nrow(high_freq)){
@@ -78,53 +94,49 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
     names(cnv_chr_zoom)[names(cnv_chr_zoom) == "Sample_ID"] <- "Sample ID"
     id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr_zoom$`Sample ID`))) #extract unique ID prepare coordinate
     try(id_coord$Order <- seq(1, nrow(id_coord),1), silent = FALSE)
-    id_coord$x <- chr_length_ars[chr_id, 2]
+    #id_coord$x <- chr_length_ars[chr_id, 2]
+    max_len = chr_length_ars %>%
+      filter(Chr == chr_id) %>%
+      select(Length)
+    id_coord$x <- max_len$Length
     id_coord$y <- (id_coord$Order-1)*5 + 1
     names(id_coord)[names(id_coord) == "Sample_ID"] <- "Sample ID"
     cnv_chr_zoom <- merge(cnv_chr_zoom, id_coord, by = "Sample ID", all.x = TRUE, sort = FALSE) #prepare original data
     cnv_chr_zoom$zoom_x <- end_position
     cnv_chr_zoom$gene_order <- max(cnv_chr_zoom$Order) + 3
-    gene_coord <- group_by(cnv_chr_zoom, name2) %>% slice(1) # generate gene data
-    gene_coord$CNV_Start <- gene_coord$g_Start
-    gene_coord$Order <- gene_coord$gene_order
+    #gene_coord <- group_by(cnv_chr_zoom, name2) %>% slice(1) %>% drop_na(g_Start)# generate gene data
+    #gene_coord$CNV_Start <- gene_coord$g_Start
+    #gene_coord$Order <- gene_coord$gene_order
+    g_order <- max(cnv_chr_zoom$Order) + 3
+    g_order_1 <- max(cnv_chr_zoom$Order) + 6
+    g_order_2 <- max(cnv_chr_zoom$Order) + 9
+    g_order_3 <- max(cnv_chr_zoom$Order) + 12
+    g_order_4 <- max(cnv_chr_zoom$Order) + 15
+    gene_coord <- cnv_chr_zoom %>%
+                  group_by(name2) %>%
+                  drop_na(g_Start) %>%
+                  arrange(g_Start) %>%
+                  distinct(name2, .keep_all = T) %>%
+                  ungroup() %>%
+                    mutate(Order = case_when(length(Chr) <= 5 ~ rep_len(c(g_order, g_order_1),length.out = length(Chr)),
+                               length(Chr) > 5 & length(name2) <= 15 ~ rep_len(c(g_order, g_order_1, g_order_2),length.out = length(Chr)),
+                               length(Chr) > 15 & length(name2) <= 25 ~ rep_len(c(g_order, g_order_1, g_order_2, g_order_3),length.out = length(Chr)),
+                               length(name2) > 25 ~ rep_len(c(g_order, g_order_1, g_order_2, g_order_3, g_order_4),length.out = length(name2))))
     try(gene_coord$CNV_Value <- "5", silent = FALSE)
 
-    #5.6 Plot BAF, LRR, LF MAF----
-    #extract intensity for individual which with cnv in cnvr, so start and end position from cnvr
-    sub_inten <- inten_chr[which(inten_chr$Chr == chr_id),]
-    sub_inten <- sub_inten[order(sub_inten$Position), ]
-    sub_inten <- filter(sub_inten, Position >= start_position & Position <= end_position)
-    sub_inten <- sub_inten[which(sub_inten$`Sample ID` %in% cnv_chr_zoom$`Sample ID`), ]
-
-    cnv_chr_zoom.byId = split(cnv_chr_zoom, cnv_chr_zoom$`Sample ID`)
-    typeF = function(i) {
-      id = sub_inten[i,'Sample ID']         ## get the ID in data_1 for row i
-      pos = sub_inten[i,'Position']  ## get the Position in data_1 for row i
-      tab = cnv_chr_zoom.byId[[id]]     ## get the subset of data_2 that matches this ID
-      ## For each row in the data_2 subset, is the Position
-      ## inside the interval [Start,End]
-      ## idx is a Boolean (TRUE or FALSE) vector
-      idx = pos >= tab$Start & pos <= tab$End
-      ## Return the matching Type from the data_2 subset
-      ## or return 2 if nothing matches
-      ## any(idx): does any element of idx == TRUE?, i.e.,
-      ## does the Position match any interval?
-      ## Yes -> tab$Type[idx][1]: return the Type for the first match
-      ## No  -> return 2
-      ifelse( any(idx), tab$CNV_Value[idx][1], 2 )
-    }
-
-    CNV_Value = sapply( 1:nrow(sub_inten), typeF )
-    sub_inten = cbind(sub_inten, CNV_Value)
-
-    zoom_name <- paste0("Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
+    #zoom_name <- paste0("Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
     id_number <- nrow(id_coord)
-    zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual")
+    zoom_title <- paste0("Chr ", chr_id, ": ", round(start_position/1000000, 2)," - ", round(end_position/1000000, 2), " Mb", " with ", id_number," Samples")
     #png(res = 300, filename = zoom_name, width = 3500, height = 2000)
-
+    color_copy <- c("0" = col_0,
+                    "1" = col_1,
+                    "2" = col_2,
+                    "3" = col_3,
+                    "4" = col_4)
     zoom_plot <- ggplot() +
       geom_rect(data = cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3, fill = as.factor(CNV_Value))) +
-      geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = "black") +
+      scale_fill_manual(values = color_copy) +
+      geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = col_gene) +
       geom_text_repel(data = gene_coord, aes(x = g_Start/1000000, y = (Order-1)*5 + 4, label = name2)) +
       geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
@@ -133,80 +145,117 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity, map, prefix_bed,
       theme(legend.position = "top") +
       #scale_y_continuous(labels = NULL) +
       #scale_x_continuous(breaks = seq(round(start_position,2), round(end_position,2), by = 0.2)) +
-      labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
+      labs(x = "Physical Position (Mb)", y ="Individual", title = zoom_title, fill = "CNV_Num")
 
+    if(!(missing(intensity)) & !(missing(map))){
+      #5.6 Plot BAF, LRR, LF MAF----
+      #extract intensity for individual which with cnv in cnvr, so start and end position from cnvr
+      sub_inten <- inten_chr[which(inten_chr$Chr == chr_id),]
+      sub_inten <- sub_inten[order(sub_inten$Position), ]
+      sub_inten <- filter(sub_inten, Position >= start_position & Position <= end_position)
+      sub_inten <- sub_inten[which(sub_inten$`Sample ID` %in% cnv_chr_zoom$`Sample ID`), ]
 
-    #id_all <- fread("1_CNV_Results/id_all.txt")
-    #names(id_all)[1] <- "Sample ID"
-    #sub_inten <- merge(sub_inten, id_all, all.x = TRUE, sort = FALSE)
+      cnv_chr_zoom.byId = split(cnv_chr_zoom, cnv_chr_zoom$`Sample ID`)
+      typeF = function(i) {
+        id = sub_inten[i,'Sample ID']         ## get the ID in data_1 for row i
+        pos = sub_inten[i,'Position']  ## get the Position in data_1 for row i
+        tab = cnv_chr_zoom.byId[[id]]     ## get the subset of data_2 that matches this ID
+        ## For each row in the data_2 subset, is the Position
+        ## inside the interval [Start,End]
+        ## idx is a Boolean (TRUE or FALSE) vector
+        idx = pos >= tab$Start & pos <= tab$End
+        ## Return the matching Type from the data_2 subset
+        ## or return 2 if nothing matches
+        ## any(idx): does any element of idx == TRUE?, i.e.,
+        ## does the Position match any interval?
+        ## Yes -> tab$Type[idx][1]: return the Type for the first match
+        ## No  -> return 2
+        ifelse( any(idx), tab$CNV_Value[idx][1], 2 )
+      }
 
-    ld_x <- LD(x, c(which(x@snps$id == sub_inten$`SNP Name`[1]), which(x@snps$id == sub_inten$`SNP Name`[nrow(sub_inten)])))
-    #ld_x <- LD(x, c(which(x@snps$id == sub_inten$`SNP Name`[1]), which(x@snps$id == sub_inten$`SNP Name`[10])))
-    ld_x[is.na(ld_x)] <- 0
-    snp_info <- x@snps[c(which(x@snps$id == sub_inten$`SNP Name`[1]):which(x@snps$id == sub_inten$`SNP Name`[nrow(sub_inten)])),]
-    #snp_info <- x@snps[c(which(x@snps$id == sub_inten$`SNP Name`[1]):which(x@snps$id == sub_inten$`SNP Name`[10])),]
+      CNV_Value = sapply( 1:nrow(sub_inten), typeF )
+      sub_inten = cbind(sub_inten, CNV_Value)
 
-    #select to plot Classical inverted triangle LD or heatmap of LD
-    if(ld_heat == FALSE){
-      try(ld <- ggplotify::as.ggplot(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, graphical.par = list(mar = c(0,0,0,0)), below.space = 0)), silent = TRUE)
-      ###ld <- ggplotify::base2grob(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE))
-    } else{
-      #plot ld and genotype in an interested region
-      ld_table <- reshape2::melt(ld_x) #convert
-      heat_map <-ggplot(ld_table, aes(Var1, Var2, fill = value)) +
-        geom_tile() +
-        scale_fill_gradientn(colours = c("lightblue", "yellow", "red"), na.value = "black") +
-        scale_x_discrete(labels = NULL) +
-        scale_y_discrete(labels = NULL) +
-        theme(legend.position = "top") + #top right
-        labs(x = "SNP Ordered by Position", y = "SNP Ordered by Position", fill = "r^2")
-      #dev.off() #save plot in working directory
+      baf <- ggplot(sub_inten, aes(x = Position, y =`B Allele Freq`, color = as.factor(CNV_Value))) +
+        scale_color_manual(values = color_copy) +
+        #scale_color_manual(values = c("#F8766D", "#A3A500","gray", "#00B0F6", "#E76BF3")) +
+        theme_bw() +
+        theme(legend.position = "top",
+              axis.title.x = element_blank()) +
+        geom_point(shape = 1) +
+        scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
+        ylim(0,1) +
+        #labs(x = 'Position (Mb)', y = 'B Allele Freq', color = "Copy_Num")
+        labs(y = 'B Allele Freq', color = "Copy_Num")
+
+      lrr <- ggplot(sub_inten, aes(x = Position, y = `Log R Ratio`, color = as.factor(CNV_Value))) +
+        #scale_color_manual(values = c("#F8766D", "#A3A500", "gray", "#00B0F6", "#E76BF3")) +
+        scale_color_manual(values = color_copy) +
+        theme_bw() +
+        theme(legend.position = "top",
+              axis.title.x = element_blank()) +
+        geom_point(shape = 1) +
+        scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
+        ylim(-2, 2) +
+        #labs(x = 'Position (Mb)', y = 'Log R Ratio', color = "Copy_Num")
+        labs(y = 'Log R Ratio', color = "Copy_Num")
     }
 
-    baf <- ggplot(sub_inten, aes(x = Position, y =`B Allele Freq`, color = as.factor(CNV_Value))) +
-      scale_color_manual(values = c("#F8766D", "#A3A500","grey", "#00B0F6", "#E76BF3")) +
-      theme_bw() +
-      theme(legend.position = "top",
-            axis.title.x = element_blank()) +
-      geom_point(shape = 1) +
-      scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
-      ylim(0,1) +
-      #labs(x = 'Position (Mb)', y = 'B Allele Freq', color = "Copy_Num")
-      labs(y = 'B Allele Freq', color = "Copy_Num")
+    if(!(missing(prefix_bed))){
+      ld_x <- LD(x, c(which(x@snps$id == sub_inten$`SNP Name`[1]), which(x@snps$id == sub_inten$`SNP Name`[nrow(sub_inten)])))
+      #ld_x <- LD(x, c(which(x@snps$id == sub_inten$`SNP Name`[1]), which(x@snps$id == sub_inten$`SNP Name`[10])))
+      ld_x[is.na(ld_x)] <- 0
+      snp_info <- x@snps[c(which(x@snps$id == sub_inten$`SNP Name`[1]):which(x@snps$id == sub_inten$`SNP Name`[nrow(sub_inten)])),]
+      #snp_info <- x@snps[c(which(x@snps$id == sub_inten$`SNP Name`[1]):which(x@snps$id == sub_inten$`SNP Name`[10])),]
 
-    lrr <- ggplot(sub_inten, aes(x = Position, y = `Log R Ratio`, color = as.factor(CNV_Value))) +
-      scale_color_manual(values = c("#F8766D", "#A3A500", "grey", "#00B0F6", "#E76BF3")) +
-      theme_bw() +
-      theme(legend.position = "top",
-            axis.title.x = element_blank()) +
-      geom_point(shape = 1) +
-      scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
-      ylim(-2, 2) +
-      #labs(x = 'Position (Mb)', y = 'Log R Ratio', color = "Copy_Num")
-      labs(y = 'Log R Ratio', color = "Copy_Num")
+      #select to plot Classical inverted triangle LD or heatmap of LD
+      if(ld_heat == FALSE){
+        try(ld <- ggplotify::as.ggplot(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE, graphical.par = list(mar = c(0,0,0,0)), below.space = 0)), silent = TRUE)
+        ###ld <- ggplotify::base2grob(function() LD.plot(LD = ld_x, snp.positions = snp_info$pos, draw.chr = FALSE))
+      } else{
+        #plot ld and genotype in an interested region
+        ld_table <- reshape2::melt(ld_x) #convert
+        heat_map <-ggplot(ld_table, aes(Var1, Var2, fill = value)) +
+          geom_tile() +
+          scale_fill_gradientn(colours = c("lightblue", "yellow", "red"), na.value = "black") +
+          scale_x_discrete(labels = NULL) +
+          scale_y_discrete(labels = NULL) +
+          theme(legend.position = "top") + #top right
+          labs(x = "SNP Ordered by Position", y = "SNP Ordered by Position", fill = "r^2")
+        #dev.off() #save plot in working directory
+      }
 
-     maf <- ggplot(data = snp_info) +
-      geom_point(aes(x = pos, y = maf, color = "maf")) +
-      geom_point(aes(x = pos, y = hz, color = "heterozygosity")) +
-      geom_line(aes(x = pos, y = callrate, color = "callrate")) +
-      scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
-      ylim(0.0, 1.0) + theme_bw() +
-      theme(legend.position = "top",
-            axis.title.x = element_blank()) +
-      labs(y = "Percentage") +
-      scale_color_manual(values = c("maf" = "red", "heterozygosity" = "green", "callrate" = "purple"))
+      maf <- ggplot(data = snp_info) +
+        geom_point(aes(x = pos, y = maf, color = "maf")) +
+        geom_point(aes(x = pos, y = hz, color = "heterozygosity")) +
+        geom_line(aes(x = pos, y = callrate, color = "callrate")) +
+        scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
+        ylim(0.0, 1.0) + theme_bw() +
+        theme(legend.position = "top",
+              axis.title.x = element_blank()) +
+        labs(y = "Percentage") +
+        scale_color_manual(values = c("maf" = "red", "heterozygosity" = "green", "callrate" = "purple"))
+    }
 
-
+    #preparing save final plot
     b <- high_freq$title[i]
     dir <- paste( b, ".png", sep = "")
     #png(dir, res = 300, width = 2000, height = 5000, bg = "transparent")
     #plot_grid(zoom,zoom2, maf, baf, lrr, align = "v", axis = "t", ncol = 1, rel_heights = c(1,1,1,1,1))
-    if(ld_heat == TRUE){
-      final_plot <- plot_grid(zoom_plot, baf, lrr, maf, heat_map, align = "v", ncol = 1,
-                              rel_heights = c(1.5, 1, 1, 1, 1.5))
+
+    if(missing(intensity) & missing(map) & missing(prefix_bed)){
+      final_plot <- zoom_plot
+    } else if(missing(prefix_bed) & missing(ld_heat)){
+      final_plot <- plot_grid(zoom_plot, baf, lrr, align = "v", ncol = 1,
+                              rel_heights = c(1.5, 1, 1))
     } else{
-      try(final_plot <- plot_grid(zoom_plot, baf, lrr, maf, ld, align = "v", ncol = 1,
-                              rel_heights = c(1.5, 1, 1, 1, 1.6)))
+      if(ld_heat == TRUE){
+        final_plot <- plot_grid(zoom_plot, baf, lrr, maf, heat_map, align = "v", ncol = 1,
+                                rel_heights = c(1.5, 1, 1, 1, 1.5))
+      } else{
+        try(final_plot <- plot_grid(zoom_plot, baf, lrr, maf, ld, align = "v", ncol = 1,
+                                    rel_heights = c(1.5, 1, 1, 1, 1.6)))
+      }
     }
 
     #print(final_plot)
