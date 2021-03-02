@@ -15,7 +15,13 @@ plot_cnvr_panorama(
   common_cnv_threshold = 0.05,
   width_1 = 14,
   height_1 = 30,
-  folder = "cnvr_panorama"
+  folder = "cnvr_panorama",
+  col_0 = "hotpink",
+  col_1 = "turquoise",
+  col_2 = "gray",
+  col_3 = "tomato",
+  col_4 = "deepskyblue",
+  col_gene = "black"
 )
 }
 \arguments{
@@ -40,6 +46,18 @@ plot_cnvr_panorama(
 \item{height_1}{default value is 30, unit is 'cm', set the height of final plot}
 
 \item{folder}{set name of folder to save results}
+
+\item{col_0}{set color for 0 copy of CNV}
+
+\item{col_1}{set color for 1 copy of CNV}
+
+\item{col_2}{set color for 2 copy of CNV (which might be ROH)}
+
+\item{col_3}{set color for 3 copy of CNV}
+
+\item{col_4}{set color for 4 copy of CNV}
+
+\item{col_gene}{set color of gene in CNV plot}
 }
 \value{
 cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...
