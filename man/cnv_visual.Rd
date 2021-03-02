@@ -22,11 +22,11 @@ cnv_visual(
   width_1 = 13,
   height_1 = 10,
   folder = "cnv_visual",
-  col_0 = "turquoise",
-  col_1 = "hotpink",
-  col_2 = "deepbluesky",
+  col_0 = "hotpink",
+  col_1 = "turquoise",
+  col_2 = "gray",
   col_3 = "tomato",
-  col_4 = "purple"
+  col_4 = "deepskyblue"
 )
 }
 \arguments{

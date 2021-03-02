@@ -36,7 +36,6 @@ clean_ensgene <- function(refgene , ens_id){
 #' @return formatted gene list.
 #' @export clean_ucsc
 #'
-#' @examples
 clean_ucsc <- function(refgene){
   refgene = refgene
   names(refgene) <- c("bin", "name", "Chr", "strand", "Start", "End",
