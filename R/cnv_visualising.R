@@ -22,6 +22,7 @@
 #' @param col_2 set color for 2 copy of CNV (which might be ROH)
 #' @param col_3 set color for 3 copy of CNV
 #' @param col_4 set color for 4 copy of CNV
+#' @param gene_font_size set the size of Gene in CNV Annotation plot
 #'
 #' @import dplyr ggplot2 tidyr ggrepel scales grDevices
 #'
@@ -33,7 +34,7 @@
 #' @export cnv_visual
 #'
 
-cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue") {
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", gene_font_size = 2.2) {
   if(!file.exists(paste0(folder))){
     dir.create(paste0(folder))
     print(paste0("A new folder '", folder, "' was created in working directory."))
@@ -111,7 +112,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       theme_bw() +
       scale_y_continuous(labels = NULL) +
       scale_x_continuous(breaks = seq(0, max_len$Length, by = 5), limits = c(0, max_len$Length)) +
-      labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "CNV_Num")
+      labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "Copy")
     print(chr_plot)
     dev.off()
   }
@@ -180,7 +181,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     theme_bw() +
     scale_y_continuous(labels = NULL) +
     scale_x_continuous(breaks = seq(0, max_len$Length, by = 5), limits = c(0, max_len$Length)) +
-    labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "CNV_Num")
+    labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "Copy")
   print(chr_plot)
   dev.off()
   print("Task done, plot was stored in working directory.")
@@ -203,7 +204,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     cnv_chr_zoom$zoom_x <- end_position
     zoom_name <- paste0(folder, "/Chr", chr_id, "_",start_position,"-",end_position, "Mb", ".png")
     id_number <- nrow(id_coord)
-    zoom_title <- paste0("CNV on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
+    zoom_title <- paste0("Chr", chr_id, ":",start_position," - ",end_position, "Mb", " with ", id_number," Samples" ," - ", plot_title)
 
     #add manual color for cnv number
     color_copy <- c("0" = col_0,
@@ -218,7 +219,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       theme_bw() +
       scale_y_continuous(labels = NULL) +
       scale_x_continuous(breaks = seq(start_position, end_position)) +
-      labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
+      labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "Copy")
     if(is.null(report_id)){
       png(res = 350, filename = zoom_name, width = width_1, height = height_1, units = "cm")
       print(zoom_plot)
@@ -351,10 +352,11 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
             legend.title = element_text(size = 6),
             legend.text  = element_text(size = 6),
             legend.margin=margin(-10, 0, 0, 0),
-            legend.position = c(0.95, -0.15),
-            legend.justification='right',
-            legend.direction='horizontal',
-            plot.margin=unit(c(0,1,1,1), "cm"),
+            legend.position = "right",
+            #legend.position = c(0.95, -0.15),
+            #legend.justification='right',
+            #legend.direction='horizontal',
+            #plot.margin=unit(c(0,1,1,1), "cm"),
             axis.ticks.y = element_blank()) +
       scale_y_continuous(labels = NULL) +
       scale_x_continuous(limits = c(start_position, end_position)) +
@@ -362,7 +364,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       labs(x = "Position (Mb)", y ="CNV", fill = "Copy")
 
     print("Plotting gene...")
-    gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, cnv = "yes")
+    gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, cnv = "yes", gene_font_size = gene_font_size)
 
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
@@ -399,7 +401,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     geom_text(aes(x/1000000, y, label = Chr), size = 4) + theme_bw() +
     scale_y_continuous(breaks = seq(0, max(cnv$End)/1000000, by = 10),labels = NULL) +
     scale_x_continuous(breaks = seq(0, max(cnv$End)/1000000, by = 10)) +
-    labs(x = "Physical Position (Mb)", y ="Autosome", title = indiv_title,  fill= "CNV_Num")
+    labs(x = "Physical Position (Mb)", y ="Autosome", title = indiv_title,  fill= "Copy")
   print(indiv_plot)
   dev.off()
   print("Task done, plot was stored in working directory.")

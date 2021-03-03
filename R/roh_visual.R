@@ -16,7 +16,7 @@
 #' @return gene plot with given interval
 #' @export plot_gene
 #'
-plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), cnv = NULL, height_1 = 2, width_1 = 10){
+plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), cnv = NULL, height_1 = 2, width_1 = 10, gene_font_size = 2.2){
   ###
   #read gene
   #if(refgene == "ARS_ens"){
@@ -94,7 +94,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
           geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
           #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
           #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
-          geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
+          geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = gene_font_size) +
           scale_x_continuous(limits = c(start, end)) +
           #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
           theme_bw() +
@@ -106,7 +106,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
           geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
           #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
           #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
-          geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
+          geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = gene_font_size) +
           scale_x_continuous(limits = c(start, end)) +
           #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
           theme_bw() +
@@ -122,7 +122,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
         geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max), fill = "gray50", show.legend = F) +
         #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
         #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
-        geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = 2.5) +
+        geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = gene_font_size) +
         scale_x_continuous(limits = c(start, end), labels = NULL) +
         #scale_x_continuous(limits = c(start, end)) +
         #geom_vline(xintercept = coord_name/1000000, linetype = "dashed") +
@@ -185,7 +185,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     handycnv_name <- c("Sample_ID",	"Chr", "Start", "End", "Num_SNP",	"Length", "Start_SNP",	"End_SNP")
     roh <- roh %>% select(handycnv_name)
     roh$Chr <- as.numeric(roh$Chr)
-    roh <- dplyr::filter(roh, roh$Chr %in% c(1:29))
+    roh <- dplyr::filter(roh, roh$Chr %in% c(1:max(roh$Chr)))
   } else{
     print("Preparing plot data...")
     }
