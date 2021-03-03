@@ -16,7 +16,7 @@
 #' @return gene plot with given interval
 #' @export plot_gene
 #'
-plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), cnv = NULL, height_1 = 2, width_1 = 10, gene_font_size = 2.2){
+plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), cnv = NULL, height_1 = 2, width_1 = 10, gene_font_size = 2.5){
   ###
   #read gene
   #if(refgene == "ARS_ens"){

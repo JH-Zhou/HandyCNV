@@ -352,11 +352,11 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
             legend.title = element_text(size = 6),
             legend.text  = element_text(size = 6),
             legend.margin=margin(-10, 0, 0, 0),
-            legend.position = "right",
-            #legend.position = c(0.95, -0.15),
-            #legend.justification='right',
-            #legend.direction='horizontal',
-            #plot.margin=unit(c(0,1,1,1), "cm"),
+            #legend.position = "right",
+            legend.position = c(0.95, 0.01),
+            legend.justification='right',
+            legend.direction='horizontal',
+            plot.margin=unit(c(0,1,1,1), "cm"),
             axis.ticks.y = element_blank()) +
       scale_y_continuous(labels = NULL) +
       scale_x_continuous(limits = c(start_position, end_position)) +
