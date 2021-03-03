@@ -7,6 +7,7 @@
 #' @param start_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param end_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param individual_id the ID of individual in cnv list, used to plot all chromosome for specific Individual
+#' @param target_gene the
 #' @param refgene if true, will plot gene above the CNV plot, need to combine with the clean_cnv, and the stardard clean_cnv file need the annotated cnv list which was generated from call_gene function, internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
 #' @param plot_title set the title of final plot
 #' @param max_chr the maximum number of chromosomes to plot, it used for plot all chromosomes at once
@@ -34,7 +35,7 @@
 #' @export cnv_visual
 #'
 
-cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", gene_font_size = 2.2) {
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, target_gene = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", gene_font_size = 2.2) {
   if(!file.exists(paste0(folder))){
     dir.create(paste0(folder))
     print(paste0("A new folder '", folder, "' was created in working directory."))
@@ -408,8 +409,61 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   #return(cnv_coord)
   }
 
+  else if(!(missing(target_gene))){
+    cnv_gene <- cnv %>%
+                filter(name2 == target_gene)
+
+    id_coord <- data.frame("Sample_ID" = sort(unique(cnv_gene$Sample_ID))) #extract unique ID prepare coordinate
+    id_coord$Order <- seq(1,nrow(id_coord),1)
+    #id_coord$x <- chr_length_ars[chr_id, 2]
+    #max_len = chr_length_ars %>%
+    #  filter(Chr == chr_id) %>%
+    #  select(Length)
+    #id_coord$x <- max_len$Length
+
+    id_coord$y <- (id_coord$Order-1)*5 + 1
+    cnv_gene <- merge(cnv_gene, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
+    max_y <- max(cnv_gene$Order)
+
+    gene_coord <- cnv_gene %>%
+                  group_by(name2) %>%
+                  distinct(name2, .keep_all = T) %>%
+                  mutate(Order = max_y)
+    title_gene <- paste0(target_gene, "-Chr", gene_coord$Chr, ":", round(gene_coord$g_Start/1000000, 2), "-", round(gene_coord$g_End/1000000, 2), "Mb ", nrow(id_coord), "Samples")
+
+    png(res = 350, filename = paste0(folder, "/", target_gene, ".png"), width = width_1, height = height_1, units = "cm")
+
+    #add manual color for cnv number
+    color_copy <- c("0" = col_0,
+                    "1" = col_1,
+                    "2" = col_2,
+                    "3" = col_3,
+                    "4" = col_4)
+
+    gene_cnv <- ggplot(cnv_gene, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
+                geom_rect(aes(fill = as.factor(CNV_Value))) +
+                scale_fill_manual(values = color_copy) +
+                geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order+2)*5 + 2, ymax = (Order+2)*5 + 5), fill = "black") +
+                geom_text(data = gene_coord, aes(x = g_Start/1000000, y = (Order + 2)*5 + 9, label = name2), size = 2.5) +
+                geom_hline(yintercept = (max(cnv_gene$Order) + 2)*5 - 2, linetype = "dashed") +
+                #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
+                theme_bw() +
+                theme(legend.key.size = unit(0.5,"line"),
+                      legend.title = element_text(size = 6),
+                      legend.text  = element_text(size = 6),
+                      legend.margin=margin(0, 0, 0, 0)) +
+                scale_y_continuous(labels = NULL) +
+                #scale_x_continuous(breaks = seq(0, max_len$Length, by = 5), limits = c(0, max_len$Length))
+                labs(x = "Physical Position (Mb)", y ="Individual ID", title = title_gene, fill = "Copy")
+    print(gene_cnv)
+    dev.off()
+    print("Task done, plot was stored in working directory.")
+  }
+
+
   else{
     print("Warning: Lack of input parameters!!!
            Warning: Please check input parameters carefully!!!")
   }
+
 }
