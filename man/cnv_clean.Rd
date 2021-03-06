@@ -6,14 +6,27 @@
 Used for cleaning the default CNV results into a standard format for the further use.
 Now support to read the results from PennCNV and CNVPartition}
 \usage{
-cnv_clean(cnvpartition = NULL, penncnv = NULL, penn_id_sep = "cnv/")
+cnv_clean(
+  cnvpartition = NULL,
+  penncnv = NULL,
+  standard_cnv = NULL,
+  drop_length = 5,
+  penn_id_sep = "cnv/",
+  folder = "cnv_clean"
+)
 }
 \arguments{
 \item{cnvpartition}{the default CNV results from CNVPartition}
 
 \item{penncnv}{the default CNV results from PennCNV}
 
+\item{standard_cnv}{User customized CNV input file}
+
+\item{drop_length}{delete the CNVs which Length longer than the threshold, unit is "Mb"}
+
 \item{penn_id_sep}{the separator in the column of Sample ID in PennCNV results, if the ID bind with the path, need to separate by this argument}
+
+\item{folder}{set new folder to save results}
 }
 \value{
 Formatted CNV results and brief summary files.

@@ -7,19 +7,49 @@ Make graphs for CNVs}
 \usage{
 cnv_summary_plot(
   clean_cnv,
-  plot_sum_1 = NULL,
-  plot_sum_2 = NULL,
-  folder = "cnv_summary_plot"
+  length_group = c(0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 1, 2, 5),
+  plot_sum_1 = FALSE,
+  plot_sum_2 = FALSE,
+  folder = "cnv_summary_plot",
+  col_0 = "hotpink",
+  col_1 = "turquoise",
+  col_2 = "gray",
+  col_3 = "tomato",
+  col_4 = "deepskyblue",
+  height_sum1 = 26,
+  width_sum1 = 20,
+  height_sum2 = 20,
+  width_sum2 = 27
 )
 }
 \arguments{
 \item{clean_cnv}{the clean cnv file was generate by clean_cnv function}
+
+\item{length_group}{set group of vectors to divide CNV length, unit is Mb. such as vector of ‘c(0.05, 0.3,  0.6, 1)’, means divide the CNV length into four group: '<0.05Mb', '0.05 - 0.3Mb', '0.3-0.6Mb' and '>1Mb', maximum accept 11 values}
 
 \item{plot_sum_1}{first type of combination of summary plot}
 
 \item{plot_sum_2}{second type of combination of summary plot}
 
 \item{folder}{set name of new create folder which used to save the results}
+
+\item{col_0}{set color for 0 copy of CNV}
+
+\item{col_1}{set color for 1 copy of CNV}
+
+\item{col_2}{set color for 2 copy of CNV (which might be ROH)}
+
+\item{col_3}{set color for 3 copy of CNV}
+
+\item{col_4}{set color for 4 copy of CNV}
+
+\item{height_sum1}{set height of Summary Plot 1}
+
+\item{width_sum1}{set width of Summary Plot 1}
+
+\item{height_sum2}{set height of Summary Plot 2}
+
+\item{width_sum2}{set width of Summary Plot 2}
 }
 \value{
 Some summary pictures

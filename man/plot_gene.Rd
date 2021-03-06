@@ -13,7 +13,9 @@ plot_gene(
   show_name = c(0, 160),
   cnv = NULL,
   height_1 = 2,
-  width_1 = 10
+  width_1 = 10,
+  col_gene = "gray",
+  gene_font_size = 2.5
 )
 }
 \arguments{
@@ -33,6 +35,10 @@ interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three}
 \item{height_1}{set height for gene plot separately}
 
 \item{width_1}{set height for gene plot separately}
+
+\item{col_gene}{set the color of Gene, only work in Gene annotated at CNV plot}
+
+\item{gene_font_size}{set the size of gene font}
 }
 \value{
 gene plot with given interval

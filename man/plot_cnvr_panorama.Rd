@@ -7,9 +7,9 @@
 plot_cnvr_panorama(
   cnvr,
   cnv_annotation,
-  intensity,
-  map,
-  prefix_bed,
+  intensity = NULL,
+  map = NULL,
+  prefix_bed = NULL,
   ld_heat = TRUE,
   sample_size,
   common_cnv_threshold = 0.05,
@@ -21,7 +21,8 @@ plot_cnvr_panorama(
   col_2 = "gray",
   col_3 = "tomato",
   col_4 = "deepskyblue",
-  col_gene = "black"
+  col_gene = "black",
+  gene_font_size = 2.2
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ plot_cnvr_panorama(
 \item{col_4}{set color for 4 copy of CNV}
 
 \item{col_gene}{set color of gene in CNV plot}
+
+\item{gene_font_size}{set size of gene in CNV annotated plot}
 }
 \value{
 cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...

@@ -39,7 +39,7 @@ plot_intensity(
 \item{end_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
 }
 \value{
-
+CNVR details plot
 }
 \description{
 Title plot intensity of cnvr

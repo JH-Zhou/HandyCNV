@@ -23,7 +23,8 @@ roh_visual(
   col_short = "deepskyblue",
   col_mid = "black",
   col_long = "deeppink2",
-  folder = "roh_visual"
+  folder = "roh_visual",
+  gene_font_size = 2.2
 )
 }
 \arguments{
@@ -62,6 +63,8 @@ roh_visual(
 \item{col_long}{set color to longer length of roh in distribution plot}
 
 \item{folder}{set new folder to save results}
+
+\item{gene_font_size}{set the font size of gene in ROH annotation plot}
 }
 \value{
 ROH distribution plot

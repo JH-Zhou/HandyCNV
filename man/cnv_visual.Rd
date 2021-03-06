@@ -13,6 +13,7 @@ cnv_visual(
   start_position = NULL,
   end_position = NULL,
   individual_id = NULL,
+  target_gene = NULL,
   max_chr_length = 160,
   refgene = NULL,
   plot_title = NULL,
@@ -26,7 +27,9 @@ cnv_visual(
   col_1 = "turquoise",
   col_2 = "gray",
   col_3 = "tomato",
-  col_4 = "deepskyblue"
+  col_4 = "deepskyblue",
+  col_gene = "gray",
+  gene_font_size = 2.2
 )
 }
 \arguments{
@@ -43,6 +46,8 @@ cnv_visual(
 \item{end_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
 
 \item{individual_id}{the ID of individual in cnv list, used to plot all chromosome for specific Individual}
+
+\item{target_gene}{the}
 
 \item{max_chr_length}{the maximum length of chromosome, default unit is 'Mb'}
 
@@ -71,6 +76,10 @@ cnv_visual(
 \item{col_3}{set color for 3 copy of CNV}
 
 \item{col_4}{set color for 4 copy of CNV}
+
+\item{col_gene}{set the color of Gene, only work in Gene annotated at CNV plot}
+
+\item{gene_font_size}{set the size of Gene in CNV Annotation plot}
 }
 \value{
 CNV distribution plot

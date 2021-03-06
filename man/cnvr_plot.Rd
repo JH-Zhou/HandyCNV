@@ -16,7 +16,11 @@ cnvr_plot(
   gain_col = "red",
   loss_col = "green",
   mixed_col = "blue",
-  folder = "cnvr_plot"
+  folder = "cnvr_plot",
+  gene_font_size = 2.2,
+  width_1 = 14,
+  height_1 = 10,
+  col_gene = "gray"
 )
 }
 \arguments{
@@ -40,9 +44,17 @@ cnvr_plot(
 
 \item{loss_col}{set color for type of loss CNVR}
 
-\item{mixed_col}{set colof for type of mixed CNVR}
+\item{mixed_col}{set color for type of mixed CNVR}
 
 \item{folder}{set name of folder to save results}
+
+\item{gene_font_size}{set the font size of gene in CNV annotation plot}
+
+\item{width_1}{number to set the width of final plot size, unit is 'cm'}
+
+\item{height_1}{number to set the height of final plot size, unit is 'cm'}
+
+\item{col_gene}{set the color of Gene, only work in Gene annotated at CNV plot}
 }
 \value{
 A figure of CNVR distribution map and plot parameters.
