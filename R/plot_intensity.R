@@ -11,8 +11,8 @@
 #' @param start_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param end_position decimal digit, default unit is 'Mb'. such as 23.2112
 #
-#' @return
-#' @export
+#' @return CNVR details plot
+#' @export plot_intensity
 #'
   plot_intensity <- function(cnvr, cnv_annotation, intensity, map, prefix_bed, sample_size, common_cnv_threshold = 0.05, chr_id, start_position, end_position) {
   #1.Read the CNVR result----
