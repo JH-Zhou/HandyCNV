@@ -13,6 +13,9 @@
 #' @param mixed_col set color for type of mixed CNVR
 #' @param folder set name of folder to save results
 #' @param gene_font_size set the font size of gene in CNV annotation plot
+#' @param width_1 number to set the width of final plot size, unit is 'cm'
+#' @param height_1 number to set the height of final plot size, unit is 'cm'
+#' @param col_gene set the color of Gene, only work in Gene annotated at CNV plot
 #'
 #' @import ggplot2 dplyr scales reshape2 tidyr
 #'
@@ -22,7 +25,7 @@
 #' If given clean_cnv file, will plot all CNVRs which are passed common threshold.
 #' @export cnvr_plot
 #'
-cnvr_plot <- function(cnvr, assembly = "ARS", legend_x = 127, legend_y = 30, clean_cnv = NULL, sample_size = NULL, common_cnv_threshold = 0.05, refgene = "ARS", gain_col = "red", loss_col = "green", mixed_col ="blue", folder ="cnvr_plot", gene_font_size = 2.2) {
+cnvr_plot <- function(cnvr, assembly = "ARS", legend_x = 127, legend_y = 30, clean_cnv = NULL, sample_size = NULL, common_cnv_threshold = 0.05, refgene = "ARS", gain_col = "red", loss_col = "green", mixed_col ="blue", folder ="cnvr_plot", gene_font_size = 2.2, width_1 = 14, height_1 = 10, col_gene = "gray") {
   if(!file.exists(paste0(folder))){
     dir.create(paste0(folder))
     print(paste0("A new folder '", folder, "' was created in working directory."))
@@ -139,7 +142,7 @@ cnvr_plot <- function(cnvr, assembly = "ARS", legend_x = 127, legend_y = 30, cle
     print(paste0("There ", nrow(high_freq), " high frequent CNVR passed the customized threshold."))
     for (i in 1:nrow(high_freq)) {
       print(paste0("Ploting CNVR ", i, "..." ))
-      cnv_visual(clean_cnv = clean_cnv, chr_id = high_freq$Chr[i], start_position = high_freq$Start[i]/1000000, end_position = high_freq$End[i]/1000000, refgene = refgene, folder = folder, gene_font_size = gene_font_size)
+      cnv_visual(clean_cnv = clean_cnv, chr_id = high_freq$Chr[i], start_position = high_freq$Start[i]/1000000, end_position = high_freq$End[i]/1000000, refgene = refgene, folder = folder, gene_font_size = gene_font_size, height_1 = height_1, width_1 = width_1, col_gene = col_gene)
     }
   }
 }
