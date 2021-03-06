@@ -14,8 +14,8 @@
 #' @param height_1 customize the height to save figure
 #' @param width_1 customize the width to save figure
 #' @param folder set the name of folder to save results
-#' @param col_1 set color for common_high in two gene lists comparison plot
-#' @param col_2 set color for common_low in two gene lists comparison plot
+#' @param col_1 set color for common_high in two gene lists comparison plot or the color of High frequency gene in multiple comparison heatmap plot
+#' @param col_2 set color for common_low in two gene lists comparison plot or the color of Low frequency gene in multiple comparison heatmap plot
 #' @param col_3 set color for High_Freq_list_1 in two gene lists comparison plot
 #' @param col_4 set color for High_Freq_list_2 in two gene lists comparison plot
 #'
@@ -25,7 +25,7 @@
 #' @return Coparison summary results and plots.
 #' @export compare_gene
 #'
-compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq_4 = NULL, common_gene_threshold = 3, title_1 = "list_1", title_2 = "list_2", title_3 = "list_3", title_4 = "list_4", height_1 = 10, width_1 =14, folder = "compre_gene", col_1 = "red", col_2 = "dodgerblue", col_3 = "yellow3", col_4 = "pink2"){
+compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq_4 = NULL, common_gene_threshold = 3, title_1 = "list_1", title_2 = "list_2", title_3 = "list_3", title_4 = "list_4", height_1 = 10, width_1 =14, folder = "compre_gene", col_1 = "red", col_2 = "yellow", col_3 = "dodgerblue", col_4 = "pink2"){
   #check and create folder
   if(!file.exists(folder)){
      dir.create(folder)
@@ -174,7 +174,8 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
     plot_data <- reshape2::melt(plot_data, id.vars = "name2_1")
     ggplot(plot_data, aes(x = variable , y = name2_1, fill = value)) +
       geom_tile() +
-      scale_fill_gradientn(colours = c("yellow", "red"), na.value = "black") +
+      #scale_fill_gradientn(colours = c("yellow", "red"), na.value = "black") +
+      scale_fill_gradientn(colours = c(col_2, col_1), na.value = "black") +
       theme_classic() +
       scale_x_discrete(labels = c(title_1, title_2, title_3, title_4)) +
       labs(x = NULL, y = "Gene", fill = "Quantity")
