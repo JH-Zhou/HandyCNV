@@ -23,6 +23,7 @@
 #' @param col_2 set color for 2 copy of CNV (which might be ROH)
 #' @param col_3 set color for 3 copy of CNV
 #' @param col_4 set color for 4 copy of CNV
+#' @param col_gene set the color of Gene, only work in Gene annotated at CNV plot
 #' @param gene_font_size set the size of Gene in CNV Annotation plot
 #'
 #' @import dplyr ggplot2 tidyr ggrepel scales grDevices
@@ -35,7 +36,7 @@
 #' @export cnv_visual
 #'
 
-cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, target_gene = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", gene_font_size = 2.2) {
+cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, target_gene = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", col_gene = "gray", gene_font_size = 2.2) {
   if(!file.exists(paste0(folder))){
     dir.create(paste0(folder))
     print(paste0("A new folder '", folder, "' was created in working directory."))
@@ -78,7 +79,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
                     select(Chr, Length)
 
   #plot CNVs on specific chr
-  plot_cnv_chr <- function(clean_cnv = NULL, chr_id = NULL, folder = folder, width_1 = 23, height_1 = 13.5){
+  plot_cnv_chr <- function(clean_cnv = NULL, chr_id = NULL, folder = folder, width_1 = width_1, height_1 = height_1){
     #2.plot for specific chromosome
     cnv <- clean_cnv
     cnv_chr <- cnv[cnv$Chr == chr_id, ]
@@ -98,7 +99,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
 
     chr_name <- paste0("Chr", chr_id, ".png")
     id_number <- nrow(id_coord)
-    chr_title <- paste0("CNV on Chromosome ", chr_id, " with ", id_number, " Individuals")
+    chr_title <- paste0("CNV on Chr", chr_id, " with ", id_number, " Samples")
     png(res = 350, filename = paste0(folder,"/", chr_name), width = width_1, height = height_1, units = "cm")
     #add manual color for cnv number
     color_copy <- c("0" = col_0,
@@ -111,6 +112,10 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       scale_fill_manual(values = color_copy) +
       #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
       theme_bw() +
+      theme(legend.key.size = unit(0.5,"line"),
+            legend.title = element_text(size = 6),
+            legend.text  = element_text(size = 6),
+            legend.margin=margin(0, 0, 0, 0)) +
       scale_y_continuous(labels = NULL) +
       scale_x_continuous(breaks = seq(0, max_len$Length, by = 5), limits = c(0, max_len$Length)) +
       labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "Copy")
@@ -165,7 +170,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
 
   chr_name <- paste0("Chr", chr_id, ".png")
   id_number <- nrow(id_coord)
-  chr_title <- paste0("CNV on Chromosome ", chr_id, " with ", id_number, " Individuals")
+  chr_title <- paste0("CNV on Chr", chr_id, " with ", id_number, " Samples")
   png(res = 350, filename = paste0(folder, "/", chr_name), width = width_1, height = height_1, units = "cm")
 
   #add manual color for cnv number
@@ -180,6 +185,10 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     scale_fill_manual(values = color_copy) +
     #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
     theme_bw() +
+    theme(legend.key.size = unit(0.5,"line"),
+          legend.title = element_text(size = 6),
+          legend.text  = element_text(size = 6),
+          legend.margin=margin(0, 0, 0, 0)) +
     scale_y_continuous(labels = NULL) +
     scale_x_continuous(breaks = seq(0, max_len$Length, by = 5), limits = c(0, max_len$Length)) +
     labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "Copy")
@@ -352,7 +361,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       theme(legend.key.size = unit(0.5,"line"),
             legend.title = element_text(size = 6),
             legend.text  = element_text(size = 6),
-            legend.margin=margin(-10, 0, 0, 0),
+            legend.margin=margin(0, 0, 0, 0),
             #legend.position = "right",
             legend.position = c(0.95, 0.01),
             legend.justification='right',
@@ -365,7 +374,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       labs(x = "Position (Mb)", y ="CNV", fill = "Copy")
 
     print("Plotting gene...")
-    gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, cnv = "yes", gene_font_size = gene_font_size)
+    gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, cnv = "yes", gene_font_size = gene_font_size, col_gene = col_gene)
 
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
@@ -389,7 +398,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   #4.
   indiv_name <- paste0("CNV_of_", individual_id,".png")
   indiv_title <- paste0("CNV Distribution of Individual ", individual_id)
-  png(res = 350, filename = paste0(folder,"/", indiv_name), width = 3500, height = 2000)
+  png(res = 350, filename = paste0(folder,"/", indiv_name), width = width_1, height = height_1, units = "cm")
   #add manual color for cnv number
   color_copy <- c("0" = col_0,
                   "1" = col_1,
@@ -443,8 +452,8 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     gene_cnv <- ggplot(cnv_gene, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
                 geom_rect(aes(fill = as.factor(CNV_Value))) +
                 scale_fill_manual(values = color_copy) +
-                geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order+2)*5 + 2, ymax = (Order+2)*5 + 5), fill = "black") +
-                geom_text(data = gene_coord, aes(x = g_Start/1000000, y = (Order + 2)*5 + 9, label = name2), size = 2.5) +
+                geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order+2)*5 + 2, ymax = (Order+2)*5 + 7), fill = "black") +
+                geom_text(data = gene_coord, aes(x = g_Start/1000000, y = (Order + 2)*5 + 11, label = name2), size = 2.5) +
                 geom_hline(yintercept = (max(cnv_gene$Order) + 2)*5 - 2, linetype = "dashed") +
                 #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
                 theme_bw() +
