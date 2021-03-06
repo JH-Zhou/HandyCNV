@@ -21,6 +21,7 @@
 #'
 #' @import dplyr ggrepel ggplot2 tidyr gaston cowplot scales
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
+#' @importFrom stringr str_detect
 #' @importFrom ggplotify base2grob
 #' @return cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...
 #' @export plot_cnvr_panorama
@@ -149,13 +150,15 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
       geom_rect(data = gene_coord, aes(xmin = g_Start/1000000, xmax = g_End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3), fill = col_gene) +
       geom_text_repel(data = gene_coord, aes(x = g_Start/1000000, y = (Order-1)*5 + 4, label = name2), size = gene_font_size) +
       geom_hline(yintercept = (max(cnv_chr_zoom$Order) + 2)*5 - 2, linetype = "dashed") +
+      scale_x_continuous(limits = c(start_position/1000000, end_position/1000000, by = 0.25)) +
+      #scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
       #geom_text(aes(zoom_x, y, label = Sample_ID), size = 2.5) +
       #scale_color_manual(values = c("#F8766D", "#A3A500", "#00B0F6", "#E76BF3", "black")) +
       theme_bw() +
       theme(legend.key.size = unit(0.5,"line"),
             legend.title = element_text(size = 6),
             legend.text  = element_text(size = 6),
-            legend.margin=margin(-10, 0, 0, 0),
+            legend.margin=margin(0, 0, 0, 0),
             #legend.position = c(0.95, -0.087),
             ) +
       {if(missing(intensity)) theme(legend.position = "right")} +
@@ -198,6 +201,7 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
         #scale_color_manual(values = c("#F8766D", "#A3A500","gray", "#00B0F6", "#E76BF3")) +
         theme_bw() +
         theme(legend.position = "top",
+              legend.margin=margin(0, 0, 0, 0),
               axis.title.x = element_blank()) +
         geom_point(shape = 1) +
         scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
@@ -210,6 +214,7 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
         scale_color_manual(values = color_copy) +
         theme_bw() +
         theme(legend.position = "top",
+              legend.margin=margin(0, 0, 0, 0),
               axis.title.x = element_blank()) +
         geom_point(shape = 1) +
         scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
@@ -249,6 +254,7 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
         scale_x_continuous(breaks = seq(start_position, end_position, by = 250000), labels = unit_format(unit = "", scale = 1e-6)) +
         ylim(0.0, 1.0) + theme_bw() +
         theme(legend.position = "top",
+              legend.margin=margin(0, 0, 0, 0),
               axis.title.x = element_blank()) +
         labs(y = "Percentage") +
         scale_color_manual(values = c("maf" = "red", "heterozygosity" = "green", "callrate" = "purple"))
