@@ -9,6 +9,8 @@
 #' interval 11.2-12.4 Mb and 15.3-18.4 Mb, the maximum pairs of interval are three
 #' @param height_1 set height for gene plot separately
 #' @param width_1 set height for gene plot separately
+#' @param gene_font_size set the size of gene font
+#' @param col_gene set the color of Gene, only work in Gene annotated at CNV plot
 #'
 #' @import ggplot2 dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -16,7 +18,7 @@
 #' @return gene plot with given interval
 #' @export plot_gene
 #'
-plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), cnv = NULL, height_1 = 2, width_1 = 10, gene_font_size = 2.5){
+plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), cnv = NULL, height_1 = 2, width_1 = 10, col_gene = "gray", gene_font_size = 2.5){
   ###
   #read gene
   #if(refgene == "ARS_ens"){
@@ -119,7 +121,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
 
     } else {
       ggplot() +
-        geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max), fill = "gray50", show.legend = F) +
+        geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max), fill = col_gene, show.legend = F) +
         #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
         #{if(nrow(gene_present) < 50)geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2))} +
         geom_text_repel(data = gene_present, aes(x = Start/1000000, y = y_max, label = name2), size = gene_font_size) +
@@ -157,6 +159,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
 #' @param col_mid set color to middle length of roh in distribution plot
 #' @param col_long set color to longer length of roh in distribution plot
 #' @param folder set new folder to save results
+#' @param gene_font_size set the font size of gene in ROH annotation plot
 #'
 #' @import dplyr ggplot2 tidyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -165,7 +168,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
 #'
 #' @export roh_visual
 #'
-roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name =c(0, 160), width_1 = 13, height_1 = 10, col_short = "deepskyblue", col_mid = "black", col_long = "deeppink2", folder = "roh_visual") {
+roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name =c(0, 160), width_1 = 13, height_1 = 10, col_short = "deepskyblue", col_mid = "black", col_long = "deeppink2", folder = "roh_visual", gene_font_size = 2.2) {
   if(!(dir.exists(folder))){
     dir.create(folder)
     print(paste0("New folder ", folder, " was created in working directory."))
@@ -396,7 +399,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       #labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "Length")
       labs(x = "Physical Position (Mb)", y ="Individual ID")
     print("plotting gene....")
-    gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name)
+    gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, gene_font_size = gene_font_size)
     #png(res = 300, filename = zoom_name, width = 3500, height = 2000)
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
