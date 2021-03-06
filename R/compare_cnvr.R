@@ -13,8 +13,8 @@
 #then find overlap cnv and non overlap cnv
 #then summarize how many CNVRs are in above standards
 #'
-#' @param cnvr_umd first cnvr list, not limited on umd or ars, default file is the result from call_cnvr function
-#' @param cnvr_ars second cnvr list, not limited on umd or ars, default file is the result from call_cnvr function
+#' @param cnvr_def first cnvr list, not limited on umd or ars, default file is the result from call_cnvr function
+#' @param cnvr_tar second cnvr list, not limited on umd or ars, default file is the result from call_cnvr function
 #' @param umd_ars_map map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
 #' @param width_1 number to set the width of final plot size, unit is 'cm'
 #' @param height_1 number to set the height of final plot size, unit is 'cm'
@@ -29,7 +29,7 @@
 #' @return Details comparison results of CNVRs between input lists
 #' @export compare_cnvr
 
-compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, height_1 = 15, hjust_prop = 0.0, hjust_num = 1.5, folder = "compare_cnvr", col_1 = "gray20", col_2 = "springgreen4") {
+compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, height_1 = 15, hjust_prop = 0.0, hjust_num = 1.5, folder = "compare_cnvr", col_1 = "gray20", col_2 = "springgreen4") {
   if(!file.exists(folder)){
     dir.create(folder)
     print(paste0("A new folder ", folder, " was created in working directory."))
@@ -40,10 +40,14 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     cnv <- cnv_checkover
     title_f = title_fig
     drop_name = "Overlap_length"
-     cnvr_cal = unique(subset(cnv, select = !(colnames(cnv) %in% drop_name))) %>% group_by(Type, Check_overlap) %>%
-      summarise(origi_length = sum(Length), num_CNVR = n_distinct(CNVR_ID))
-    cnvr_over <- cnv %>% group_by(Type, Check_overlap) %>%
-      summarise(overlap_len = sum(Overlap_length), num_overlap_oppsite = n_distinct(Overlap_length))
+    cnvr_cal = unique(subset(cnv, select = !(colnames(cnv) %in% drop_name))) %>%
+               group_by(Type, Check_overlap) %>%
+               summarise(origi_length = sum(Length),
+                         num_CNVR = n_distinct(CNVR_ID))
+    cnvr_over <- cnv %>%
+                 group_by(Type, Check_overlap) %>%
+                 summarise(overlap_len = sum(Overlap_length),
+                           num_overlap_oppsite = n_distinct(Overlap_length, na.rm = TRUE))
 
     cnvr_over[1,3] = cnvr_cal[1,3] + cnvr_cal[2,3] - cnvr_over[2,3]
     cnvr_over[3,3] = cnvr_cal[3,3] + cnvr_cal[4,3] - cnvr_over[4,3]
@@ -51,8 +55,10 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
 
     cnvr_cal <- merge(cnvr_cal, cnvr_over, by = c("Type", "Check_overlap"), all.x = TRUE)
 
-    cnvr_cal = cnvr_cal %>% group_by(Type) %>%
-      mutate(prop_overlap_len = overlap_len / sum(origi_length), prop_num = num_CNVR / sum(num_CNVR))
+    cnvr_cal = cnvr_cal %>%
+               group_by(Type) %>%
+               mutate(prop_overlap_len = round(overlap_len / sum(origi_length),3),
+                      prop_num = round(num_CNVR / sum(num_CNVR),3))
     #cnvr_cal %>% add_row(Total = "")
 
     print(paste0("CNVR comparison summary results in ", title_f," as following:"))
@@ -74,13 +80,16 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
     compare_plot <- ggplot(cnvr_cal) +
       geom_col(aes(x = Type, y = overlap_len, fill = Check_overlap)) +
       scale_fill_manual(values = color_bar) +
-      geom_text(data = subset(cnvr_cal, Check_overlap == "Overlap"), aes(x= Type, y = overlap_len,label = scales::percent(prop_overlap_len)), color = "black", position = position_stack(0.5), hjust = hjust_prop) +
-      geom_text(data = subset(cnvr_cal, Check_overlap == "Overlap"), aes(x= Type, y = overlap_len,label = num_CNVR), color = "orange", position = position_stack(0.5), hjust = hjust_num) +
+      geom_text(data = subset(cnvr_cal, Check_overlap == "Overlap"), aes(x= Type, y = overlap_len,label = scales::percent(prop_overlap_len, accuracy = 0.1)), color = "orange", position = position_stack(0.5), hjust = hjust_prop) +
+      geom_text(data = subset(cnvr_cal, Check_overlap == "Overlap"), aes(x= Type, y = overlap_len,label = num_CNVR), color = "black", position = position_stack(0.5), hjust = hjust_num) +
       #geom_text(aes(x = Type, y = percent_total, label = num), vjust = -0.5, hjust = 1.3) +
       #geom_text(inherit.aes = FALSE, data = cnv_freq, aes(x = Type, y = percent_total, label = scales::percent(percent_total)), vjust = -0.5, hjust  =-0.5) +
       scale_y_continuous(labels=scales::unit_format(unit = "", scale = 1e-6)) +
       theme_classic() +
-      theme(legend.position = "top", legend.title = element_blank()) +
+      theme(legend.position = "top",
+            legend.title = element_blank(),
+            legend.key.size = unit(0.5,"line"),
+            legend.text  = element_text(size = 6)) +
       labs(x = summary_title, y = "Total Length (Mb)")
     print(compare_plot)
     dev.off()
@@ -89,12 +98,12 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
 
   #dealing with data
   if (is.null(umd_ars_map)) {
-    cnv_ars <- fread(cnvr_ars)
+    cnv_ars <- fread(cnvr_tar)
     cnv_ars$version <- "Verision_ARS" # add verision in dataframe
     colnames(cnv_ars) <- paste(colnames(cnv_ars), "ARS", sep = "_") #add suffix to all colnames
     ars_colnames <- colnames(cnv_ars) #set original column names use for extarting columns after matching
 
-    cnv_umd <- fread(cnvr_umd)
+    cnv_umd <- fread(cnvr_def)
     cnv_umd$version <- "Version_UMD"
     colnames(cnv_umd) <- paste(colnames(cnv_umd), "UMD", sep = "_")
     umd_colnames <- colnames(cnv_umd)
@@ -180,6 +189,7 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
 
 
     try(plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1, hjust_prop = hjust_prop, hjust_num = hjust_num), silent = TRUE)
+    #plot_comparison(cnv_checkover = checkover_pop_length_2, title_fig = "checkover_pop_2", width_1 = width_1, height_1 = height_1, hjust_prop = hjust_prop, hjust_num = hjust_num)
     fwrite(checkover_pop_length_2, file = paste0(folder, "/checkover_pop_2.txt"), sep = "\t", quote = FALSE)
 
     #5.summarize difference
@@ -209,12 +219,12 @@ compare_cnvr <- function(cnvr_umd, cnvr_ars, umd_ars_map = NULL, width_1 = 15, h
 
   # else {
   #   #convert coordinate for CNV and CNVR
-  #   cnv_ars <- fread(cnvr_ars)
-  #   cnv_ars$version <- "Verision_ARS" # add verision in dataframe
+  #   cnv_ars <- fread(cnvr_tar)
+  #   cnv_ars$version <- "Verision_ARS" # add version in dataframe
   #   colnames(cnv_ars) <- paste(colnames(cnv_ars), "ARS", sep = "_") #add suffix to all colnames
-  #   ars_colnames <- colnames(cnv_ars) #set original column names use for extarting columns after matching
+  #   ars_colnames <- colnames(cnv_ars) #set original column names use for extracting columns after matching
   #
-  #   cnv_umd <- fread(cnvr_umd)
+  #   cnv_umd <- fread(cnvr_def)
   #   cnv_umd$version <- "Version_UMD"
   #   colnames(cnv_umd) <- paste(colnames(cnv_umd), "UMD", sep = "_")
   #   umd_colnames <- colnames(cnv_umd)
