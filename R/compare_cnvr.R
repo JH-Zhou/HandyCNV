@@ -13,9 +13,9 @@
 #then find overlap cnv and non overlap cnv
 #then summarize how many CNVRs are in above standards
 #'
-#' @param cnvr_def first cnvr list, not limited on umd or ars, default file is the result from call_cnvr function
-#' @param cnvr_tar second cnvr list, not limited on umd or ars, default file is the result from call_cnvr function
-#' @param umd_ars_map map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
+#' @param cnvr_def first cnvr list, not limited on def or tar, default file is the result from call_cnvr function
+#' @param cnvr_tar second cnvr list, not limited on def or tar, default file is the result from call_cnvr function
+#' @param def_tar_map map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function
 #' @param width_1 number to set the width of final plot size, unit is 'cm'
 #' @param height_1 number to set the height of final plot size, unit is 'cm'
 #' @param hjust_prop default value is 0.0. used to adjust horizontal position of the number of overlapped CNVR in the plot
@@ -29,7 +29,7 @@
 #' @return Details comparison results of CNVRs between input lists
 #' @export compare_cnvr
 
-compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, height_1 = 15, hjust_prop = 0.0, hjust_num = 1.5, folder = "compare_cnvr", col_1 = "gray20", col_2 = "springgreen4") {
+compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, height_1 = 15, hjust_prop = 0.0, hjust_num = 1.5, folder = "compare_cnvr", col_1 = "gray20", col_2 = "springgreen4") {
   if(!file.exists(folder)){
     dir.create(folder)
     print(paste0("A new folder ", folder, " was created in working directory."))
@@ -73,7 +73,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
     summary_title <- paste0(overlap_sum$num_CNVR[2]," CNVRs ",
                             round(overlap_sum$overlap_len[2]/sum(cnvr_cal$origi_length), 4) * 100, "% overlap Length")
 
-    #add manual color to bars
+    #add manual color to btar
     color_bar <- c("Non-Overlap" = col_1,
                    "Overlap" = col_2)
     png(res = 300, filename = paste0(folder, "/", title_f, ".png"), width = width_1, height = height_1, bg = "transparent", units = "cm")
@@ -97,37 +97,37 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
   }
 
   #dealing with data
-  if (is.null(umd_ars_map)) {
-    cnv_ars <- fread(cnvr_tar)
-    cnv_ars$version <- "Verision_ARS" # add verision in dataframe
-    colnames(cnv_ars) <- paste(colnames(cnv_ars), "ARS", sep = "_") #add suffix to all colnames
-    ars_colnames <- colnames(cnv_ars) #set original column names use for extarting columns after matching
+  if (is.null(def_tar_map)) {
+    cnv_tar <- fread(cnvr_tar)
+    cnv_tar$version <- "Verision_TAR" # add verision in dataframe
+    colnames(cnv_tar) <- paste(colnames(cnv_tar), "TAR", sep = "_") #add suffix to all colnames
+    tar_colnames <- colnames(cnv_tar) #set original column names use for extarting columns after matching
 
-    cnv_umd <- fread(cnvr_def)
-    cnv_umd$version <- "Version_UMD"
-    colnames(cnv_umd) <- paste(colnames(cnv_umd), "UMD", sep = "_")
-    umd_colnames <- colnames(cnv_umd)
+    cnv_def <- fread(cnvr_def)
+    cnv_def$version <- "Version_DEF"
+    colnames(cnv_def) <- paste(colnames(cnv_def), "DEF", sep = "_")
+    def_colnames <- colnames(cnv_def)
 
     #find overlap on population level
-    setkey(cnv_ars, Chr_ARS, Start_ARS, End_ARS)
-    pop_overlap <- data.table::foverlaps(cnv_umd, cnv_ars, by.x = c("Chr_UMD", "Start_UMD", "End_UMD"), type = "any", nomatch = NULL)
-    pop_overlap$Overlap_length <- pmin(pop_overlap$End_ARS, pop_overlap$End_UMD) - pmax(pop_overlap$Start_ARS, pop_overlap$Start_UMD) + 1
-    pop_overlap_umd <- subset(pop_overlap, select = umd_colnames)
-    final_pop_overlap_umd <- unique(pop_overlap_umd)
-    non_overlap_pop_umd <- dplyr::setdiff(cnv_umd, final_pop_overlap_umd)
-    if (nrow(non_overlap_pop_umd) + nrow(final_pop_overlap_umd) == nrow(cnv_umd)) {
-      print(paste0("Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_umd)))
+    setkey(cnv_tar, Chr_TAR, Start_TAR, End_TAR)
+    pop_overlap <- data.table::foverlaps(cnv_def, cnv_tar, by.x = c("Chr_DEF", "Start_DEF", "End_DEF"), type = "any", nomatch = NULL)
+    pop_overlap$Overlap_length <- pmin(pop_overlap$End_TAR, pop_overlap$End_DEF) - pmax(pop_overlap$Start_TAR, pop_overlap$Start_DEF) + 1
+    pop_overlap_def <- subset(pop_overlap, select = def_colnames)
+    final_pop_overlap_def <- unique(pop_overlap_def)
+    non_overlap_pop_def <- dplyr::setdiff(cnv_def, final_pop_overlap_def)
+    if (nrow(non_overlap_pop_def) + nrow(final_pop_overlap_def) == nrow(cnv_def)) {
+      print(paste0("Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_def)))
     } else {print("Comparison to the first file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
-    fwrite(final_pop_overlap_umd, file = paste0(folder, "/overlap_cnv_1.popu"), sep = "\t", quote = FALSE)
-    fwrite(non_overlap_pop_umd, file = paste0(folder, "/non_overlap_cnv_1.popu"), sep = "\t", quote = FALSE)
+    fwrite(final_pop_overlap_def, file = paste0(folder, "/overlap_cnv_1.popu"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_pop_def, file = paste0(folder, "/non_overlap_cnv_1.popu"), sep = "\t", quote = FALSE)
 
     #make comparison plot
-    final_pop_overlap_umd$Check_overlap <- "Overlap"
-    non_overlap_pop_umd$Check_overlap <- "Non-Overlap"
-    checkover_pop_1 <- rbind(final_pop_overlap_umd, non_overlap_pop_umd)
-    colnames(checkover_pop_1) <- sub("_UMD", "", colnames(checkover_pop_1))
-    checkover_pop_length <- merge(checkover_pop_1, pop_overlap[, c("CNVR_ID_UMD", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_UMD", all.x = TRUE)
+    final_pop_overlap_def$Check_overlap <- "Overlap"
+    non_overlap_pop_def$Check_overlap <- "Non-Overlap"
+    checkover_pop_1 <- rbind(final_pop_overlap_def, non_overlap_pop_def)
+    colnames(checkover_pop_1) <- sub("_DEF", "", colnames(checkover_pop_1))
+    checkover_pop_length <- merge(checkover_pop_1, pop_overlap[, c("CNVR_ID_DEF", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_DEF", all.x = TRUE)
     #checkover_pop_length <- unique(checkover_pop_length)
     drop_name = "Overlap_length"
     checkover_pop_uniqe_1 = unique(subset(checkover_pop_length, select = !(colnames(checkover_pop_length) %in% drop_name))) #used for calculate overlapping
@@ -138,11 +138,11 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
     fwrite(checkover_pop_length, file = paste0(folder, "/checkover_pop_1.txt"), sep = "\t", quote = FALSE)
 
     #5.summarize difference
-    #UMD overlap number
-    overlap_percent_pop <- round(nrow(final_pop_overlap_umd) / nrow(cnv_umd), 3) * 100
-    non_overlap_percent_pop <- round(nrow(non_overlap_pop_umd) / nrow(cnv_umd), 3) * 100
-    print(paste0("The number of overlaped CNVRs on population level is ", nrow(final_pop_overlap_umd), ", which is around ", overlap_percent_pop, " percent in first file."))
-    print(paste0("The number of Non-overlaped CNVRs on population level is ", nrow(non_overlap_pop_umd), ", which is around ", non_overlap_percent_pop, " percent in first file"))
+    #DEF overlap number
+    overlap_percent_pop <- round(nrow(final_pop_overlap_def) / nrow(cnv_def), 3) * 100
+    non_overlap_percent_pop <- round(nrow(non_overlap_pop_def) / nrow(cnv_def), 3) * 100
+    print(paste0("The number of overlaped CNVRs on population level is ", nrow(final_pop_overlap_def), ", which is around ", overlap_percent_pop, " percent in first file."))
+    print(paste0("The number of Non-overlaped CNVRs on population level is ", nrow(non_overlap_pop_def), ", which is around ", non_overlap_percent_pop, " percent in first file"))
 
     #overlap length
     overlap_length_1 <- sum(pop_overlap$Overlap_length, na.rm = TRUE)
@@ -152,7 +152,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
     print(paste0("The overlapping length is ", overlap_length_1, " bp, which is around ", overlap_length_prop, " percent in first file"))
 
     overlap_summary <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs", "In Total"),
-                                  "Number of CNVR" = c(nrow(final_pop_overlap_umd), nrow(non_overlap_pop_umd), nrow(final_pop_overlap_umd) + nrow(non_overlap_pop_umd)),
+                                  "Number of CNVR" = c(nrow(final_pop_overlap_def), nrow(non_overlap_pop_def), nrow(final_pop_overlap_def) + nrow(non_overlap_pop_def)),
                                   "Proportion of Number (%)" = c(overlap_percent_pop, non_overlap_percent_pop, 100),
                                   "Length(bp)" = c(overlap_length_1, cnvr_length_1- overlap_length_1, cnvr_length_1),
                                   "Proportion of Length (%)" = c(overlap_length_prop, 100 - overlap_length_prop, 100))
@@ -162,27 +162,27 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
     print("Comparison to the first file was finished.")
 
 
-  ##########compare results in ARS at second-------------------------------------------------------------------
-   #setkey(cnv_umd_ars, Chr_UMD, Start_UMD, End_UMD)
+  ##########compare results in TAR at second-------------------------------------------------------------------
+   #setkey(cnv_def_tar, Chr_DEF, Start_DEF, End_DEF)
     #find overlap on population level
-    setkey(cnv_umd, Chr_UMD, Start_UMD, End_UMD)
-    pop_overlap_2 <- data.table::foverlaps(cnv_ars, cnv_umd, by.x = c("Chr_ARS", "Start_ARS", "End_ARS"), type = "any", nomatch = NULL)
-    pop_overlap_2$Overlap_length <- pmin(pop_overlap_2$End_ARS, pop_overlap_2$End_UMD) - pmax(pop_overlap_2$Start_ARS, pop_overlap_2$Start_UMD) + 1
-    pop_overlap_ars <- subset(pop_overlap_2, select = ars_colnames)
-    final_pop_overlap_ars <- unique(pop_overlap_ars)
-    non_overlap_pop_ars <- dplyr::setdiff(cnv_ars, final_pop_overlap_ars)
-    if (nrow(non_overlap_pop_ars) + nrow(final_pop_overlap_ars) == nrow(cnv_ars)) {
-      print(paste0("Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_ars)))
+    setkey(cnv_def, Chr_DEF, Start_DEF, End_DEF)
+    pop_overlap_2 <- data.table::foverlaps(cnv_tar, cnv_def, by.x = c("Chr_TAR", "Start_TAR", "End_TAR"), type = "any", nomatch = NULL)
+    pop_overlap_2$Overlap_length <- pmin(pop_overlap_2$End_TAR, pop_overlap_2$End_DEF) - pmax(pop_overlap_2$Start_TAR, pop_overlap_2$Start_DEF) + 1
+    pop_overlap_tar <- subset(pop_overlap_2, select = tar_colnames)
+    final_pop_overlap_tar <- unique(pop_overlap_tar)
+    non_overlap_pop_tar <- dplyr::setdiff(cnv_tar, final_pop_overlap_tar)
+    if (nrow(non_overlap_pop_tar) + nrow(final_pop_overlap_tar) == nrow(cnv_tar)) {
+      print(paste0("Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_tar)))
     } else {print("Comparison to the second file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
-    fwrite(final_pop_overlap_ars, file = paste0(folder, "/overlap_cnv_ars.popu"), sep = "\t", quote = FALSE)
-    fwrite(non_overlap_pop_ars, file = paste0(folder, "/non_overlap_cnv_ars.popu"), sep = "\t", quote = FALSE)
+    fwrite(final_pop_overlap_tar, file = paste0(folder, "/overlap_cnv_tar.popu"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_pop_tar, file = paste0(folder, "/non_overlap_cnv_tar.popu"), sep = "\t", quote = FALSE)
 
-    final_pop_overlap_ars$Check_overlap <- "Overlap"
-    non_overlap_pop_ars$Check_overlap <- "Non-Overlap"
-    checkover_pop_2 <- rbind(final_pop_overlap_ars, non_overlap_pop_ars)
-    colnames(checkover_pop_2) <- sub("_ARS", "", colnames(checkover_pop_2))
-    checkover_pop_length_2 <- merge(checkover_pop_2, pop_overlap_2[, c("CNVR_ID_ARS", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_ARS", all.x = TRUE)
+    final_pop_overlap_tar$Check_overlap <- "Overlap"
+    non_overlap_pop_tar$Check_overlap <- "Non-Overlap"
+    checkover_pop_2 <- rbind(final_pop_overlap_tar, non_overlap_pop_tar)
+    colnames(checkover_pop_2) <- sub("_TAR", "", colnames(checkover_pop_2))
+    checkover_pop_length_2 <- merge(checkover_pop_2, pop_overlap_2[, c("CNVR_ID_TAR", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_TAR", all.x = TRUE)
     #checkover_pop_length_2 <- unique(checkover_pop_length_2)
     drop_name = "Overlap_length"
     checkover_pop_uniqe_2 = unique(subset(checkover_pop_length_2, select = !(colnames(checkover_pop_length_2) %in% drop_name))) #used for calculate overlapping
@@ -193,11 +193,11 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
     fwrite(checkover_pop_length_2, file = paste0(folder, "/checkover_pop_2.txt"), sep = "\t", quote = FALSE)
 
     #5.summarize difference
-    #ARS
-    overlap_percent_pop_2 <- round(nrow(final_pop_overlap_ars) / nrow(cnv_ars), 3) * 100
-    non_overlap_percent_pop_2 <- round(nrow(non_overlap_pop_ars) / nrow(cnv_ars), 3) * 100
-    print(paste0("The number of overlaped CNVRs in seceond file on population level are ", nrow(final_pop_overlap_ars), ", which is around ", overlap_percent_pop_2, " percent"))
-    print(paste0("The number of Non-overlaped CNVRs in second file on population level are ", nrow(non_overlap_pop_ars), ", which is around ", non_overlap_percent_pop_2, " percent"))
+    #TAR
+    overlap_percent_pop_2 <- round(nrow(final_pop_overlap_tar) / nrow(cnv_tar), 3) * 100
+    non_overlap_percent_pop_2 <- round(nrow(non_overlap_pop_tar) / nrow(cnv_tar), 3) * 100
+    print(paste0("The number of overlaped CNVRs in seceond file on population level are ", nrow(final_pop_overlap_tar), ", which is around ", overlap_percent_pop_2, " percent"))
+    print(paste0("The number of Non-overlaped CNVRs in second file on population level are ", nrow(non_overlap_pop_tar), ", which is around ", non_overlap_percent_pop_2, " percent"))
 
     #overlap length
     overlap_length_2 <- sum(pop_overlap_2$Overlap_length, na.rm = TRUE)
@@ -207,7 +207,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
     print(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in first file"))
 
     overlap_summary_2 <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs", "In Total"),
-                                    "Number of CNVR" = c(nrow(final_pop_overlap_ars), nrow(non_overlap_pop_ars), nrow(final_pop_overlap_ars) + nrow(non_overlap_pop_ars)),
+                                    "Number of CNVR" = c(nrow(final_pop_overlap_tar), nrow(non_overlap_pop_tar), nrow(final_pop_overlap_tar) + nrow(non_overlap_pop_tar)),
                                     "Proportion of Number (%)" = c(overlap_percent_pop_2, non_overlap_percent_pop_2, 100),
                                     "Length(bp)" = c(overlap_length_2, cnvr_length_2- overlap_length_2, cnvr_length_2),
                                     "Proportion of Length (%)" = c(overlap_length_prop_2, 100 - overlap_length_prop_2, 100))
@@ -219,155 +219,155 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
 
   # else {
   #   #convert coordinate for CNV and CNVR
-  #   cnv_ars <- fread(cnvr_tar)
-  #   cnv_ars$version <- "Verision_ARS" # add version in dataframe
-  #   colnames(cnv_ars) <- paste(colnames(cnv_ars), "ARS", sep = "_") #add suffix to all colnames
-  #   ars_colnames <- colnames(cnv_ars) #set original column names use for extracting columns after matching
+  #   cnv_tar <- fread(cnvr_tar)
+  #   cnv_tar$version <- "Verision_TAR" # add version in dataframe
+  #   colnames(cnv_tar) <- paste(colnames(cnv_tar), "TAR", sep = "_") #add suffix to all colnames
+  #   tar_colnames <- colnames(cnv_tar) #set original column names use for extracting columns after matching
   #
-  #   cnv_umd <- fread(cnvr_def)
-  #   cnv_umd$version <- "Version_UMD"
-  #   colnames(cnv_umd) <- paste(colnames(cnv_umd), "UMD", sep = "_")
-  #   umd_colnames <- colnames(cnv_umd)
+  #   cnv_def <- fread(cnvr_def)
+  #   cnv_def$version <- "Version_DEF"
+  #   colnames(cnv_def) <- paste(colnames(cnv_def), "DEF", sep = "_")
+  #   def_colnames <- colnames(cnv_def)
   #
-  #   two_map <- fread(umd_ars_map)
+  #   two_map <- fread(def_tar_map)
   #   colnames(two_map) <- paste(colnames(two_map), "Map", sep = "_")
   #
-  #   #cnv_umd_ars <- merge(cnv_umd, two_map, by.x = c("Chr", "Start"), by.y = c("Chr_UMD", "Position_UMD"), all.x = TRUE)
+  #   #cnv_def_tar <- merge(cnv_def, two_map, by.x = c("Chr", "Start"), by.y = c("Chr_DEF", "Position_DEF"), all.x = TRUE)
   #
-  #   #1. convert the umd result to ars
+  #   #1. convert the def result to tar
   #   #matching the start position by snp name, validating by matching the original position and new mathced position
-  #   #cnv_umd_ars <- merge(cnv_umd, two_map, by.x = "Start_SNP_UMD", by.y = "Name_Map", all.x = TRUE)
+  #   #cnv_def_tar <- merge(cnv_def, two_map, by.x = "Start_SNP_DEF", by.y = "Name_Map", all.x = TRUE)
   #
   #   #There are some duplicated rows after merge progress, because of there are some different SNP with same location in the map file
   #   #To solve this problem, we should check duplicated row after each merge step and remove the duplicates
   #   print("Starting to convert the coordinates for the first input file...")
-  #   cnv_umd_ars <- merge(cnv_umd, two_map, by.x = c("Chr_UMD", "Start_UMD"), by.y = c("Chr_def_Map", "Position_def_Map"), all.x = TRUE)
-  #   dup_index <- grep("TRUE", duplicated(cnv_umd_ars[, c("Chr_UMD", "Start_UMD", "CNVR_ID_UMD")]))
+  #   cnv_def_tar <- merge(cnv_def, two_map, by.x = c("Chr_DEF", "Start_DEF"), by.y = c("Chr_def_Map", "Position_def_Map"), all.x = TRUE)
+  #   dup_index <- grep("TRUE", duplicated(cnv_def_tar[, c("Chr_DEF", "Start_DEF", "CNVR_ID_DEF")]))
   #   if (length(dup_index) > 0){
-  #     cnv_umd_ars <- cnv_umd_ars[-dup_index, ]
+  #     cnv_def_tar <- cnv_def_tar[-dup_index, ]
   #     print(paste0("There are ", length(dup_index), " duplicated SNPs after converting the Start Position for the first file, they were all successfully removed."))
   #   } else {
   #     print("Non duplicated SNPs were detected after converting the Start Position for the first file.")
   #   }
   #
-  #   if (all(cnv_umd_ars$Start_UMD == cnv_umd_ars$Position_def_Map)){
+  #   if (all(cnv_def_tar$Start_DEF == cnv_def_tar$Position_def_Map)){
   #     print("Matching results by the Start position passed the validation.")
   #   } else {print("matching results didn't pass the validation, please check your input data, make sure the input file all generate by HandyCNV")}
   #
-  #   cnv_umd_ars <- subset(cnv_umd_ars, select = c(umd_colnames, "Position_tar_Map"))
-  #   names(cnv_umd_ars)[names(cnv_umd_ars) == "Position_tar_Map"] <- "Start_ARS_Map"
-  #   umd_temp_colnames <- colnames(cnv_umd_ars)
+  #   cnv_def_tar <- subset(cnv_def_tar, select = c(def_colnames, "Position_tar_Map"))
+  #   names(cnv_def_tar)[names(cnv_def_tar) == "Position_tar_Map"] <- "Start_TAR_Map"
+  #   def_temp_colnames <- colnames(cnv_def_tar)
   #
   #   #matching the end position of CNV
-  #   #cnv_umd_ars <- merge(cnv_umd_ars, two_map, by.x = "End_SNP_UMD", by.y = "Name_Map", all.x = TRUE)
-  #   cnv_umd_ars <- merge(cnv_umd_ars, two_map, by.x = c("Chr_UMD", "End_UMD"), by.y = c("Chr_def_Map", "Position_def_Map"), all.x = TRUE)
-  #   dup_index <- grep("TRUE", duplicated(cnv_umd_ars[, c("Chr_UMD", "End_UMD", "CNVR_ID_UMD")]))
+  #   #cnv_def_tar <- merge(cnv_def_tar, two_map, by.x = "End_SNP_DEF", by.y = "Name_Map", all.x = TRUE)
+  #   cnv_def_tar <- merge(cnv_def_tar, two_map, by.x = c("Chr_DEF", "End_DEF"), by.y = c("Chr_def_Map", "Position_def_Map"), all.x = TRUE)
+  #   dup_index <- grep("TRUE", duplicated(cnv_def_tar[, c("Chr_DEF", "End_DEF", "CNVR_ID_DEF")]))
   #   if (length(dup_index) > 0){
-  #     cnv_umd_ars <- cnv_umd_ars[-dup_index, ]
+  #     cnv_def_tar <- cnv_def_tar[-dup_index, ]
   #     print(paste0("There are ", length(dup_index), " duplicated SNPs after converting the End Position for the first file, they were all successfully removed."))
   #   } else {
   #     print("Non duplicated SNPs were detected after converting the End Position for the first file.")
   #   }
   #
-  #   if (all(cnv_umd_ars$End_UMD == cnv_umd_ars$Position_def_Map)){
+  #   if (all(cnv_def_tar$End_DEF == cnv_def_tar$Position_def_Map)){
   #     print("Matching results by the End position passed the validation.")
   #   } else {print("matching results didn't pass the validation, please check your input data, make sure the input file all generate by HandyCNV")}
   #
-  #   cnv_umd_ars <- subset(cnv_umd_ars, select = c(umd_temp_colnames, "Position_tar_Map"))
-  #   names(cnv_umd_ars)[names(cnv_umd_ars) == "Position_tar_Map"] <- "End_ARS_Map"
-  #   umd_convert_colnames <- colnames(cnv_umd_ars)
+  #   cnv_def_tar <- subset(cnv_def_tar, select = c(def_temp_colnames, "Position_tar_Map"))
+  #   names(cnv_def_tar)[names(cnv_def_tar) == "Position_tar_Map"] <- "End_TAR_Map"
+  #   def_convert_colnames <- colnames(cnv_def_tar)
   #
   #
-  #   #2.convert ars result to umd
-  #   #cnv_ars_umd <- merge(cnv_ars, two_map, by.x = "Start_SNP_ARS", by.y = "Name_Map", all.x = TRUE)
+  #   #2.convert tar result to def
+  #   #cnv_tar_def <- merge(cnv_tar, two_map, by.x = "Start_SNP_TAR", by.y = "Name_Map", all.x = TRUE)
   #   print("Starting to convert the coordinates for the second input file...")
-  #   cnv_ars_umd <- merge(cnv_ars, two_map, by.x = c("Chr_ARS", "Start_ARS"), by.y = c("Chr_tar_Map", "Position_tar_Map"), all.x = TRUE)
-  #   dup_index <- grep("TRUE", duplicated(cnv_ars_umd[, c("Chr_ARS", "Start_ARS", "CNVR_ID_ARS")]))
+  #   cnv_tar_def <- merge(cnv_tar, two_map, by.x = c("Chr_TAR", "Start_TAR"), by.y = c("Chr_tar_Map", "Position_tar_Map"), all.x = TRUE)
+  #   dup_index <- grep("TRUE", duplicated(cnv_tar_def[, c("Chr_TAR", "Start_TAR", "CNVR_ID_TAR")]))
   #   if (length(dup_index) > 0){
-  #     cnv_ars_umd <- cnv_ars_umd[-dup_index, ]
+  #     cnv_tar_def <- cnv_tar_def[-dup_index, ]
   #     print(paste0("There are ", length(dup_index), " duplicated SNPs after converting the Start Position for the Second file, they were all successfully removed."))
   #   } else {
   #     print("Non duplicated SNPs were detected after converting the Start Position for the Second file.")
   #   }
   #
   #   #checking if the matching results correct?
-  #   if (all(cnv_ars_umd$Start_ARS == cnv_ars_umd$Position_tar_Map)){
+  #   if (all(cnv_tar_def$Start_TAR == cnv_tar_def$Position_tar_Map)){
   #     print("Matching results by the Start position passed the validation.")
   #   } else {print("matching results didn't pass the validation, please check your input data, make sure the input file all generate by HandyCNV")}
-  #   cnv_ars_umd <- subset(cnv_ars_umd, select = c(ars_colnames, "Position_def_Map"))
-  #   names(cnv_ars_umd)[names(cnv_ars_umd) == "Position_def_Map"] <- "Start_UMD_Map"
-  #   ars_temp_colnames <- colnames(cnv_ars_umd)
+  #   cnv_tar_def <- subset(cnv_tar_def, select = c(tar_colnames, "Position_def_Map"))
+  #   names(cnv_tar_def)[names(cnv_tar_def) == "Position_def_Map"] <- "Start_DEF_Map"
+  #   tar_temp_colnames <- colnames(cnv_tar_def)
   #
   #   #matching end position
-  #   #cnv_ars_umd <- merge(cnv_ars_umd, two_map, by.x = "End_SNP_ARS", by.y = "Name_Map", all.x = TRUE)
-  #   cnv_ars_umd <- merge(cnv_ars_umd, two_map, by.x = c("Chr_ARS", "End_ARS"), by.y = c("Chr_tar_Map", "Position_tar_Map"), all.x = TRUE)
-  #   dup_index <- grep("TRUE", duplicated(cnv_ars_umd[, c("Chr_ARS", "End_ARS", "CNVR_ID_ARS")]))
+  #   #cnv_tar_def <- merge(cnv_tar_def, two_map, by.x = "End_SNP_TAR", by.y = "Name_Map", all.x = TRUE)
+  #   cnv_tar_def <- merge(cnv_tar_def, two_map, by.x = c("Chr_TAR", "End_TAR"), by.y = c("Chr_tar_Map", "Position_tar_Map"), all.x = TRUE)
+  #   dup_index <- grep("TRUE", duplicated(cnv_tar_def[, c("Chr_TAR", "End_TAR", "CNVR_ID_TAR")]))
   #   if (length(dup_index) > 0){
-  #     cnv_ars_umd <- cnv_ars_umd[-dup_index, ]
+  #     cnv_tar_def <- cnv_tar_def[-dup_index, ]
   #     print(paste0("There are ", length(dup_index), " duplicated SNPs after converting the End Postion for the Second File, they were all successfully removed."))
   #   } else {
   #     print("Non duplicated SNPs were detected after converting the End Postion for the Second File.")
   #   }
   #
-  #   if (all(cnv_ars_umd$End_ARS == cnv_ars_umd$Position_tar_Map)){
+  #   if (all(cnv_tar_def$End_TAR == cnv_tar_def$Position_tar_Map)){
   #     print("Matching results by the End position passed the validation.")
   #   } else {print("matching results didn't pass the validation, please check your input data, make sure the input file all generate by HandyCNV")}
-  #   cnv_ars_umd <- subset(cnv_ars_umd, select = c(ars_temp_colnames, "Position_def_Map"))
-  #   names(cnv_ars_umd)[names(cnv_ars_umd) == "Position_def_Map"] <- "End_UMD_Map"
-  #   ars_convert_colnames <- colnames(cnv_ars_umd)
+  #   cnv_tar_def <- subset(cnv_tar_def, select = c(tar_temp_colnames, "Position_def_Map"))
+  #   names(cnv_tar_def)[names(cnv_tar_def) == "Position_def_Map"] <- "End_DEF_Map"
+  #   tar_convert_colnames <- colnames(cnv_tar_def)
   #
   #   #write out CNV with converted coordinates
-  #   fwrite(cnv_umd_ars, file = paste0(folder, "/cnvr_UtoA.coord"), sep = "\t", quote = FALSE)
-  #   fwrite(cnv_ars_umd, file = paste0(folder, "/cnvr_AtoU.coord"), sep = "\t", quote = FALSE)
+  #   fwrite(cnv_def_tar, file = paste0(folder, "/cnvr_UtoA.coord"), sep = "\t", quote = FALSE)
+  #   fwrite(cnv_tar_def, file = paste0(folder, "/cnvr_AtoU.coord"), sep = "\t", quote = FALSE)
   #
   #   #two requirements for foverlap: 1) start <= end, 2) no NA in both start and end
-  #   #cnv_umd_ars$End_ARS_Map[is.na(cnv_umd_ars$End_ARS_Map)] <- 0
-  #   #cnv_umd_ars$Start_ARS_Map[is.na(cnv_umd_ars$Start_ARS_Map)] <- 0
+  #   #cnv_def_tar$End_TAR_Map[is.na(cnv_def_tar$End_TAR_Map)] <- 0
+  #   #cnv_def_tar$Start_TAR_Map[is.na(cnv_def_tar$Start_TAR_Map)] <- 0
   #   #After conversion of coordinate, we should check how many CNVRs got wrong position
   #   #The types of wrong position caused by the difference between the two version of map
   #   #1, NA, unknown position in start or end
   #   #2, 0 position in start or end
   #   #3, Start position lager than End Position
   #   #So we need to find out these CNVR with wrong position, then extarct the right CNVR for comparison
-  #   wrong_umd <- subset(cnv_umd_ars, subset = (Start_ARS_Map == 0 | End_ARS_Map == 0 | is.na(Start_ARS_Map) | is.na(End_ARS_Map) | End_ARS_Map - Start_ARS_Map <= 0))
-  #   right_umd <- subset(cnv_umd_ars, subset = !(Start_ARS_Map == 0 | End_ARS_Map == 0 | is.na(Start_ARS_Map) | is.na(End_ARS_Map) | End_ARS_Map - Start_ARS_Map <= 0))
-  #   print(paste0("There are ", nrow(right_umd), " CNVRs successful coordinates coversion in Input list 1"))
-  #   print(paste0("There are ", nrow(wrong_umd), " CNVRs failed to coordinates coversion in Input list 1"))
-  #   #right_umd <- setdiff(x = cnv_umd_ars, y = wrong_umd)
-  #   #which(cnv_umd_ars$Start_ARS_Map == 0)
-  #   #which(cnv_umd_ars$End_ARS_Map == 0)
-  #   #grep("TRUE", is.na(cnv_umd_ars$Start_ARS_Map))
-  #   #grep("TRUE", is.na(cnv_umd_ars$End_ARS_Map))
-  #   #which((cnv_umd_ars$End_ARS_Map - cnv_umd_ars$Start_ARS_Map) <= 0)
-  #   #right_umd <- cnv_umd_ars[-c(which((cnv_umd_ars$End_ARS_Map - cnv_umd_ars$Start_ARS_Map) <= 0)), ]
-  #   #wrong_ars <- cnv_ars_umd[which((cnv_ars_umd$End_UMD_Map - cnv_ars_umd$Start_UMD_Map) <= 0), ]
-  #   #wrong_ars <- wrong_ars[-c(which(wrong_ars$End_UMD_Map == 0)), ]
-  #   #right_ars <- setdiff(cnv_ars_umd, wrong_ars)
+  #   wrong_def <- subset(cnv_def_tar, subset = (Start_TAR_Map == 0 | End_TAR_Map == 0 | is.na(Start_TAR_Map) | is.na(End_TAR_Map) | End_TAR_Map - Start_TAR_Map <= 0))
+  #   right_def <- subset(cnv_def_tar, subset = !(Start_TAR_Map == 0 | End_TAR_Map == 0 | is.na(Start_TAR_Map) | is.na(End_TAR_Map) | End_TAR_Map - Start_TAR_Map <= 0))
+  #   print(paste0("There are ", nrow(right_def), " CNVRs successful coordinates coversion in Input list 1"))
+  #   print(paste0("There are ", nrow(wrong_def), " CNVRs failed to coordinates coversion in Input list 1"))
+  #   #right_def <- setdiff(x = cnv_def_tar, y = wrong_def)
+  #   #which(cnv_def_tar$Start_TAR_Map == 0)
+  #   #which(cnv_def_tar$End_TAR_Map == 0)
+  #   #grep("TRUE", is.na(cnv_def_tar$Start_TAR_Map))
+  #   #grep("TRUE", is.na(cnv_def_tar$End_TAR_Map))
+  #   #which((cnv_def_tar$End_TAR_Map - cnv_def_tar$Start_TAR_Map) <= 0)
+  #   #right_def <- cnv_def_tar[-c(which((cnv_def_tar$End_TAR_Map - cnv_def_tar$Start_TAR_Map) <= 0)), ]
+  #   #wrong_tar <- cnv_tar_def[which((cnv_tar_def$End_DEF_Map - cnv_tar_def$Start_DEF_Map) <= 0), ]
+  #   #wrong_tar <- wrong_tar[-c(which(wrong_tar$End_DEF_Map == 0)), ]
+  #   #right_tar <- setdiff(cnv_tar_def, wrong_tar)
   #
-  #   #######compare results in UMD at first-------------------------------------------------------------------------
-  #   #setkey(cnv_umd_ars, Chr_UMD, Start_UMD, End_UMD)
+  #   #######compare results in DEF at first-------------------------------------------------------------------------
+  #   #setkey(cnv_def_tar, Chr_DEF, Start_DEF, End_DEF)
   #   #find overlap on population level
   #   print("Starting to find overlapping CNVR...")
-  #   setkey(cnv_ars_umd, Chr_ARS, Start_ARS, End_ARS)
-  #   pop_overlap <- data.table::foverlaps(right_umd, cnv_ars_umd, by.x = c("Chr_UMD", "Start_ARS_Map", "End_ARS_Map"), type = "any", nomatch = NULL)
-  #   pop_overlap$Overlap_length <- pmin(pop_overlap$End_ARS, pop_overlap$End_ARS_Map) - pmax(pop_overlap$Start_ARS, pop_overlap$Start_ARS_Map) + 1
+  #   setkey(cnv_tar_def, Chr_TAR, Start_TAR, End_TAR)
+  #   pop_overlap <- data.table::foverlaps(right_def, cnv_tar_def, by.x = c("Chr_DEF", "Start_TAR_Map", "End_TAR_Map"), type = "any", nomatch = NULL)
+  #   pop_overlap$Overlap_length <- pmin(pop_overlap$End_TAR, pop_overlap$End_TAR_Map) - pmax(pop_overlap$Start_TAR, pop_overlap$Start_TAR_Map) + 1
   #   pop_overlap <- unique(pop_overlap)
-  #   pop_overlap_umd <- subset(pop_overlap, select = umd_convert_colnames)
-  #   final_pop_overlap_umd <- unique(pop_overlap_umd)
-  #   non_overlap_pop_umd <- dplyr::setdiff(cnv_umd_ars, final_pop_overlap_umd)
-  #   if (nrow(non_overlap_pop_umd) + nrow(final_pop_overlap_umd) == nrow(cnv_umd_ars)) {
-  #     print(paste0("Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_umd_ars)))
+  #   pop_overlap_def <- subset(pop_overlap, select = def_convert_colnames)
+  #   final_pop_overlap_def <- unique(pop_overlap_def)
+  #   non_overlap_pop_def <- dplyr::setdiff(cnv_def_tar, final_pop_overlap_def)
+  #   if (nrow(non_overlap_pop_def) + nrow(final_pop_overlap_def) == nrow(cnv_def_tar)) {
+  #     print(paste0("Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_def_tar)))
   #   } else {print("Comparison to the first file was failed in validation, please use the original output files from HandyCNV as the input files")}
   #
-  #   fwrite(final_pop_overlap_umd, file = paste0(folder, "/overlap_cnvr_1.popu"), sep = "\t", quote = FALSE)
-  #   fwrite(non_overlap_pop_umd, file = paste0(folder, "/non_overlap_cnvr_1.popu"), sep = "\t", quote = FALSE)
+  #   fwrite(final_pop_overlap_def, file = paste0(folder, "/overlap_cnvr_1.popu"), sep = "\t", quote = FALSE)
+  #   fwrite(non_overlap_pop_def, file = paste0(folder, "/non_overlap_cnvr_1.popu"), sep = "\t", quote = FALSE)
   #
   #   #plot comparison
-  #   final_pop_overlap_umd$Check_overlap <- "Overlap"
-  #   non_overlap_pop_umd$Check_overlap <- "Non-Overlap"
-  #   checkover_pop_1 <- rbind(final_pop_overlap_umd, non_overlap_pop_umd)
-  #   colnames(checkover_pop_1) <- sub("_UMD", "", colnames(checkover_pop_1))
-  #   checkover_pop_length <- merge(checkover_pop_1, pop_overlap[, c("CNVR_ID_UMD", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_UMD", all.x = TRUE)
+  #   final_pop_overlap_def$Check_overlap <- "Overlap"
+  #   non_overlap_pop_def$Check_overlap <- "Non-Overlap"
+  #   checkover_pop_1 <- rbind(final_pop_overlap_def, non_overlap_pop_def)
+  #   colnames(checkover_pop_1) <- sub("_DEF", "", colnames(checkover_pop_1))
+  #   checkover_pop_length <- merge(checkover_pop_1, pop_overlap[, c("CNVR_ID_DEF", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_DEF", all.x = TRUE)
   #   #checkover_pop_length <- unique(checkover_pop_length)
   #   drop_name = "Overlap_length"
   #   checkover_pop_uniqe = unique(subset(checkover_pop_length, select = !(colnames(checkover_pop_length) %in% drop_name))) #used for calculate overlapping
@@ -378,11 +378,11 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
   #   fwrite(checkover_pop_length, file = paste0(folder, "/checkover_pop_1.txt"), sep = "\t", quote = FALSE)
   #
   #   #5.summarize difference
-  #   #UMD
-  #   overlap_percent_pop <- round(nrow(final_pop_overlap_umd) / nrow(cnv_umd_ars), 3) * 100
-  #   non_overlap_percent_pop <- round(nrow(non_overlap_pop_umd) / nrow(cnv_umd_ars), 3) * 100
-  #   print(paste0("The number of overlaped CNVRs on population level is ", nrow(final_pop_overlap_umd), ", which is around ", overlap_percent_pop, " percent in first file."))
-  #   print(paste0("The number of Non-overlaped CNVRs on population level is ", nrow(non_overlap_pop_umd), ", which is around ", non_overlap_percent_pop, " percent in first file"))
+  #   #DEF
+  #   overlap_percent_pop <- round(nrow(final_pop_overlap_def) / nrow(cnv_def_tar), 3) * 100
+  #   non_overlap_percent_pop <- round(nrow(non_overlap_pop_def) / nrow(cnv_def_tar), 3) * 100
+  #   print(paste0("The number of overlaped CNVRs on population level is ", nrow(final_pop_overlap_def), ", which is around ", overlap_percent_pop, " percent in first file."))
+  #   print(paste0("The number of Non-overlaped CNVRs on population level is ", nrow(non_overlap_pop_def), ", which is around ", non_overlap_percent_pop, " percent in first file"))
   #
   #   #overlap length
   #   overlap_length_1 <- sum(pop_overlap$Overlap_length, na.rm = TRUE)
@@ -392,7 +392,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
   #   print(paste0("The overlapping length is ", overlap_length_1, " bp, which is around ", overlap_length_prop, " percent in first file"))
   #
   #   overlap_summary <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs", "In Total"),
-  #                                 "Number of CNVR" = c(nrow(final_pop_overlap_umd), nrow(non_overlap_pop_umd), nrow(final_pop_overlap_umd) + nrow(non_overlap_pop_umd)),
+  #                                 "Number of CNVR" = c(nrow(final_pop_overlap_def), nrow(non_overlap_pop_def), nrow(final_pop_overlap_def) + nrow(non_overlap_pop_def)),
   #                                 "Proportion of Number (%)" = c(overlap_percent_pop, non_overlap_percent_pop, 100),
   #                                 "Length(bp)" = c(overlap_length_1, cnvr_length_1- overlap_length_1, cnvr_length_1),
   #                                 "Proportion of Length (%)" = c(overlap_length_prop, 100 - overlap_length_prop, 100))
@@ -406,27 +406,27 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
   #   print("Comparison to the first file was finished.")
   #
   #
-  #   ##########compare results in ARS-------------------------------------------------------------------
+  #   ##########compare results in TAR-------------------------------------------------------------------
   #   #find overlap on population level
-  #   setkey(right_umd, Chr_UMD, Start_ARS_Map, End_ARS_Map)
-  #   pop_overlap_2 <- data.table::foverlaps(cnv_ars_umd, right_umd, by.x = c("Chr_ARS", "Start_ARS", "End_ARS"), type = "any", nomatch = NULL)
-  #   pop_overlap_2$Overlap_length <- pmin(pop_overlap_2$End_ARS, pop_overlap_2$End_ARS_Map) - pmax(pop_overlap_2$Start_ARS, pop_overlap_2$Start_ARS_Map) + 1
-  #   pop_overlap_ars <- subset(pop_overlap_2, select = ars_convert_colnames)
-  #   final_pop_overlap_ars <- unique(pop_overlap_ars)
-  #   non_overlap_pop_ars <- dplyr::setdiff(cnv_ars_umd, final_pop_overlap_ars)
-  #   if (nrow(non_overlap_pop_ars) + nrow(final_pop_overlap_ars) == nrow(cnv_ars_umd)) {
-  #     print(paste0("Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_ars_umd)))
+  #   setkey(right_def, Chr_DEF, Start_TAR_Map, End_TAR_Map)
+  #   pop_overlap_2 <- data.table::foverlaps(cnv_tar_def, right_def, by.x = c("Chr_TAR", "Start_TAR", "End_TAR"), type = "any", nomatch = NULL)
+  #   pop_overlap_2$Overlap_length <- pmin(pop_overlap_2$End_TAR, pop_overlap_2$End_TAR_Map) - pmax(pop_overlap_2$Start_TAR, pop_overlap_2$Start_TAR_Map) + 1
+  #   pop_overlap_tar <- subset(pop_overlap_2, select = tar_convert_colnames)
+  #   final_pop_overlap_tar <- unique(pop_overlap_tar)
+  #   non_overlap_pop_tar <- dplyr::setdiff(cnv_tar_def, final_pop_overlap_tar)
+  #   if (nrow(non_overlap_pop_tar) + nrow(final_pop_overlap_tar) == nrow(cnv_tar_def)) {
+  #     print(paste0("Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_tar_def)))
   #   } else {print("Comparison to the second file was failed in validation, please use the original output files from HandyCNV as the input files")}
   #
-  #   fwrite(final_pop_overlap_ars, file = paste0(folder, "/overlap_cnvr_2.popu"), sep = "\t", quote = FALSE)
-  #   fwrite(non_overlap_pop_ars, file = paste0(folder, "/non_overlap_cnvr_2.popu"), sep = "\t", quote = FALSE)
+  #   fwrite(final_pop_overlap_tar, file = paste0(folder, "/overlap_cnvr_2.popu"), sep = "\t", quote = FALSE)
+  #   fwrite(non_overlap_pop_tar, file = paste0(folder, "/non_overlap_cnvr_2.popu"), sep = "\t", quote = FALSE)
   #
   #
-  #   final_pop_overlap_ars$Check_overlap <- "Overlap"
-  #   non_overlap_pop_ars$Check_overlap <- "Non-Overlap"
-  #   checkover_pop_2 <- rbind(final_pop_overlap_ars, non_overlap_pop_ars)
-  #   colnames(checkover_pop_2) <- sub("_ARS", "", colnames(checkover_pop_2))
-  #   checkover_pop_length_2 <- merge(checkover_pop_2, pop_overlap_2[, c("CNVR_ID_ARS", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_ARS", all.x = TRUE)
+  #   final_pop_overlap_tar$Check_overlap <- "Overlap"
+  #   non_overlap_pop_tar$Check_overlap <- "Non-Overlap"
+  #   checkover_pop_2 <- rbind(final_pop_overlap_tar, non_overlap_pop_tar)
+  #   colnames(checkover_pop_2) <- sub("_TAR", "", colnames(checkover_pop_2))
+  #   checkover_pop_length_2 <- merge(checkover_pop_2, pop_overlap_2[, c("CNVR_ID_TAR", "Overlap_length")], by.x = "CNVR_ID", by.y = "CNVR_ID_TAR", all.x = TRUE)
   #   #checkover_pop_length_2 <- unique(checkover_pop_length_2)
   #
   #   drop_name = "Overlap_length"
@@ -437,11 +437,11 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
   #   fwrite(checkover_pop_length_2, file = paste0(folder, "/checkover_pop_2.txt"), sep = "\t", quote = FALSE)
   #
   #   #5.summarize difference
-  #   #UMD
-  #   overlap_percent_pop_2 <- round(nrow(final_pop_overlap_ars) / nrow(cnv_ars_umd), 3) * 100
-  #   non_overlap_percent_pop_2 <- round(nrow(non_overlap_pop_ars) / nrow(cnv_ars_umd), 3) * 100
-  #   print(paste0("The number of overlaped CNVRs in seceond file on population level are ", nrow(final_pop_overlap_ars), ", which is around ", overlap_percent_pop_2, " percent"))
-  #   print(paste0("The number of Non-overlaped CNVRs in second file on population level are ", nrow(non_overlap_pop_ars), ", which is around ", non_overlap_percent_pop_2, " percent"))
+  #   #DEF
+  #   overlap_percent_pop_2 <- round(nrow(final_pop_overlap_tar) / nrow(cnv_tar_def), 3) * 100
+  #   non_overlap_percent_pop_2 <- round(nrow(non_overlap_pop_tar) / nrow(cnv_tar_def), 3) * 100
+  #   print(paste0("The number of overlaped CNVRs in seceond file on population level are ", nrow(final_pop_overlap_tar), ", which is around ", overlap_percent_pop_2, " percent"))
+  #   print(paste0("The number of Non-overlaped CNVRs in second file on population level are ", nrow(non_overlap_pop_tar), ", which is around ", non_overlap_percent_pop_2, " percent"))
   #
   #   #overlap length
   #   overlap_length_2 <- sum(pop_overlap_2$Overlap_length, na.rm = TRUE)
@@ -451,7 +451,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, umd_ars_map = NULL, width_1 = 15, h
   #   print(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in first file"))
   #
   #   overlap_summary_2 <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs", "In Total"),
-  #                                   "Number of CNVR" = c(nrow(final_pop_overlap_ars), nrow(non_overlap_pop_ars), nrow(final_pop_overlap_ars) + nrow(non_overlap_pop_ars)),
+  #                                   "Number of CNVR" = c(nrow(final_pop_overlap_tar), nrow(non_overlap_pop_tar), nrow(final_pop_overlap_tar) + nrow(non_overlap_pop_tar)),
   #                                   "Proportion of Number (%)" = c(overlap_percent_pop_2, non_overlap_percent_pop_2, 100),
   #                                   "Length(bp)" = c(overlap_length_2, cnvr_length_2- overlap_length_2, cnvr_length_2),
   #                                   "Proportion of Length (%)" = c(overlap_length_prop_2, 100 - overlap_length_prop_2, 100))

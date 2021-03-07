@@ -8,7 +8,7 @@
 compare_cnvr(
   cnvr_def,
   cnvr_tar,
-  umd_ars_map = NULL,
+  def_tar_map = NULL,
   width_1 = 15,
   height_1 = 15,
   hjust_prop = 0,
@@ -19,11 +19,11 @@ compare_cnvr(
 )
 }
 \arguments{
-\item{cnvr_def}{first cnvr list, not limited on umd or ars, default file is the result from call_cnvr function}
+\item{cnvr_def}{first cnvr list, not limited on def or tar, default file is the result from call_cnvr function}
 
-\item{cnvr_tar}{second cnvr list, not limited on umd or ars, default file is the result from call_cnvr function}
+\item{cnvr_tar}{second cnvr list, not limited on def or tar, default file is the result from call_cnvr function}
 
-\item{umd_ars_map}{map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
+\item{def_tar_map}{map file contains coordinates in both version of map. only need in comparison between the results from different versions. default file is generated from convert_map function}
 
 \item{width_1}{number to set the width of final plot size, unit is 'cm'}
 
