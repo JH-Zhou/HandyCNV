@@ -94,7 +94,7 @@ get_refgene <- function(gene_version = NULL){
 
   #remind what's version we support to automatic download and formatting
   if(missing(gene_version)){
-    cat("Now we support to download some of reference gene list of Bovine, Pig and Human from UCSC website. \nPlease select which version to download from following list:\n")
+    cat("Please select which version to download from following list:\n")
     print(support_ver)
   } else {
     if(!(file.exists("refgene"))){

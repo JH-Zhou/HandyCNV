@@ -2,9 +2,9 @@ Package: HandyCNV
 Type: Package
 Title: HandyCNV: An R package for Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH 
 Version: 1.0.0
-Author: Jinghang Zhou, Liyuan Liu, Yuangang Shi, Dorian Garrick
-Maintainer: JH Zhou <zjhang027@gmail.com>
-Description: The package is aimed to provide a Standard, Reproducible and Time-saving pipelines for the post-analysis of CNV and CNVR.
+Author: Jinghang Zhou, Liyuan Liu, Thomas J. Lopdell, Dorian J. Garrick, Yuangang Shi
+Maintainer: JH Zhou <jinghangzhou@qq.com>
+Description: The package is aimed to provide a Standard, Reproducible and Time-saving pipelines for the post-analysis of CNV, CNVR and ROH.
 Depends: R (>= 3.5.0)
 Imports:
     data.table,
