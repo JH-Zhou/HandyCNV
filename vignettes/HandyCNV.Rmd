@@ -25,24 +25,24 @@ knitr::opts_chunk$set(
 This package was originally designed for the Post-analysis of CNV results inferred from PennCNV and CNVPartition (GenomeStudio). But now it has now been expanded to accept input files in standard formats for a wider range of applications. Our motivation is to provide a standard, reproducible and time-saving pipeline for the post-analysis of CNVs and ROHs detected from SNP genotyping data for the majority of diploid Species. The functions provided in this package can be categorised into five sectors: Conversion, Summary, Annotation, Comparison and Visualization. The most useful features provided are: integrating summarized results, generating lists of CNVR, annotating the results with known gene positions, plotting CNVR distribution maps, and producing customised visualisations of CNVs and ROHs with gene and other related information on one plot. This package also supports a range of customisations, including the colour, size of high resolution figures, and output folder, avoiding conflict between the results of different runs. Running through all functions detailed in the vignette could help us to identify and explore the most interesting genomic regions more easily. In the following sections, we will present how to use the functions provided in this package to solve these problems.
 
 # Prerequisite
-First, to run this package, we need to make sure the R (Version >= 3.5.2) was installed in your computer (R download link: https://www.r-project.org/).<br> second, install the 'HandyCNV' package from Github repository by following script:
+First, to run this package, we need to make sure that R (Version >= 3.5.2) is installed in your computer (R download link: https://www.r-project.org/).<br> Once R is installed, the 'HandyCNV' package can be installed from Github repository by running the following script:
 ```{r}
 #library(remotes)
 #install_github(repo = "JH-Zhou/HandyCNV", auth_token = "3d2ac98e4c297bab332f1e68b3b2d49f3a17d6aa")
 ```
-Then, we need to library 'HandyCNV' by following code and use it later.
+Then, we need to load the 'HandyCNV' package in order to run the following examples. This can be done using the `library` function as shown below.
 ```{r setup}
 library(HandyCNV)
 ```
 
-To start play with this package, we need to prepare at least one CNV result list. With only CNV results as input file, we can explore the functions from section 1 to section 10 as below. But to get more interested information, we have to prepare more input files, including map file, signal intensity file, pedigree, and Plink format (bed, bim and fam) files. Don't afraid to prepare these files, most of them we already had and used in the CNV inferring progress. In order to get more valuable results, it worth to make the preparation, and after that, you will found the rest of work are much more easier and would saving lots of time. We will introducing how to prepare each input file during the relative chunk while using them.
+To start playing with this package, we first need to prepare at least one CNV result list. With only CNV results as an input file, we can explore the functions from section 1 to section 10 as below. But to get more interesting and potentially valuable results, we will have to prepare additional input files, including the map file and signal intensity file for the SNP chip used to generate the CNV list, the pedigree of the samples, and Plink format (bed, bim and fam) genotype files. Many of these files are already required during CNV discovery, and by generating them eaarly in the pipeline, you will find that the rest of workflow will be much easier and faster. We will be introducing how to prepare each of the input files in the relevant chunks below.
 
 # Demo data
-We have provided some internal demo data and it should installed with package. We are going to take these data as example to present how to use this package.<br>
+We have provided some internal demo data, which should installed with package, in order to demonstrate how to use this package.<br>
 
-We can extract the demo data by 'system.file' (see as below). In demo data, the first CNV results is default output format from PennCNV with ARS-UCD 1.2 (ARS) reference genome; The second CNV results is defaults output from CNVPartition with UMD 3.1 (UMD) reference genome; The third CNV list is the standard input file could prepared from CNV results inferred by the other tools. <br> 
+We can access the demo data using the built-in R function 'system.file' (see examples below). In the demo data, the first CNV results file is the default output from PennCNV with the ARS-UCD 1.2 (ARS) cattle reference genome. The second CNV results file contains the default output from CNVPartition with UMD 3.1 (UMD) cattle reference genome, and the third CNV list is an example of a standard input file that could be prepared from CNV results inferred by other tools.<br>
 
-Note: If you are dislike to test with this demo data, just skip this step to section 1 and use your own data instead.
+Note: If you prefer not to test with this demo data, just skip this step to section 1 and use your own data instead.
 ```{r}
 cnv_penn_ars <- system.file("extdata", "Demo_data/cnv_results/ARS_PennCNV_WGC.goodcnv", package = "HandyCNV")
 cnv_part_umd <- system.file("extdata", "Demo_data/cnv_results/UMD_CNVPartition.txt", package = "HandyCNV")
