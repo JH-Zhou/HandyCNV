@@ -40,7 +40,7 @@ To start playing with this package, we first need to prepare at least one CNV re
 # Demo data
 We have provided some internal demo data, which should installed with package, in order to demonstrate how to use this package.<br>
 
-We can access the demo data using the built-in R function 'system.file' (see examples below). In the demo data, the first CNV results file is the default output from PennCNV with the ARS-UCD 1.2 (ARS) cattle reference genome. The second CNV results file contains the default output from CNVPartition with UMD 3.1 (UMD) cattle reference genome, and the third CNV list is an example of a standard input file that could be prepared from CNV results inferred by other tools.<br>
+We can access the demo data using the built-in R function `system.file` (see examples below). In the demo data, the first CNV results file is the default output from PennCNV with the ARS-UCD 1.2 (ARS) cattle reference genome. The second CNV results file contains the default output from CNVPartition with UMD 3.1 (UMD) cattle reference genome, and the third CNV list is an example of a standard input file that could be prepared from CNV results inferred by other tools.<br>
 
 Note: If you prefer not to test with this demo data, just skip this step to section 1 and use your own data instead.
 ```{r}
@@ -55,7 +55,7 @@ To start the analysis, let's first set up the working directory. This will help 
 setwd(dir = "C:/Users/handy_test") #remember to replace the path with your own 
 ```
 
-# What Issues can this package solve?
+# What issues can this package solve?
 As above we mentioned, the functions in the package have been categorised into five sections: Conversion, Summary, Annotation, Comparison and Visualization.
 Functions in the Conversion section could, for example, be used to convert coordinates between the default and target mapfiles provided by users; this would be useful if we are detecting CNVs with two different reference genomes. The converted map files can be output in formats suitable for use in Plink, PennCNV and our package 'HandyCNV'. It is also possible to convert coordinates for intervals (CNV, CNVR, QTL et al) between the defaults and target maps, which might useful when comparing the results to those of other researchers.
 Functions included in the Summarization section allow the formatting and plotting of outputs, such as producing detailed summaries of CNVs and ROHs, making CNV summary plots, generating CNV regions (CNVRs), and plotting CNVR distribution maps.
@@ -63,28 +63,29 @@ The Annotation section allows the downloading of reference gene lists from the U
 The Comparison section facilitates the comparison of CNVs, CNVRs, Gene Frequent Lists and any other intervals. The highlight of this section is that comparison of CNVs and CNVRs will produce reports detailing comparison results on both individual and population levels, and all comparison results are relative to both input files.
 Finally, the Visualization section contains functions to support customised CNV and ROH plotting by chromosome, specific sample, regions of interest, or target genes (plotting by gene is not yet available for ROH). It is also possible to annotate the plots with other information, such as gene locations, log R ratio, B Allele Frequency, SNP genotype, LD or the source of CNVs. These functions can also plot genes separately from reference gene lists, which might useful for comparing outputs with plots from other studies.
 
-Now, let's start to explore the functions in 'HandyCNV'.
+Now, let's start to explore the functions in `HandyCNV`.
 
-## 1. How to prepare the standard cnv input file for 'HandyCNV' and get a fast summary?
-We can use 'cnv_clean' function to convert cnv results to standard format. This function will also make brief summary of CNVs results.<br> Let's formatting the cnv results from PennCNV at first.<br> 
+## 1. How do we prepare the standard cnv input file for `HandyCNV` and get a quick summary?
+We can use `cnv_clean` function to convert cnv results to standard format. This function will also produce a brief summary of CNV results.<br>
+First, let's format the sample CNV results from PennCNV.<br> 
 Note: <br> 
-a. If default results in PennCNV format, corresponding CNV input argument is 'penncnv'.<br> 
-b. Default PennCNV result in Sample ID columns usually has path ahead the Sample ID, in example it's "/home/zjhang027/C/final_403_penncnv/201094560082_R03C01.txt", the pattern 'cnv/' ahead sample ID is unique, we can take it as separator in argument 'penn_id_sep = "cnv/"' to extract Sample ID.
+a. When formatting results in PennCNV format, the corresponding CNV input argument is 'penncnv'.<br> 
+b. Default PennCNV results in Sample ID columns usually have the file path ahead the Sample ID. For example with the file "/home/zjhang027/C/final_403_penncnv/201094560082_R03C01.txt", the pattern 'cnv/' before the sample ID is unique, so we can take it as the separator using the argument `penn_id_sep = "cnv/"` to extract the wanted sample ID.
 ```{r cnv_clean_penn, echo=TRUE, warning=FALSE}
-cnv_clean(penncnv = cnv_penn_ars, #when run your own data, set this argument by 'penncnv = "localpath/file"'
-          penn_id_sep = "cnv/", #take the unique pattern as separator to extract the sample ID 
-          drop_length = 5, #used to remove the outlier CNVs by the limited Length, unit is Mb 
-          folder = "cnv_clean") #create new folder to save results 
+cnv_clean(penncnv = cnv_penn_ars, #when running your own data, set this argument to 'penncnv = "localpath/file"'
+          penn_id_sep = "cnv/", #take the unique pattern as a separator to extract the sample ID 
+          drop_length = 5, # the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted
+          folder = "cnv_clean") #create a new folder to save results 
 ```
 
-Then let's formatting the second CNV results from CNVPartition.<br> 
-Note: The corresponding input argument is 'cnvpartition' for CNV result from CNVPartition .
+Next, let's format a second set of CNV results, this time produced using CNVPartition.<br> 
+Note: The corresponding input argument is `cnvpartition` for CNV result from CNVPartition.
 ```{r cnv_clean_part, echo=TRUE, warning=FALSE}
-cnv_clean(cnvpartition = cnv_part_umd, #when run your own data, set this argument by 'cnvpartition = "localpath/file"' 
-          drop_length = 5, # the maximum length threshold, unit is Mb, larger than this value the CNVs will be deleted 
+cnv_clean(cnvpartition = cnv_part_umd, #when running your own data, set this argument by 'cnvpartition = "localpath/file"' 
+          drop_length = 5, #the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted
           folder = "cnv_clean") 
 ```
-If the CNV results are not detect by PennCNV or CNVPartition, then we need to arrange the CNV results by the standard format, then use the 'standard_cnv' argument instead.<br> The standard cnv input list should include columns by order with:<br> 'Sample_ID', "Chr", "Start", "End" and "CNV_Value".
+If the CNV results were not produced by PennCNV or CNVPartition, we need to arrange the CNV results into the standard format, then use the 'standard_cnv' argument instead. The standard CNV input list should include the following columns (in order):  'Sample_ID', "Chr", "Start", "End" and "CNV_Value".
 ```{r table1, message=FALSE, warning=FALSE, results='asis'}
 tabl <- "
 |Sample_ID           |Chr |Start   |End     |CNV_Value |
@@ -96,10 +97,10 @@ tabl <- "
 |201094560067_R08C02 |4   |66567442|66830563|3         |" 
 ```
 
-Let's run 'cnv_clean' on the third Standard CNV input file. Pay attention here, we are using the argument 'standard_cnv' to the third CNV result.
+Let's run 'cnv_clean' on the third Standard CNV input file. Note that we are using the argument 'standard_cnv' for the third CNV result.
 ```{r}
-cnv_clean(standard_cnv = cnv_other_umd, #when run your own data, set this argument by 'standard_cnv = "localpath/file"'
-          drop_length = 5, #used to remove the outlier CNVs by the limited Length, unit is Mb 
+cnv_clean(standard_cnv = cnv_other_umd, #when running your own data, set this argument by 'standard_cnv = "localpath/file"'
+          drop_length = 5, #the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted
           folder = "cnv_clean")
 ```
 
