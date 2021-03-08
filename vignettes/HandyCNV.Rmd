@@ -24,8 +24,8 @@ knitr::opts_chunk$set(
 # Introduction
 This package was originally designed for the Post-analysis of CNV results inferred from PennCNV and CNVPartition (GenomeStudio). However, it has now been expanded to accept input files in standard formats for a wider range of applications. Our motivation is to provide a standard, reproducible and time-saving pipeline for the post-analysis of CNVs and ROHs detected from SNP genotyping data for the majority of diploid Species. The functions provided in this package can be categorised into five sections: Conversion, Summary, Annotation, Comparison and Visualization. The most useful features provided are: integrating summarized results, generating lists of CNVR, annotating the results with known gene positions, plotting CNVR distribution maps, and producing customised visualisations of CNVs and ROHs with gene and other related information on one plot. This package also supports a range of customisations, including the colour, size of high resolution figures, and output folder, avoiding conflict between the results of different runs. Running through all functions detailed in the vignette could help us to identify and explore the most interesting genomic regions more easily. In the following sections, we will present how to use the functions provided in this package to solve these problems.
 
-# Prerequisite
-First, to run this package, we need to make sure that R (Version >= 3.5.2) is installed in your computer (R download link: https://www.r-project.org/).<br> Once R is installed, the 'HandyCNV' package can be installed from Github repository by running the following script:
+## Installation and Prerequisites
+First, to run this package, we need to make sure that R (Version >= 3.5.2) is installed in your computer (R download link: https://www.r-project.org/). Once R is installed, the 'HandyCNV' package can be installed from Github repository by running the following script:
 ```{r}
 #library(remotes)
 #install_github(repo = "JH-Zhou/HandyCNV", auth_token = "3d2ac98e4c297bab332f1e68b3b2d49f3a17d6aa")
@@ -37,10 +37,8 @@ library(HandyCNV)
 
 To start playing with this package, we first need to prepare at least one CNV result list. With only CNV results as an input file, we can explore the functions from section 1 to section 10 as below. But to get more interesting and potentially valuable results, we will have to prepare additional input files, including the map file and signal intensity file for the SNP chip used to generate the CNV list, the pedigree of the samples, and Plink format (bed, bim and fam) genotype files. Many of these files are already required during CNV discovery, and by generating them eaarly in the pipeline, you will find that the rest of workflow will be much easier and faster. We will be introducing how to prepare each of the input files in the relevant chunks below.
 
-# Demo data
-We have provided some internal demo data, which should installed with package, in order to demonstrate how to use this package.<br>
-
-We can access the demo data using the built-in R function `system.file` (see examples below). In the demo data, the first CNV results file is the default output from PennCNV with the ARS-UCD 1.2 (ARS) cattle reference genome. The second CNV results file contains the default output from CNVPartition with UMD 3.1 (UMD) cattle reference genome, and the third CNV list is an example of a standard input file that could be prepared from CNV results inferred by other tools.<br>
+## Demo data
+We have provided some internal demo data, which should installed with package, in order to demonstrate how to use this package. We can access the demo data using the built-in R function `system.file` (see examples below). In the demo data, the first CNV results file is the default output from PennCNV with the ARS-UCD 1.2 (ARS) cattle reference genome. The second CNV results file contains the default output from CNVPartition with UMD 3.1 (UMD) cattle reference genome, and the third CNV list is an example of a standard input file that could be prepared from CNV results inferred by other tools.<br>
 
 Note: If you prefer not to test with this demo data, just skip this step to section 1 and use your own data instead.
 ```{r}
@@ -49,7 +47,7 @@ cnv_part_umd <- system.file("extdata", "Demo_data/cnv_results/UMD_CNVPartition.t
 cnv_other_umd <- system.file("extdata", "Demo_data/cnv_results/UMD_Standard_CNV.txt", package = "HandyCNV")
 ```
 
-#Setting up a working directory
+## Setting up a working directory
 To start the analysis, let's first set up the working directory. This will help ensure that all results will be saved in the same directory.
 ```{r eval=FALSE}
 setwd(dir = "C:/Users/handy_test") #remember to replace the path with your own 
@@ -57,20 +55,19 @@ setwd(dir = "C:/Users/handy_test") #remember to replace the path with your own
 
 # What issues can this package solve?
 As above we mentioned, the functions in the package have been categorised into five sections: Conversion, Summary, Annotation, Comparison and Visualization.
-Functions in the Conversion section could, for example, be used to convert coordinates between the default and target mapfiles provided by users; this would be useful if we are detecting CNVs with two different reference genomes. The converted map files can be output in formats suitable for use in Plink, PennCNV and our package 'HandyCNV'. It is also possible to convert coordinates for intervals (CNV, CNVR, QTL et al) between the defaults and target maps, which might useful when comparing the results to those of other researchers.
-Functions included in the Summarization section allow the formatting and plotting of outputs, such as producing detailed summaries of CNVs and ROHs, making CNV summary plots, generating CNV regions (CNVRs), and plotting CNVR distribution maps.
-The Annotation section allows the downloading of reference gene lists from the UCSC website, enabling the annotation of CNV, CNVR, ROH or other intervals with gene locations.
-The Comparison section facilitates the comparison of CNVs, CNVRs, Gene Frequent Lists and any other intervals. The highlight of this section is that comparison of CNVs and CNVRs will produce reports detailing comparison results on both individual and population levels, and all comparison results are relative to both input files.
-Finally, the Visualization section contains functions to support customised CNV and ROH plotting by chromosome, specific sample, regions of interest, or target genes (plotting by gene is not yet available for ROH). It is also possible to annotate the plots with other information, such as gene locations, log R ratio, B Allele Frequency, SNP genotype, LD or the source of CNVs. These functions can also plot genes separately from reference gene lists, which might useful for comparing outputs with plots from other studies.
 
-Now, let's start to explore the functions in `HandyCNV`.
+Functions in the Conversion section can, for example, be used to convert coordinates between the default and target mapfiles provided by users; this would be useful if we are detecting CNVs with two different reference genomes. The converted map files can be output in formats suitable for use in Plink, PennCNV and our package 'HandyCNV'. It is also possible to convert coordinates for intervals (CNV, CNVR, QTL et al) between the defaults and target maps, which might useful when comparing the results to those of other researchers. Functions included in the Summarization section allow the formatting and plotting of outputs, such as producing detailed summaries of CNVs and ROHs, making CNV summary plots, generating CNV regions (CNVRs), and plotting CNVR distribution maps.
+
+The Annotation section allows the downloading of reference gene lists from the UCSC website, enabling the annotation of CNV, CNVR, ROH or other intervals with gene locations. The Comparison section facilitates the comparison of CNVs, CNVRs, Gene Frequent Lists and any other intervals. The highlight of this section is that comparison of CNVs and CNVRs will produce reports detailing comparison results on both individual and population levels, and all comparison results are relative to both input files. Finally, the Visualization section contains functions to support customised CNV and ROH plotting by chromosome, specific sample, regions of interest, or target genes (plotting by gene is not yet available for ROH). It is also possible to annotate the plots with other information, such as gene locations, log R ratio, B Allele Frequency, SNP genotype, LD or the source of CNVs. These functions can also plot genes separately from reference gene lists, which might useful for comparing outputs with plots from other studies.
+
+Now, let's start exploring the functions in `HandyCNV`.
 
 ## 1. How do we prepare the standard cnv input file for `HandyCNV` and get a quick summary?
-We can use `cnv_clean` function to convert cnv results to standard format. This function will also produce a brief summary of CNV results.<br>
-First, let's format the sample CNV results from PennCNV.<br> 
-Note: <br> 
-a. When formatting results in PennCNV format, the corresponding CNV input argument is 'penncnv'.<br> 
-b. Default PennCNV results in Sample ID columns usually have the file path ahead the Sample ID. For example with the file "/home/zjhang027/C/final_403_penncnv/201094560082_R03C01.txt", the pattern 'cnv/' before the sample ID is unique, so we can take it as the separator using the argument `penn_id_sep = "cnv/"` to extract the wanted sample ID.
+We can use `cnv_clean` function to convert cnv results to standard format. This function will also produce a brief summary of CNV results. First, let's format the sample CNV results from PennCNV. Note:
+
+a.  When formatting results in PennCNV format, the corresponding CNV input argument is 'penncnv'.
+b.  Default PennCNV results in Sample ID columns usually have the file path ahead the Sample ID. For example with the file "/home/zjhang027/C/final_403_penncnv/201094560082_R03C01.txt", the pattern 'cnv/' before the sample ID is unique, so we can take it as the separator using the argument `penn_id_sep = "cnv/"` to extract the wanted sample ID.
+
 ```{r cnv_clean_penn, echo=TRUE, warning=FALSE}
 cnv_clean(penncnv = cnv_penn_ars, #when running your own data, set this argument to 'penncnv = "localpath/file"'
           penn_id_sep = "cnv/", #take the unique pattern as a separator to extract the sample ID 
@@ -78,14 +75,13 @@ cnv_clean(penncnv = cnv_penn_ars, #when running your own data, set this argument
           folder = "cnv_clean") #create a new folder to save results 
 ```
 
-Next, let's format a second set of CNV results, this time produced using CNVPartition.<br> 
-Note: The corresponding input argument is `cnvpartition` for CNV result from CNVPartition.
+Next, let's format a second set of CNV results, this time produced using CNVPartition. Note: The corresponding input argument is `cnvpartition` for CNV result from CNVPartition.
 ```{r cnv_clean_part, echo=TRUE, warning=FALSE}
 cnv_clean(cnvpartition = cnv_part_umd, #when running your own data, set this argument by 'cnvpartition = "localpath/file"' 
           drop_length = 5, #the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted
           folder = "cnv_clean") 
 ```
-If the CNV results were not produced by PennCNV or CNVPartition, we need to arrange the CNV results into the standard format, then use the 'standard_cnv' argument instead. The standard CNV input list should include the following columns (in order):  'Sample_ID', "Chr", "Start", "End" and "CNV_Value".
+If the CNV results were not produced by PennCNV or CNVPartition, we need to arrange the CNV results into the standard format, then use the `standard_cnv` argument instead. The standard CNV input list should include the following columns (in order):  `Sample_ID`, `Chr`, `Start`, `End` and `CNV_Value`.
 ```{r table1, message=FALSE, warning=FALSE, results='asis'}
 tabl <- "
 |Sample_ID           |Chr |Start   |End     |CNV_Value |
@@ -97,7 +93,7 @@ tabl <- "
 |201094560067_R08C02 |4   |66567442|66830563|3         |" 
 ```
 
-Let's run 'cnv_clean' on the third Standard CNV input file. Note that we are using the argument 'standard_cnv' for the third CNV result.
+Let's now run `cnv_clean` on the third Standard CNV input file. Note that we are using the argument `standard_cnv` for the third CNV result.
 ```{r}
 cnv_clean(standard_cnv = cnv_other_umd, #when running your own data, set this argument by 'standard_cnv = "localpath/file"'
           drop_length = 5, #the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted
@@ -108,7 +104,8 @@ cnv_clean(standard_cnv = cnv_other_umd, #when running your own data, set this ar
 The `cnv_visual` function supports visualising CNVs by chromosome, single sample, regions of interest, and target genes.
 
 ### 2.1 How do you have a quick overview of all CNVs on each chromosome?
-Once we got the standard `clean_cnv` result, we can use the `cnv_visual` function to plot all CNVs, to have a quick look if there are any notable patterns in CNV results.<br>
+Once we got the standard `clean_cnv` result, we can use the `cnv_visual` function to plot all CNVs, to have a quick look if there are any notable patterns in CNV results.
+
 First, let's visualise the whole PennCNV dataset across all chromosomes:
 ```{r fig.show='hide', message=FALSE, warning=FALSE, echo=TRUE}
 cnv_visual(clean_cnv = "cnv_clean/penncnv_clean.cnv", #standard file was generated by 'cnv_clean' function in section 1
@@ -146,23 +143,24 @@ cnv_visual(clean_cnv = "cnv_clean/penncnv_clean.cnv", #standard file was generat
 ```
 ![Figure.3 CNVs on Chr15:77-80.1221 Mb](cnv_visual/Chr15_77-80.1221Mb.png){width=320px}
 
-### 2.3 How to plot CNV in an interested sample?
-Here we need to assign the Sample ID to 'individual_id' and clean CNV list to 'clean_cnv' in 'cnv_visual' function, then the individual CNV plot will saved in working directory. In this example, the sample "201094560076_R03C02" has the most CNVs in Penn results, let's try to plot it have a look. <br> Note: The 'individual_cnv_count.txt' file will generate at section 3 when making summary plots, we can choose the interested individual in that file.
+### 2.3 How do we plot CNVs in a sample of interest?
+Here we need to assign both the Sample ID (to `individual_id`) and the clean CNV list (to `clean_cnv`) in the `cnv_visual` function. The individual CNV plot will saved in the current working directory. For example, the sample "201094560076_R03C02" has the most CNVs in the PennCNV results, so let's plot it and have a look. Note: we can use the `individual_cnv_count.txt` file (to be generated in section 3) to identify samples that exhibit large numbers of CNVs.
 ```{r fig.show='hide', warning=FALSE}
-cnv_visual(clean_cnv = "cnv_clean//penncnv_clean.cnv", #standard file was generated by 'cnv_clean' function in section 1
+cnv_visual(clean_cnv = "cnv_clean/penncnv_clean.cnv", #standard file was generated by 'cnv_clean' function in section 1
            individual_id = "201094560076_R03C02", #set the sample ID  
            width_1 = 20, #optional, adjust the width of final plot
            height_1 = 13, #optional. adjust the height of final plot
            folder = "cnv_visual")
 ```
-![Figure.4 CNVs on Specific Sample](cnv_visual/CNV_of_201094560076_R03C02.png){width=320px}
+![Figure.4 CNVs in a specific sample](cnv_visual/CNV_of_201094560076_R03C02.png){width=320px}
 
-### 2.4 How to plot an interested Gene to see how many samples had CNV with it?
-The idea to plot CNV by Target Gene is to avoid the ambitious statements when report important candidate genes after annotation for CNVRs. If we think one gene is important in CNV analysis, it's better to present what the frequency of the genes that has structure variation in the experimental population, plot CNV by gene will present how many sample has the gene with copy number variation directly. 
-Note: The input file 'cnv_annotation.txt' will generate in section 5.2. Play it after we annotated the gene to CNV results.
+### 2.4 How do we plot an interesting gene to see how many samples had a CNV overlapping with it?
+The idea of plotting CNVs by target gene is to avoid making overly-strong statements when reporting important candidate genes after annotation for CNVRs. If we think that one particular gene is especially important in the CNV analysis, it's better to present the frequency at which that gene has a structural variation in the experimental population. Plotting CNVs by gene will directly present how many samples show copy number variations overlapping the gene. 
+
+Note: The input file 'cnv_annotation.txt' will be generated in section 5.2, as part of annotating the gene to CNV results.
 ```{r fig.show='hide', warning=FALSE}
 cnv_visual(clean_cnv = "call_gene_Penn_UCSC/cnv_annotation.txt", #here we need the annotated CNV list, generated by 'call_gene' in section 5.2
-           target_gene = "BLA-DQB", #set the gene name we are interested
+           target_gene = "BLA-DQB", #set the gene name we are interested in
            col_0 = "darkorchid4",  #optional, customize color for o copy CNV 
            col_1 = "dodgerblue3",  #optional, customize color for 1 copy CNV 
            col_3 = "violetred3",  #optional, customize color for 3 copy CNV 
@@ -171,7 +169,7 @@ cnv_visual(clean_cnv = "call_gene_Penn_UCSC/cnv_annotation.txt", #here we need t
            height_1 = 10, #adjust the width of final plot
            folder = "cnv_visual")
 ```
-![Figure.5 CNVs on Specific Gene](cnv_visual/BLA-DQB.png){width=320px}
+![Figure.5 CNVs on a specific gene (*BLA-DQB*)](cnv_visual/BLA-DQB.png){width=320px}
 
 ### 2.5 How to present annotated gene above CNV plot?
 The idea is to plot CNV and gene in given region separately at first, then combine two plot together. So we need to provide two input files to arguments 'clean_cnv' and 'refgene' meanwhile. Then set region we are interested.
