@@ -1,4 +1,5 @@
 # HandyCNV
+![R-CMD-check](https://github.com/JH-Zhou/HandyCNV/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/JH-Zhou/HandyCNV/actions/workflows/R-CMD-check.yaml)
 An R package for Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH
 
 ![Fig.1 Working Flow](https://github.com/JH-Zhou/HandyCNV/blob/master/vignettes/High_resolution_pipeline_HandyCNV.png)
