@@ -34,5 +34,6 @@ Suggests:
     graphics,
     grid,
     gridGraphics,
-    rvcheck
+    rvcheck,
+    covr
 VignetteBuilder: knitr
