@@ -25,6 +25,7 @@
 #' @param folder set name of folder to save results
 #' @import dplyr ggplot2
 #' @importFrom data.table fread fwrite setkey foverlaps
+#' @importFrom scales unit_format
 #'
 #' @return Details comparison results of CNVRs between input lists
 #' @export compare_cnvr

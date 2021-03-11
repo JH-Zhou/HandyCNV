@@ -24,6 +24,7 @@
 #'
 #' @import dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
+#' @importFrom scales unit_format
 #'
 #' @return
 #' Summary results of ROH by sliding windows across all chromosomes.

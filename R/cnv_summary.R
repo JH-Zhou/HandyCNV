@@ -16,8 +16,9 @@
 #' @param height_sum2 set height of Summary Plot 2
 #' @param width_sum2 set width of Summary Plot 2
 #'
-#' @import ggplot2 dplyr scales reshape2 tidyr
+#' @import ggplot2 dplyr reshape2 tidyr
 #' @importFrom data.table fread fwrite
+#' @importFrom scales unit_format
 #'
 #' @return Some summary pictures
 #' @export cnv_summary_plot

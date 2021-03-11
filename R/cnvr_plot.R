@@ -17,7 +17,7 @@
 #' @param height_1 number to set the height of final plot size, unit is 'cm'
 #' @param col_gene set the color of Gene, only work in Gene annotated at CNV plot
 #'
-#' @import ggplot2 dplyr scales reshape2 tidyr
+#' @import ggplot2 dplyr reshape2 tidyr
 #'
 #' @importFrom data.table fread fwrite
 #'

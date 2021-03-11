@@ -1,14 +1,15 @@
-#' Title pre_phased
+#' Title prep_phased
 #' This function used to prepare phased genotype file to standard format in 'HandyCNV' to get haplotype for any interested genomic region,
 #' The input file should phased by Beagle 5.1.
 #'
 #' @param phased_geno phased genotype file from Beagle 5.1, the first nine columns contain basic information, the rest are genotype
 #'
 #' @importFrom data.table fread
-#' @import dplyr tidyr purrr
+#' @importFrom purrr map
+#' @import dplyr tidyr
 #'
 #' @return A list contain map and genotype information
-#' @export pre_phased
+#' @export prep_phased
 #'
 prep_phased <- function(phased_geno){
   print("Reading input file...")
@@ -52,6 +53,8 @@ prep_phased <- function(phased_geno){
 #' @param chr chromosome ID
 #' @param start start position, unite 'bp'
 #' @param end end position, unite 'bp'
+#'
+#' @import dplyr
 #'
 #' @return SNP position
 #' @export closer_snp

@@ -9,6 +9,8 @@
 #' @param cnvr Generate by 'call_cnvr', requires at least have four columns: Chr, Start, End, Frequency
 #' @param freq_threshold This used to filter the CNVRs, only prepare the demo data for CNVRs which passed this threshold
 #' @param folder Set name of new folder to save results
+#' @import dplyr tidyr
+#' @importFrom data.table fread fwrite
 #'
 #' @return Demo data of Intensity, Map, Ped file which appears only in CNVRs
 #' @export get_demo

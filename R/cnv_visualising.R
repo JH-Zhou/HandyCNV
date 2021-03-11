@@ -26,9 +26,10 @@
 #' @param col_gene set the color of Gene, only work in Gene annotated at CNV plot
 #' @param gene_font_size set the size of Gene in CNV Annotation plot
 #'
-#' @import dplyr ggplot2 tidyr ggrepel scales grDevices
+#' @import dplyr ggplot2 tidyr ggrepel grDevices
 #'
 #' @importFrom data.table fread fwrite
+#' @importFrom scales unit_format
 #'
 #' @return
 #' CNV distribution plot

@@ -52,7 +52,7 @@ clean_ucsc <- function(refgene){
 #' @param gene_version The version of reference gene 'HandyCNV' support to download, if now don't have the version of the gene you want, please feel free to cotact the Maintainer to help you updating this function.
 #'
 #' @importFrom R.utils gunzip gunzip.default
-#' @importFrom data.table fread
+#' @importFrom data.table fread fwrite
 #'
 #' @return Standard formatted reference gene list
 #' @export get_refgene

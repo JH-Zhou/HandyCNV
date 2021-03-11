@@ -9,6 +9,7 @@ Depends: R (>= 3.5.0)
 Imports:
     data.table,
     dplyr,
+    purrr,
     ggplot2,
     reshape2,
     scales,
