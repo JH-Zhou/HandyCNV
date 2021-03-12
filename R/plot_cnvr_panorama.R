@@ -30,7 +30,7 @@
 plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NULL, prefix_bed = NULL, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", col_gene = "black", gene_font_size = 2.2) {
   if(!file.exists(folder)){
     dir.create(folder)
-    print(paste0("A new folder ", folder,  "was created in working directory."))
+    print(paste0("A new folder '", folder, "' was created in working directory."))
   }
 
   if(!(missing(cnvr))){
@@ -41,7 +41,7 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
       filter(Frequent >= sample_size * common_cnv_threshold) %>%
       arrange(Length)
     if(nrow(high_freq) == 0){
-      print("No CNVR passed the high frequency threshold, please reset your common_cnv_threshold!")
+      print("No CNVRs passed the high frequency threshold, please reset your common_cnv_threshold!")
     } else {
       print(paste0(nrow(high_freq), " CNVRs passed the common frequency threshold."))
     }
@@ -178,7 +178,7 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
 
       cnv_chr_zoom.byId = split(cnv_chr_zoom, cnv_chr_zoom$`Sample ID`)
       typeF = function(i) {
-        id = sub_inten[i,'Sample ID']         ## get the ID in data_1 for row i
+        id = sub_inten[i,'Sample ID'][[1]]         ## get the ID in data_1 for row i
         pos = sub_inten[i,'Position']  ## get the Position in data_1 for row i
         tab = cnv_chr_zoom.byId[[id]]     ## get the subset of data_2 that matches this ID
         ## For each row in the data_2 subset, is the Position
@@ -285,6 +285,6 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
     #print(final_plot)
     #dev.off()
     ggsave(plot = final_plot, path = paste0(folder, "/"), filename = dir, width = width_1, height = height_1, dpi = 300, units = "cm")
-    print(paste0("Plot ", i, " was stored in working directory."))
+    print(paste0("Plot ", i, " (", dir, ") was stored in the ", paste0(folder, "/"), " directory."))
   }
 }
