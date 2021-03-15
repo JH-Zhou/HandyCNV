@@ -19,7 +19,8 @@
 #' @param col_gene set color of gene in CNV plot
 #' @param gene_font_size set size of gene in CNV annotated plot
 #'
-#' @import dplyr ggrepel ggplot2 tidyr gaston cowplot scales
+#' @import dplyr ggrepel ggplot2 tidyr gaston cowplot
+#' @importFrom scales unit_format
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
 #' @importFrom stringr str_detect
 #' @importFrom ggplotify base2grob

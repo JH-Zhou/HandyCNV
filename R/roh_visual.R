@@ -146,6 +146,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
 #' @param start_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param end_position decimal digit, default unit is 'Mb'. such as 23.2112
 #' @param individual_id reporting ID of individuals while plotting
+#' @param target_region plot target region by setting given interval in 'c(value1, value2)'.
 #' @param plot_title add title in the plot
 #' @param width_1 number to set the width of final plot size, unit is 'cm'
 #' @param height_1 number to set the height of final plot size, unit is 'cm'
@@ -168,7 +169,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
 #'
 #' @export roh_visual
 #'
-roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name =c(0, 160), width_1 = 13, height_1 = 10, col_short = "deepskyblue", col_mid = "black", col_long = "deeppink2", folder = "roh_visual", gene_font_size = 2.2) {
+roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, refgene = NULL,  target_region = c(0, 160), plot_title = NULL, report_id = NULL, pedigree = NULL, show_name =c(0, 160), width_1 = 13, height_1 = 10, col_short = "deepskyblue", col_mid = "black", col_long = "deeppink2", folder = "roh_visual", gene_font_size = 2.2) {
   if(!(dir.exists(folder))){
     dir.create(folder)
     print(paste0("New folder ", folder, " was created in working directory."))
@@ -435,6 +436,44 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     dev.off()
     print("Task done, plot was stored in working directory.")
     #return(cnv_coord)
+  } else if (is.null(target_region) == "FALSE"){
+    #get input data
+    target_g <- data.table(t(target_region))
+    target_g$V2 <- target_g$V2 * 1000000 #convert to bp
+    target_g$V3 <- target_g$V3 * 1000000 #convert to bp
+    names(target_g) <- c("Chr_TAR", "Start_TAR", "End_TAR")
+    #prepare target roh
+    roh <- setDT(roh)
+    setkey(roh, Chr, Start, End)
+    target_roh <- foverlaps(x = target_g, y = roh, by.x = c("Chr_TAR", "Start_TAR", "End_TAR"), type = "any")
+
+    id_coord <- data.frame("Sample_ID" = sort(unique(target_roh$Sample_ID))) #extract unique ID prepare coordinate
+    id_coord$Order <- seq(1,nrow(id_coord),1)
+    #id_coord$x <- chr_length_ars[chr_id, 2]
+    # max_len = chr_length_ars %>%
+    #   filter(Chr == chr_id) %>%
+    #   select(Length)
+    # id_coord$x <- max_len$Length
+    # id_coord$y <- (id_coord$Order-1)*5 + 1
+    target_roh <- merge(target_roh, id_coord, all.x = TRUE, sort = FALSE) #prepare original data
+
+    target_name <- paste0(folder, "/Chr", target_g$Chr_TAR, "_",  target_region[2], "_", target_region[3], "_roh.png")
+    id_number <- nrow(id_coord)
+    chr_title <- paste0("ROH on Chr", target_g$Chr_TAR, "_", target_region[2], "_", target_region[3], " with ", id_number, " Samples")
+    png(res = 350, filename = target_name, width = width_1, height = height_1, units = "cm")
+    #png(res = 300, filename = "10_chr.png", width = 3500, height = 2000)
+    target_plot <- ggplot(target_roh, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
+      geom_rect(aes(fill = Length/1000000), show.legend = FALSE) +
+      scale_fill_gradientn(colours = c(col_short, col_mid, col_long)) +
+      #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
+      theme_bw() +
+      scale_y_continuous(labels = NULL) +
+      scale_x_continuous(breaks = seq(0, max(target_roh$End)/1000000, by = 5), limits = c(0, max(target_roh$End)/1000000)) +
+      labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "Length")
+    print(target_plot)
+    dev.off()
+    print("Task done, plot was stored in working directory.")
+
   }
 
   else{

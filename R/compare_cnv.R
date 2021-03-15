@@ -25,9 +25,10 @@
 #' @param folder set name of folder to save results
 #' @param plot_caption If TRUE, present Note Caption in Comparison plot
 #'
-#' @import dplyr scales ggplot2
+#' @import dplyr ggplot2
 #'
 #' @importFrom data.table fread fwrite setkey foverlaps
+#' @importFrom scales unit_format
 #'
 #' @return Details comparison results of CNVs between input lists.
 #' @export compare_cnv
