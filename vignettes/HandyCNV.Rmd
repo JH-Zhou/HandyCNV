@@ -629,7 +629,7 @@ roh_visual(clean_roh = "cnv_clean/cnvpart_roh.cnv",
 ![Figure.23 Annotation of ROH on Chr6:36.5-40.5](roh_visual/Chr6_36.5-40.61Mb_roh.png){width=300px}
 
 
-If the ROH region has too much genes, plotting all the gene names will make the figure look too busy. We can choose the most important region(s) to plot using the `show_names` argument. In this example, we set two regions with the following argument: `show_name = c(37.28, 37.49, 38.25, 39.52)`. This will show the gene names in two regions:  (37.28 - 37.49 Mb) and (38.25 - 39.52 Mb).
+If the ROH region has too many genes, plotting all the gene names will make the figure look too busy. We can choose the most important region(s) to plot using the `show_names` argument. In this example, we set two regions with the following argument: `show_name = c(37.28, 37.49, 38.25, 39.52)`. This will show the gene names in two regions:  (37.28 - 37.49 Mb) and (38.25 - 39.52 Mb).
 ```{r fig.show='hide', warning=FALSE, results='hide'}
 roh_visual(clean_roh = "cnv_clean/cnvpart_roh.cnv", 
            chr_id = 6, 
