@@ -18,7 +18,7 @@
 call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
   if(!file.exists(folder)){
     dir.create(folder)
-    print(paste0("New folder ", folder, " was created in the working directory."))
+    cat(paste0("Output folder '", folder, "' was created in the working directory.\n"))
   }
 
   clean_cnv <- data.table::fread(file = clean_cnv, sep = "\t", header = TRUE)
@@ -88,7 +88,7 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
     cnvr_f_type <- merge(cnvr_union_f, cnvr_type2, sort = F)
     cnvr_f_type$Length <- cnvr_f_type$End - cnvr_f_type$Start + 1
 
-    print(paste0(nrow(cnvr_f_type), " CNVR generated in total."))
+    cat(paste0(nrow(cnvr_f_type), " CNVRs generated in total.\n"))
 
     #The overall summary
     cnvr_summary <- cnvr_f_type %>%
@@ -100,9 +100,9 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
       group_by(Chr) %>%
       summarise("Total Length" = sum(Length), "Number of CNVR" = n())
 
-    print("Overall summary of CNVRs:")
+    cat("Overall summary of CNVRs:\n")
     print(cnvr_summary)
-    print("Summary of CNVRs on each Chromosome:")
+    cat("Summary of CNVRs on each Chromosome:\n")
     print(cnvr_chr_summary)
 
     fwrite(cnv_cnvr, file = paste0(folder, "/individual_cnv_cnvr.txt"), sep = "\t", quote = FALSE)
@@ -111,7 +111,7 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
     fwrite(cnvr_chr_summary, file = paste0(folder, "/cnvr_chr_summary.txt"), sep = "\t", quote = FALSE, col.names = TRUE)
 
     if(file.exists(paste0(folder,"/cnvr.txt")) & file.exists(paste0(folder, "/individual_cnv_cnvr.txt"))) {
-      print("Task done, CNVR results saved in the ", folder, " directory.")
+      cat(paste0("Task done, CNVR results saved in the '", folder, "' directory.\n"))
     } else {warning("No output file produced. Please check the format of your input file!!")}
   }
 
@@ -120,7 +120,7 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
     fwrite(cnvr_union_f, file = paste0("call_cnvr_", folder, "/roh.txt"), sep = "\t", quote = FALSE)
 
     if(file.exists(paste0(folder, "/roh.txt"))) {
-      print("Task done, ROH results saved in the ", folder, " directory.")
+      cat(paste0("Task done, ROH results saved in the '", folder, "' directory.\n"))
     } else {warning("No output file produced. Please check the format of your input file!!")}
   }
 }
