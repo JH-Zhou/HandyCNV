@@ -20,8 +20,8 @@
 #' @param height_1 integer, default value is 14,number to set the height of final plot size, unit is 'cm'
 #' @param legend_x decimal digit, default value is 0.9, consistent with ggplot manual coordinates of legend
 #' @param legend_y decimal digit, default value is 0.9, consistent with ggplot manual coordinates of legend
-#' @param col_1 set color for overlapped bar
-#' @param col_2 set color for non-overlapped bar
+#' @param col_1 set color for non-overlapped bar
+#' @param col_2 set color for overlapped bar
 #' @param folder set name of folder to save results
 #' @param plot_caption If TRUE, present Note Caption in Comparison plot
 #'
@@ -53,13 +53,15 @@ compare_cnv <- function(cnv_def, cnv_tar, def_tar_map = NULL, width_1 = 14, heig
                 summarise(percent_total = sum(percent_total),
                           num = sum(n))
 
+    over_sum <- scales::percent(length(which(cnv$Check_overlap == "Overlap")) / nrow(cnv), accuracy = 0.1)
+
     # manual add color
     color_bar <- c("Non-Overlap" = col_1,
                    "Overlap" = col_2)
     png(res = 300, filename = paste0(folder, "/", title_f, ".png"), width = width_1, height = height_1, bg = "transparent", units = "cm")
     compare_plot <- ggplot(cnv_cal, aes(x = CNV_Value, y = percent_total, fill = Check_overlap)) +
       geom_col() +
-      scale_fill_manual(values = color_bar) +
+      scale_fill_manual(values = color_bar, labels = c("Non-Overlap", paste0("Overlap:", over_sum))) +
       geom_text(data = subset(cnv_cal, Check_overlap == "Overlap"), aes(label = scales::percent(percent_group)), color = "blue", position = position_stack(0.5)) +
       geom_text(inherit.aes = FALSE, data = cnv_freq, aes(x = CNV_Value - 0.4, y = percent_total, label = num), vjust = -0.5) +
       geom_text(inherit.aes = FALSE, data = cnv_freq, aes(x = CNV_Value + 0.2, y = percent_total, label = scales::percent(percent_total,accuracy = 0.1)), vjust = -0.5, color = "red") +
