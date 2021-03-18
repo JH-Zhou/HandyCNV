@@ -1,0 +1,6 @@
+Item	Length	Number
+Total Original	974963676	4576
+Succeed Original 	891042504	4104
+Succeed Convertion	897762659	-
+Failed convertion	77201017	472
+Difference Converted minus Original	-6720155	-

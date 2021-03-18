@@ -14,6 +14,7 @@ roh_visual(
   end_position = NULL,
   individual_id = NULL,
   refgene = NULL,
+  target_region = c(0, 160),
   plot_title = NULL,
   report_id = NULL,
   pedigree = NULL,
@@ -43,6 +44,8 @@ roh_visual(
 \item{individual_id}{reporting ID of individuals while plotting}
 
 \item{refgene}{if true, will plot gene above roh plot}
+
+\item{target_region}{plot target region by setting given interval in 'c(value1, value2)'.}
 
 \item{plot_title}{add title in the plot}
 

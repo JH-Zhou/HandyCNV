@@ -24,6 +24,7 @@
 #'
 #' @import dplyr
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
+#' @importFrom scales unit_format
 #'
 #' @return
 #' Summary results of ROH by sliding windows across all chromosomes.
@@ -108,7 +109,6 @@ roh_window <- function(roh, window_size = 5, length_autosomal = 2489.386, thresh
 
 
   roh <- fread(roh)
-  total_n_sample <- length(unique(roh$Sample_ID))
 
   #check if the input is a Plink results
   #convert to the stardards format if it is
@@ -135,6 +135,8 @@ roh_window <- function(roh, window_size = 5, length_autosomal = 2489.386, thresh
   print("Individual situations are shown below:")
   print(indiv_roh)
   fwrite(indiv_roh, file = paste0(folder, "/indiv_roh.txt"), sep = "\t", quote = FALSE)
+
+  total_n_sample <- length(unique(roh$Sample_ID))
 
   w <- set_window(win_size = window_size)
 
