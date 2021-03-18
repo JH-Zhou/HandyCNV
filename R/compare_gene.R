@@ -21,6 +21,7 @@
 #'
 #' @import dplyr ggplot2 scatterplot3d
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
+#' @importFrom graphics legend text
 #'
 #' @return Coparison summary results and plots.
 #' @export compare_gene

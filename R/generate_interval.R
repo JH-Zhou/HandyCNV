@@ -7,6 +7,7 @@
 #'
 #' @param i the start number, must be integer, such as 1
 #' @param j the end number, must be integer, such as 10
+#' @import dplyr
 #'
 #' @return interval
 #' @export generate_interval_integer
@@ -20,7 +21,7 @@ generate_interval_integer <- function(i, j){
     end_i = seq(i+1, j, 1)
     end_list <- c(end_list, end_i)
   }
-  interval <- unique(data.table(start_list, end_list)) #convert two vectors into data table
+  interval <- unique(data.frame(start_list, end_list)) #convert two vectors into data table
   interval <- interval[-c(0:j+1),] #remove the intervals not whthin the given number, it caused by the for loop
   return(interval)
 }
@@ -49,7 +50,7 @@ generate_interval_decimal <- function(i, j){
     end_i = seq(i+1, j, 1)
     end_list <- c(end_list, end_i)
   }
-  interval <- unique(data.table(start_list, end_list))
+  interval <- unique(data.frame(start_list, end_list))
   interval <- interval[-c(0:(distance*10+1)),] #here is the distance between two value time 10, plus 1 empty
   interval$start_list <-  as.numeric(interval$start_list)/10
   interval$end_list <- as.numeric(interval$end_list)/10
