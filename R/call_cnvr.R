@@ -112,7 +112,7 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
 
     if(file.exists(paste0(folder,"/cnvr.txt")) & file.exists(paste0(folder, "/individual_cnv_cnvr.txt"))) {
       print("Task done, CNVR results saved in the ", folder, " directory.")
-    } else {print("WARNING: no output file produced. Please check the format of your input file!!")}
+    } else {warning("WARNING: no output file produced. Please check the format of your input file!!")}
   }
 
   else {
@@ -121,7 +121,7 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
 
     if(file.exists(paste0(folder, "/roh.txt"))) {
       print("Task done, ROH results saved in the ", folder, " directory.")
-    } else {print("WARNING: no output file produced. Please check the format of your input file!!")}
+    } else {warning("WARNING: no output file produced. Please check the format of your input file!!")}
   }
 }
 
