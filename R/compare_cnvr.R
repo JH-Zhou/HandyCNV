@@ -72,7 +72,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
                              overlap_len = sum(overlap_len))
 
     summary_title <- paste0(overlap_sum$num_CNVR[2]," CNVRs ",
-                            round(overlap_sum$overlap_len[2]/sum(cnvr_cal$origi_length), 4) * 100, "% overlap Length")
+                            round(overlap_sum$overlap_len[2]/sum(cnvr_cal$origi_length), 4) * 100, "% Overlap Length")
 
     #add manual color to btar
     color_bar <- c("Non-Overlap" = col_1,
