@@ -1,13 +1,12 @@
-#' Title call_gene
+#' call_gene
 #'
-#' This function used for annotating genes for any interval by giving the interval list and reference gene list.
-#' The interval file requires at least consists of four columns, they are ID, Chr, Start and End.
-#' The first column must be the ID column, the column of Chr should only contain the number of chromosome, the units of Start and End columns are the basepair.
+#' This function is used for annotating genes over any interval by giving the interval list and reference gene list.
+#' The interval file requires at least four columns: Interval_ID, Chr, Start and End. The first column must be the ID column, the column of Chr should only contain the chromosome number (i.e., no "chr" prefix), and the units of the Start and End columns are the basepair.
 #'
-#' @param refgene internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data
-#' @param interval Could be CNV, ROH, QTL or any interval list. At least comprised by four columns Interval_ID, Chr, Start and End
-#' @param clean_cnv The output data from cnv_clean function
-#' @param folder set the name of folder to save results
+#' @param refgene a file containing the gene information. This shoul;d be prepared using the [get_refgene()] function.
+#' @param interval a file containing a list of genomic intervals, such as CNVs, ROHs, or QTLs. The file must contain at least the following four columns: Interval_ID, Chr, Start and End
+#' @param clean_cnv the output data from a previous run of the cnv_clean function. If this is provided, additional output files are created that annotate the CNVs
+#' @param folder set the name of the output folder
 #' @import dplyr
 #'
 #' @importFrom  data.table fread fwrite setkey foverlaps
@@ -18,7 +17,7 @@
 call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, folder = "ARS"){
   if(!file.exists(folder)){
     dir.create(folder)
-    print(paste0("A new folder ", folder, " was created in working directory."))
+    cat(paste0("Output folder '", folder, "' has been created in the working directory.\n"))
   }
 
   #if(missing(refgene)){
@@ -59,7 +58,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
   gene$Chr <- suppressWarnings(as.integer(sub("chr", "", gene$Chr))) #convert Chr to integer in order to use foverlap in next step
   interval <- fread(file = interval, header = TRUE)
   if(ncol(interval) < 4){
-    cat("Not enought columns provide in 'interval' list, \nat least four columns required:\n'Interval_ID' 'Chr' 'Start' 'End'
+    stop("Not enought columns provided in the 'interval' list: at least four columns are required:\n'Interval_ID' 'Chr' 'Start' 'End'
         ")
   }
   names(interval)[1] = "ID"    #Replace names of table in order to the summarize in the final step,
@@ -68,7 +67,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
   setkey(gene, Chr, Start, End)
   cnvr_gene <- foverlaps(interval, gene, by.x = c("Chr", "Start", "End"), type = "any")
 
-  print("Starting to check gene annotation status in interval file....")
+  cat("Checking gene annotation status in the interval file...\n")
   #Summarize how many CNVRs got gene annotated
   cnvr_gene <- cnvr_gene %>%
                mutate(Check_gene = if_else(is.na(Start) & is.na(End), true = "Non_gene", false = "Has_gene"))
@@ -81,7 +80,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
   gene_summary <- data.frame(matrix(nrow = 1, ncol = 3)) #create a data table to save summary results
   names(gene_summary) <- c("Interval_Has_Gene", "Invertal_Without_Gene", "Total_Number_of_Genes") #assign columns name
   gene_summary[1, 1:3] <- c(num_CNVR_has_gene, num_CNVR_no_gene, gene_number) #assign relative value into table
-  print("The summary of annotation results as shown below:")
+  cat("Summary of annotation results:\n")
   print(gene_summary)
 
   #report gene as list format for annotation use in David Annotation
@@ -114,7 +113,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
                              g_End = End,
                              CNV_Start = i.Start,
                              CNV_End = i.End)
-    print("Starting to check gene annotation status in CNV file....")
+    cat("Checking gene annotation status in CNV file...\n")
 
     cnv_annotation <- cnv_annotation %>%
                       mutate(Check_gene = if_else(is.na(g_Start) & is.na(g_End), true = "Non_gene", false = "Has_gene"))
@@ -122,7 +121,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
 
     cnv_gene <- subset(cnv_annotation, Check_gene == "Has_gene") #extract CNV which has gene
     gene_freq <- cnv_gene %>% group_by(name2) %>% count(name2, name = "Frequency", sort = TRUE)
-    print(paste0(nrow(gene_freq), " genes were matched in the CNV and CNVR, top 10 frequent genes as below: "))
+    cat(paste0(nrow(gene_freq), " genes were matched in the CNV and CNVR results. The 10 most frequent genes:\n"))
     print(gene_freq[1:10, ])
 
     # assign CNVR ID and positions into gene frequency list
@@ -136,7 +135,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
     }
 
     dup_gene <- cnvr_has_gene_unique[check_dup_gene(cnvr_has_gene_unique), ] # extract all duplicated genes
-    print("These genes are duplicated in multiple CNVR, will only remain the first CNVR_ID in final gene frequency list report!")
+    warning("The following genes are duplicated in multiple CNVRs, and will only be annotated on the first CNVR_ID in the final gene frequency list report!")
     print(dup_gene)
 
     cnvr_has_gene_unique_pure <- cnvr_has_gene_unique[-which(duplicated(cnvr_has_gene_unique$name2)), ] # exclude the rows with duplicated gene name, only remained the first value
@@ -149,15 +148,15 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
     fwrite(cnv_annotation, file = paste0(folder, "/cnv_annotation.txt"), sep = "\t", quote = FALSE)
     fwrite(gene_freq_location, file = paste0(folder, "/gene_freq_cnv.txt"), sep = "\t", quote = FALSE)
     if(file.exists(paste0(folder, "/interval_annotation.txt")) & file.exists(paste0(folder, "/call_gene_summary.txt")) & file.exists(paste0(folder, "/cnv_annotation.txt")) & file.exists(paste0(folder, "/gene_freq_cnv.txt"))) {
-      print("Task done. CNV, CNVR Annotation, summary files and the Frequency of Gene in CNV Region have been saved in Working directory.")
+      cat(paste0("Task done. Files containing the CNVs, CNVR annotations, summary tables, and the frequency of genes in CNV regions have been saved in the '", folder, "'.\n"))
     } else {
-      print("Task failed, please check your input file format carefully!!")
+      stop("Task failed: please check your input file format carefully!!")
     }
   } else {
     if(file.exists(paste0(folder, "/interval_annotation.txt")) & file.exists(paste0(folder, "/call_gene_summary.txt"))) {
-      print("Task done. Annotation and summary files have been saved in Working directory.")
+      cat(paste0("Task done. Annotation and summary files have been saved in the '", folder, "' directory.\n"))
     } else {
-      print("Task failed, please check your input file format carefully!!")
+      stop("Task failed: please check your input file format carefully!!")
     }
   }
 
