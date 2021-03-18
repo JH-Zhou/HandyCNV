@@ -27,7 +27,7 @@
 #' @return cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...
 #' @export plot_cnvr_panorama
 #'
-plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NULL, prefix_bed = NULL, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "grey", col_3 = "tomato", col_4= "deepskyblue", col_gene = "black", gene_font_size = 2.2) {
+plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NULL, prefix_bed = NULL, ld_heat = TRUE, sample_size, common_cnv_threshold = 0.05, width_1 = 14, height_1 = 30, folder = "cnvr_panorama", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "NA", col_3 = "tomato", col_4= "deepskyblue", col_gene = "black", gene_font_size = 2.2) {
   if(!file.exists(folder)){
     dir.create(folder)
     print(paste0("A new folder '", folder, "' was created in working directory."))
@@ -178,9 +178,9 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
 
       cnv_chr_zoom.byId = split(cnv_chr_zoom, cnv_chr_zoom$`Sample ID`)
       typeF = function(i) {
-		if ( nrow(sub_inten) == 0 ) {
-			return(2)
-		}
+        if ( nrow(sub_inten) == 0 ) {
+          return(2)
+        }
         id = sub_inten[i,'Sample ID'][[1]]         ## get the ID in data_1 for row i
         pos = sub_inten[i,'Position']  ## get the Position in data_1 for row i
         tab = cnv_chr_zoom.byId[[id]]     ## get the subset of data_2 that matches this ID

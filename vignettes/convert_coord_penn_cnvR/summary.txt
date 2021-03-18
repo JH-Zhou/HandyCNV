@@ -1,6 +1,6 @@
 Item	Length	Number
-Total Original	300651334	978
-Successful Original	223409582	745
-Successful Conversion	221363332	-
-Failed Conversion	79288002	233
-Converted minus Original	2046250	-
+Total Original	286942723	881
+Succeed Original 	270103909	835
+Succeed Convertion	271977583	-
+Failed convertion	14965140	46
+Difference Converted minus Original	-1873674	-

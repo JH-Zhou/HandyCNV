@@ -20,6 +20,7 @@
 #' @import ggplot2 dplyr reshape2 tidyr
 #'
 #' @importFrom data.table fread fwrite
+#' @importFrom graphics barplot legend par rect text
 #'
 #' @return A figure of CNVR distribution map and plot parameters.
 #' If given clean_cnv file, will plot all CNVRs which are passed common threshold.
