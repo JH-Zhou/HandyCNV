@@ -473,6 +473,7 @@ The function will not only generate map files, for use in `compare_cnv` and `com
 ```{r fig.show='hide', warning=FALSE}
 convert_map(default_map = umd_map, #when running your own data, set this argument to 'default_map = "localpath/file"'
             target_map = ars_map, #when running your own data, set this argument to 'target_map = "localpath/file"'
+            chr_set = 30,
             defMap_title = "UMD 3.1", #set the label of axis
             tarMap_title = "ARS-UCD 1.2", #set the label of axis
             col_1 = "green4", #set colour for the type of Match in SNP comparison plot
@@ -481,7 +482,11 @@ convert_map(default_map = umd_map, #when running your own data, set this argumen
             col_4 = "deeppink2", #set colour for line of Target_map in density plot
             col_5 = "turquoise3", #set colour for point of Default_Map in SNP density plot
             col_6 = "turquoise3", #set colour for line of Default_map in SNP density plot
-            species = "Bovine")
+            species = "Bovine", 
+            height_c = 16,
+            width_c = 20,
+            height_d = 14,
+            width_d = 22)
 ```
 ![Figure.17 Comparison of the ARS 1.2 and UMD 3.1 reference genomes](convert_map/comparison_snp.png){width=320px}
 
