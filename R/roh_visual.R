@@ -13,7 +13,7 @@
 #' @param col_gene set the color of Gene, only work in Gene annotated at CNV plot
 #'
 #' @import ggplot2 dplyr
-#' @importFrom data.table fread fwrite setkey foverlaps setDT
+#' @importFrom data.table fread fwrite setkey foverlaps setDT data.table
 #'
 #' @return gene plot with given interval
 #' @export plot_gene
@@ -289,7 +289,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     cnv_chr_zoom$zoom_x <- end_position
     zoom_name <- paste0(folder, "/Chr", chr_id, "_",start_position,"-",end_position, "Mb", "_roh.png")
     id_number <- nrow(id_coord)
-    zoom_title <- paste0(folder, "/ROH on Chromosome ", chr_id, ": ",start_position," - ",end_position, " Mb", " with ", id_number," Individual" ," - ", plot_title)
+    zoom_title <- paste0("/ROH on Chr ", chr_id, ": ",start_position,"-",end_position, " Mb", " with ", id_number," Samples" ," - ", plot_title)
     png(res = 350, filename = zoom_name, width = width_1, height = height_1, units = "cm")
     zoom_plot <- ggplot(cnv_chr_zoom, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
       geom_rect(aes(fill = Length/1000000)) +
@@ -438,6 +438,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     #return(cnv_coord)
   } else if (is.null(target_region) == "FALSE"){
     #get input data
+    target_region <- as.vector(target_region)
     target_g <- data.table(t(target_region))
     target_g$V2 <- target_g$V2 * 1000000 #convert to bp
     target_g$V3 <- target_g$V3 * 1000000 #convert to bp
@@ -459,8 +460,8 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
 
     target_name <- paste0(folder, "/Chr", target_g$Chr_TAR, "_",  target_region[2], "_", target_region[3], "_roh.png")
     id_number <- nrow(id_coord)
-    chr_title <- paste0("ROH on Chr", target_g$Chr_TAR, "_", target_region[2], "_", target_region[3], " with ", id_number, " Samples")
-    png(res = 350, filename = target_name, width = width_1, height = height_1, units = "cm")
+    chr_title <- paste0("ROH on Chr", target_g$Chr_TAR, "：", target_region[2], "-", target_region[3], " with ", id_number, " Samples")
+    #png(res = 350, filename = target_name, width = width_1, height = height_1, units = "cm")
     #png(res = 300, filename = "10_chr.png", width = 3500, height = 2000)
     target_plot <- ggplot(target_roh, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
       geom_rect(aes(fill = Length/1000000), show.legend = FALSE) +
@@ -468,11 +469,21 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       #geom_text(aes(x,y, label = Sample_ID), size = 1.5, check_overlap = TRUE) +
       theme_bw() +
       scale_y_continuous(labels = NULL) +
-      scale_x_continuous(breaks = seq(0, max(target_roh$End)/1000000, by = 5), limits = c(0, max(target_roh$End)/1000000)) +
+      geom_vline(xintercept = target_region[2:3], linetype = "dashed", size = 0.3) +
+      #scale_x_continuous(breaks = seq(min(target_roh$Start)/1000000, max(target_roh$End)/1000000, by = 5), limits = c(min(target_roh$Start)/1000000, max(target_roh$End)/1000000)) +
+      scale_x_continuous(limits = c(min(target_roh$Start)/1000000, max(target_roh$End)/1000000)) +
       labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "Length")
-    print(target_plot)
-    dev.off()
-    print("Task done, plot was stored in working directory.")
+
+    if(is.null(refgene) == "FALSE"){
+      gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = target_g$Chr_TAR, start = target_g$Start_TAR/1000000, end = target_g$End_TAR/1000000, show_name = show_name, gene_font_size = gene_font_size)
+      roh_gene <- plot_grid(gene_plot, target_plot, ncol = 1, rel_heights = c(1, 3))
+      print(roh_gene)
+      ggsave(filename = target_name, plot = roh_gene, width = width_1, height = height_1, units = "cm", dpi = 350)
+      print("Task done, plot was stored in working directory.")
+    } else {
+      ggsave(filename = target_name, plot = target_plot, width = width_1, height = height_1, units = "cm", dpi = 350)
+      print("Task done, plot was stored in working directory.")
+    }
 
   }
 
