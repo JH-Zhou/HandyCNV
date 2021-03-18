@@ -1,13 +1,13 @@
-#' Title  cnv_clean
-#' Used for cleaning the default CNV results into a standard format for the further use.
-#' Now support to read the results from PennCNV and CNVPartition
+#' cnv_clean
 #'
-#' @param cnvpartition the default CNV results from CNVPartition
-#' @param penncnv the default CNV results from PennCNV
-#' @param penn_id_sep the separator in the column of Sample ID in PennCNV results, if the ID bind with the path, need to separate by this argument
-#' @param standard_cnv User customized CNV input file
-#' @param drop_length delete the CNVs which Length longer than the threshold, unit is "Mb"
-#' @param folder set new folder to save results
+#' Import CNV call results produced by the software packages PennCNV and CNVPartition, and converts them into a standard format for use in other functions in the `HandyCNV` package.
+#'
+#' @param cnvpartition load CNV results from CNVPartition
+#' @param penncnv load CNV results from PennCNV
+#' @param penn_id_sep the separator in the `Sample ID` column of PennCNV results. Useful if the ID is bound to the path
+#' @param standard_cnv Load a user-generated CNV input file. The following columns must be present: Sample_ID, Chr, Start, End, CNV_Value
+#' @param drop_length exclude CNVs longer than this threshold, unit is "Mb"
+#' @param folder set the name of the output folder
 #'
 #' @import dplyr
 #' @importFrom data.table fread fwrite
@@ -20,7 +20,7 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
   #create a directory to store output files
   if (!file.exists(folder)){
     dir.create(folder)
-    print(paste0("New folder ", folder, " was created in working directory."))
+    cat(paste0("Output folder '", folder, "' has been created in the working directory.\n"))
   }
 
   if(!is.null(cnvpartition)) {
@@ -38,11 +38,11 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
     cnvpart_pure <- cnvpart_pure[cnvpart_pure$Length <= drop_length*1000000, ] #delete CNV larger than 5 Mb
 
     average_indiv_cnv <- round(nrow(cnvpart_pure)/length(unique(cnvpart_pure$Sample_ID)), 2)
-    print(paste0("There are ", length(unique(cnvpart_pure$Sample_ID))," individuals with ",  nrow(cnvpart_pure), " CNVs in total."))
-    print(paste0("The average number of CNV on each Individual is ", average_indiv_cnv))
+    cat(paste0("There are ", length(unique(cnvpart_pure$Sample_ID))," individuals with ",  nrow(cnvpart_pure), " CNVs in total.\n"))
+    cat(paste0("The average number of CNV on each Individual is ", average_indiv_cnv, "\n"))
 
     summary_cnvpart <- cnvpart_pure %>% group_by(CNV_Value) %>% summarise("N" = n(), "Average Length" = mean(Length), "Min Length" = min(Length), "Max Length" = max(Length))
-    print("The basic summary of each CNV type as following:")
+    cat("Basic summary stats by CNV type:\n")
     print(summary_cnvpart)
 
     fwrite(summary_cnvpart, file = paste0(folder, "/cnvpart_summary.txt"), sep = "\t", quote = FALSE, col.names = TRUE)
@@ -51,11 +51,11 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
     fwrite(cnvpart_roh, file = paste0(folder, "/cnvpart_roh.cnv"), sep = "\t", quote = FALSE)
 
     if (file.exists(paste0(folder,"/cnvpart_clean.cnv"))){
-       print("Task finished, Clean CNV, ROH, CNV Summary results were saved in your working directory.")
+       cat(paste0("Task finished. Clean CNV, ROH, and CNV summary results have been saved in the '", folder, "' directory.\n"))
      }
 
     else {
-       print("Task failed, please check input cnv data carefully!!!")
+       stop("Task failed: please check the format of your input CNV data carefully!!!")
      }
   }
 
@@ -82,8 +82,8 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
     penn <- penn[penn$Length <= drop_length*1000000, ]
 
     average_indiv_cnv <- round(nrow(penn)/length(unique(penn$Sample_ID)), 2)
-    print(paste0("There are ", length(unique(penn$Sample_ID)), " individuals with ", nrow(penn), " CNVs in total."))
-    print(paste0("The average number of CNVs on each Individual are around ", average_indiv_cnv))
+    cat(paste0("There are ", length(unique(penn$Sample_ID)), " individuals with ", nrow(penn), " CNVs in total.\n"))
+    cat(paste0("The average number of CNVs present per individual is ", average_indiv_cnv, "\n"))
 
     summary_cnv <- penn %>%
                    group_by(CNV_Value) %>%
@@ -91,15 +91,16 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
                             "Average Length" = mean(Length),
                             "Min Length" = min(Length),
                             "Max Length" = max(Length))
-    print("The basic summary of each CNV type as following:")
+    cat("Basic summary stats by CNV type:\n")
     print(summary_cnv)
+	
     fwrite(penn, file = paste0(folder, "/penncnv_clean.cnv"), sep ="\t", quote = FALSE)
     fwrite(summary_cnv, file = paste0(folder, "/penncnv_summary.txt"), sep = "\t", quote = FALSE, col.names = TRUE)
     if (file.exists(paste0(folder, "/penncnv_clean.cnv"))){
-      print("Task finished, please check Clean CNV results in your working directory.")
+      cat(paste0("Task finished. Please check clean CNV results in the '", folder, "' directory.\n"))
     }
     else {
-      print("Task failed, please check input cnv data carefully!!!")
+      stop("Task failed: please check input CNV data carefully!!!")
     }
     }
     else{
@@ -107,8 +108,7 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
       default_title <- c("Sample_ID", "Chr", "Start", "End", "CNV_Value")
       #check input format
       if(!(all(colnames(user_cnv) %in% default_title))){
-        print("Lack of column information, please prepare file as following format:")
-        print(default_title)
+        stop(paste0("Incorrect columns provided: the following columns are required: ", paste0(default_title, collapse=', ') ))
       }
 
       #calculate length and QC
@@ -118,8 +118,8 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
 
       #brief summary
       average_indiv_cnv <- round(nrow(user_cnv)/length(unique(user_cnv$Sample_ID)), 2)
-      print(paste0("There are ", length(unique(user_cnv$Sample_ID))," individuals with ",  nrow(user_cnv), " CNVs in total."))
-      print(paste0("The average number of CNV on each Individual is ", average_indiv_cnv))
+      cat(paste0("There are ", length(unique(user_cnv$Sample_ID))," individuals with ",  nrow(user_cnv), " CNVs in total.\n"))
+      cat(paste0("The average number of CNV per individual is ", average_indiv_cnv, "\n"))
 
       #summary CNV
       summary_cnv <- user_cnv %>%
@@ -128,17 +128,17 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
                               "Average Length" = mean(Length),
                               "Min Length" = min(Length),
                               "Max Length" = max(Length))
-      print("The basic summary of each CNV type as following:")
+      cat("Basic summary stats by CNV type:\n")
       print(summary_cnv)
 
       #write output
       fwrite(user_cnv, file = paste0(folder, "/cleancnv.cnv"), sep = "\t", quote = FALSE, col.names = TRUE)
       fwrite(summary_cnv, file = paste0(folder, "/cnv_summary.txt"), sep = "\t", quote = FALSE, col.names = TRUE)
       if (file.exists(paste0(folder, "/cleancnv.cnv"))){
-        print("Task finished, please check Clean CNV results in your working directory.")
+        cat(paste0("Task finished. Please check clean CNV results in the '", folder, "' directory.\n"))
       }
       else {
-        print("Task failed, please check input cnv data carefully!!!")
+        stop("Task failed: please check input CNV data carefully!!!")
       }
     }
 }
