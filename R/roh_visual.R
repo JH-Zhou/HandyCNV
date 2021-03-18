@@ -460,7 +460,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
 
     target_name <- paste0(folder, "/Chr", target_g$Chr_TAR, "_",  target_region[2], "_", target_region[3], "_roh.png")
     id_number <- nrow(id_coord)
-    chr_title <- paste0("ROH on Chr", target_g$Chr_TAR, "：", target_region[2], "-", target_region[3], " with ", id_number, " Samples")
+    chr_title <- paste0("ROH on Chr", target_g$Chr_TAR, ":", target_region[2], "-", target_region[3], " with ", id_number, " Samples")
     #png(res = 350, filename = target_name, width = width_1, height = height_1, units = "cm")
     #png(res = 300, filename = "10_chr.png", width = 3500, height = 2000)
     target_plot <- ggplot(target_roh, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
