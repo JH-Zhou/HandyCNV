@@ -484,9 +484,9 @@ convert_map(default_map = umd_map, #when running your own data, set this argumen
             col_6 = "turquoise3", #set colour for line of Default_map in SNP density plot
             species = "Bovine", 
             height_c = 16,
-            width_c = 20,
+            width_c = 22,
             height_d = 14,
-            width_d = 22)
+            width_d = 25)
 ```
 ![Figure.17 Comparison of the ARS 1.2 and UMD 3.1 reference genomes](convert_map/comparison_snp.png){width=320px}
 
