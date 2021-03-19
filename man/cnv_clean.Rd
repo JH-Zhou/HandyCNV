@@ -2,9 +2,7 @@
 % Please edit documentation in R/cnv_clean.R
 \name{cnv_clean}
 \alias{cnv_clean}
-\title{Title  cnv_clean
-Used for cleaning the default CNV results into a standard format for the further use.
-Now support to read the results from PennCNV and CNVPartition}
+\title{cnv_clean}
 \usage{
 cnv_clean(
   cnvpartition = NULL,
@@ -16,23 +14,21 @@ cnv_clean(
 )
 }
 \arguments{
-\item{cnvpartition}{the default CNV results from CNVPartition}
+\item{cnvpartition}{load CNV results from CNVPartition}
 
-\item{penncnv}{the default CNV results from PennCNV}
+\item{penncnv}{load CNV results from PennCNV}
 
-\item{standard_cnv}{User customized CNV input file}
+\item{standard_cnv}{Load a user-generated CNV input file. The following columns must be present: Sample_ID, Chr, Start, End, CNV_Value}
 
-\item{drop_length}{delete the CNVs which Length longer than the threshold, unit is "Mb"}
+\item{drop_length}{exclude CNVs longer than this threshold, unit is "Mb"}
 
-\item{penn_id_sep}{the separator in the column of Sample ID in PennCNV results, if the ID bind with the path, need to separate by this argument}
+\item{penn_id_sep}{the separator in the `Sample ID` column of PennCNV results. Useful if the ID is bound to the path}
 
-\item{folder}{set new folder to save results}
+\item{folder}{set the name of the output folder}
 }
 \value{
 Formatted CNV results and brief summary files.
 }
 \description{
-Title  cnv_clean
-Used for cleaning the default CNV results into a standard format for the further use.
-Now support to read the results from PennCNV and CNVPartition
+Import CNV call results produced by the software packages PennCNV and CNVPartition, and converts them into a standard format for use in other functions in the `HandyCNV` package.
 }

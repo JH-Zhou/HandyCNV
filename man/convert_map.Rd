@@ -9,6 +9,7 @@ Four columns in fixed order are required for both default and target map file, t
 convert_map(
   default_map,
   target_map,
+  chr_set = 29,
   defMap_title = "UMD 3.1",
   tarMap_title = "ARS .12",
   species = "Bovine",
@@ -17,13 +18,19 @@ convert_map(
   col_3 = "deeppink2",
   col_4 = "deeppink2",
   col_5 = "turquoise3",
-  col_6 = "turquoise3"
+  col_6 = "turquoise3",
+  height_c = 16,
+  width_c = 22,
+  height_d = 15,
+  width_d = 25
 )
 }
 \arguments{
 \item{default_map}{the map file to be converted}
 
 \item{target_map}{the map file used to convert}
+
+\item{chr_set}{set the number of autosomes}
 
 \item{defMap_title}{customize the title of default map in plot}
 
@@ -33,7 +40,7 @@ convert_map(
 
 \item{col_1}{set color for the type of Match in SNP comparison plot}
 
-\item{col_2}{set color for the type of Unmatch in SNP comparison plot}
+\item{col_2}{set color for the type of Mismatch in SNP comparison plot}
 
 \item{col_3}{set color for the bar of Target_Map in SNP density plot}
 
@@ -42,6 +49,14 @@ convert_map(
 \item{col_5}{set color for point of Default_Map in SNP density plot}
 
 \item{col_6}{set color for line of Default_map in SNP density plot}
+
+\item{height_c}{set height for Comparison plot}
+
+\item{width_c}{set width for comparison plot}
+
+\item{height_d}{set height for SNP density plot}
+
+\item{width_d}{set width for SNP density plot}
 }
 \value{
 Details of comparison results between given map, and standard input map files used in PennCNV and Plink

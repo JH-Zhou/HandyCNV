@@ -32,8 +32,8 @@ Interval with converted map
 }
 \description{
 Quality control Principle of conversion
-1.End must larger than Start, namely the length of Interval must are the positive value
-2.Both Start and End position must matched in the def_tar_map file
-3.The difference of length between Converted Interval and Original Intervals should pass the threshold
+1.End must larger than Start, i.e. the length of the interval must be a positive value
+2.Both the Start and End position must match rows in the def_tar_map file
+3.The difference of length between Converted Interval and Original Intervals should be less than threshold `len_diff_threshold`
 4.If allow to replace the missing points by nearest point, new interval should fit all above conditions. For Start position, matching proxy from down stream, for End position, matching proxy from up stream
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/call_gene.R
 \name{call_gene}
 \alias{call_gene}
-\title{Title call_gene}
+\title{call_gene}
 \usage{
 call_gene(
   refgene = "ARS_ens",
@@ -12,19 +12,18 @@ call_gene(
 )
 }
 \arguments{
-\item{refgene}{internal reference gene-list are "ARS_ens", "ARS_UCSC" and "UMD_UCSC". Or provide the reference genes list corresponding to your data}
+\item{refgene}{a file containing the gene information. This should be prepared using the [get_refgene()] function.}
 
-\item{interval}{Could be CNV, ROH, QTL or any interval list. At least comprised by four columns Interval_ID, Chr, Start and End}
+\item{interval}{a file containing a list of genomic intervals, such as CNVs, ROHs, or QTLs. The file must contain at least the following four columns: Interval_ID, Chr, Start and End}
 
-\item{clean_cnv}{The output data from cnv_clean function}
+\item{clean_cnv}{the output data from a previous run of the cnv_clean function. If this is provided, additional output files are created that annotate the CNVs}
 
-\item{folder}{set the name of folder to save results}
+\item{folder}{set the name of the output folder}
 }
 \value{
 Annotated file and brief summary
 }
 \description{
-This function used for annotating genes for any interval by giving the interval list and reference gene list.
-The interval file requires at least consists of four columns, they are ID, Chr, Start and End.
-The first column must be the ID column, the column of Chr should only contain the number of chromosome, the units of Start and End columns are the basepair.
+This function is used for annotating genes over any interval by giving the interval list and reference gene list.
+The interval file requires at least four columns: Interval_ID, Chr, Start and End. The first column must be the ID column, the column of Chr should only contain the chromosome number (i.e., no "chr" prefix), and the units of the Start and End columns are the basepair.
 }
