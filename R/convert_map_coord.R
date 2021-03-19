@@ -38,19 +38,22 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
     def_map$Chr_def <- sub("X", "30", def_map$Chr_def)
     def_map$Chr_def <- sub("Y", "31", def_map$Chr_def)
     def_map$Chr_def <- sub("MT", "32", def_map$Chr_def)
-
+    def_map$Chr_def <- as.integer(def_map$Chr_def)
 
     names(tar_map) <- c("Chr_tar","Name", "Mb_tar", "Position_tar")
     #repalce X, Y, MT to 30, 31, and 32
     tar_map$Chr_tar <- sub("X", "30", tar_map$Chr_tar)
     tar_map$Chr_tar <- sub("Y", "31", tar_map$Chr_tar)
     tar_map$Chr_tar <- sub("MT", "32", tar_map$Chr_tar)
+    tar_map$Chr_tar <- as.integer(tar_map$Chr_tar)
+
   } else if(!(species == "Bovine")) {
     names(def_map) <- c("Chr_def", "Name","Morgan_def", "Position_def")
     #repalce X, Y, MT to 30, 31, and 32
     def_map$Chr_def <- sub("X", "87", def_map$Chr_def)
     def_map$Chr_def <- sub("Y", "88", def_map$Chr_def)
     def_map$Chr_def <- sub("MT", "89", def_map$Chr_def)
+    def_map$Chr_def <- as.integer(def_map$Chr_def)
 
 
     names(tar_map) <- c("Chr_tar","Name", "Mb_tar", "Position_tar")
@@ -58,22 +61,23 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
     tar_map$Chr_tar <- sub("X", "87", tar_map$Chr_tar)
     tar_map$Chr_tar <- sub("Y", "88", tar_map$Chr_tar)
     tar_map$Chr_tar <- sub("MT", "89", tar_map$Chr_tar)
+    tar_map$Chr_tar <- as.integer(tar_map$Chr_tar)
   }
 
 
-  #####1.fing the difference between two map
+  #####1.find out the difference between two map
   print("Starting comparing the differences between the two versions")
   def_tar_map <- merge(def_map, tar_map, by = "Name", all = TRUE, sort = FALSE)
   def_tar_map$Chr_def <- as.integer(def_tar_map$Chr_def) # convert chr to numeric, for later plot in order
   def_tar_map$Chr_tar <- as.integer(def_tar_map$Chr_tar) # convert chr to numeric, for later plot in order
 
-  #check how many negtive postion in new assembly and replace it to positive
+  #check how many negative position in new assembly and replace it to positive
   print("Checking if negtive position exsits in new converted map....")
   negtive_position <- table(def_tar_map$Position_tar < 0)
   print(negtive_position)
   print(paste0("There are ", negtive_position[2], " SNPs with negtive postion in new assembly." ))
 
-  #replace the negtive position to positive
+  #replace the negative position to positive
   def_tar_map$Position_tar <- sub("-", "", def_tar_map$Position_tar)
   def_tar_map$Position_tar <- as.numeric(def_tar_map$Position_tar)
 
@@ -154,7 +158,7 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
   }
 
 
-  #compare snp difference between two vertions of map
+  #compare snp difference between two versions of map
   #summarize how many SNP on each Chromosome
   snp_def <- data.frame(table(def_tar_map$Chr_def))
   names(snp_def) <- c("Chr", "SNP_Freq_def")
@@ -167,62 +171,69 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
   snp_tar_def$Difference <- abs(snp_tar_def$SNP_Freq_tar - snp_tar_def$SNP_Freq_def)
   snp_tar_def$Chr <- as.factor(snp_tar_def$Chr)
 
-  fwrite(snp_tar_def, file = "convert_map/number_of_snp_on_chromosome.txt", sep ="\t", quote = FALSE)
 
   print("Plotting the Difference of SNPs between two versions of map...")
-  #snp_ars_umd$Chr <- as.numeric(snp_ars_umd$Chr)
   snp_diff <- ggplot(snp_tar_def, aes(x = Chr)) +
     geom_bar(aes(y = SNP_Freq_tar, fill = tarMap_title), stat = "identity", position = "identity") +
     scale_fill_manual(values = col_3) +
     geom_point(aes(y = SNP_Freq_def, shape = defMap_title), stat = "identity", position = "identity", size = 4, color = col_5) +
     geom_text(aes(y = SNP_Freq_tar + 500, label = Difference)) +
     theme_classic() +
-    labs(x = "Chromosome", y = "Number of SNP", shape = NULL, fill = NULL, caption = "**The number represents the number of different SNPS in the two versions") +
+    labs(x = "Chromosome", y = "Number of SNP", shape = NULL, fill = NULL, caption = "**The number represents the number of different SNPS between two maps") +
     theme(legend.position = c(0.9, 0.9)) # legend position - 0 is left/bottom, 1 is top/right
-  ggsave(plot = snp_diff, filename = "convert_map/SNP_difference_by_chromosome.png", height = 12, width = 24, units = "cm", dpi = 350)
+  ggsave(plot = snp_diff, filename = "convert_map/SNP_difference_by_chromosome.png", height = height_d, width = width_d, units = "cm", dpi = 350)
   if(file.exists("convert_map/SNP_difference_by_chromosome.png")){
     print("SNP difference plot was saved in working directory.")
   }
 
-  if(species == "Bovine"){
-    chr_length_tar <- data.frame("Chr" = c(30:1), "Length" = c( 139.009144, 51.098607, 45.94015, 45.612108, 51.992305,
-                                                                    42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
-                                                                    71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
-                                                                    85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
-                                                                    103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
-                                                                    120.089316, 120.000601, 121.005158, 136.231102, 158.53411))
-
-
-    chr_length_def <- data.frame("Chr" = c(30:1), "Length" = c(148.823899, 51.505224, 46.312546, 45.407902, 51.681464, 42.90417, 62.71493, 52.530062,
-                                                                   61.435874, 71.599096, 72.042655, 64.057457,
-                                                                   66.004023,75.158596, 81.724687, 85.296676, 84.64839, 84.24035, 91.163125,
-                                                                   107.310763, 104.305016, 105.70825, 113.384836, 112.638659, 119.458736,
-                                                                   121.1914245, 120.829699, 121.430405, 137.060424, 158.337067))
-  } else if(!(species == "Bovine")){
+  # if(species == "Bovine"){
+  #   chr_length_tar <- data.frame("Chr" = c(30:1), "Length" = c( 139.009144, 51.098607, 45.94015, 45.612108, 51.992305,
+  #                                                                   42.350435, 62.317253, 52.498615, 60.773035, 69.862954,
+  #                                                                   71.974595, 63.449741, 65.820629, 73.167244, 81.013979,
+  #                                                                   85.00778, 82.403003, 83.472345, 87.216183, 106.982474,
+  #                                                                   103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
+  #                                                                   120.089316, 120.000601, 121.005158, 136.231102, 158.53411))
+  #
+  #
+  #   chr_length_def <- data.frame("Chr" = c(30:1), "Length" = c(148.823899, 51.505224, 46.312546, 45.407902, 51.681464, 42.90417, 62.71493, 52.530062,
+  #                                                                  61.435874, 71.599096, 72.042655, 64.057457,
+  #                                                                  66.004023,75.158596, 81.724687, 85.296676, 84.64839, 84.24035, 91.163125,
+  #                                                                  107.310763, 104.305016, 105.70825, 113.384836, 112.638659, 119.458736,
+  #                                                                  121.1914245, 120.829699, 121.430405, 137.060424, 158.337067))
+  # } else if(!(species == "Bovine")){
     #construct the border of each chromosome from imput data
     chr_length_tar <- tar_map %>%
                       group_by(Chr_tar) %>%
-                      summarise(Length = max(Position_tar) / 1000000) %>%
+                      summarise(Length_tar = max(Position_tar, na.rm = TRUE) / 1000000) %>%
                       filter(Chr_tar >= 1 & Chr_tar <= chr_set) %>%
-                      arrange(-as.integer(Chr_tar)) %>%
+                      arrange(Chr_tar) %>%
                       rename(Chr = Chr_tar)
 
 
     chr_length_def <- def_map %>%
                       group_by(Chr_def) %>%
                       filter(Chr_def >= 1 & Chr_def <= chr_set) %>%
-                      summarise(Length = max(Position_def) / 1000000) %>%
-                      arrange(-as.integer(Chr_def)) %>%
+                      summarise(Length_def = max(Position_def, na.rm = TRUE) / 1000000) %>%
+                      arrange(Chr_def) %>%
                       rename(Chr = Chr_def)
-  }
+  # }
 
 
-  snp_tar_def_density <- merge(snp_tar_def, chr_length_tar, all.x = TRUE)
-  snp_tar_def_density <- merge(snp_tar_def_density, chr_length_def, all.x = TRUE)
-  snp_tar_def_density$ARS_Density <- round(snp_tar_def_density$SNP_Freq_tar / snp_tar_def_density$Length, digits = 0)
-  snp_tar_def_density$UMD_Density <- round(snp_tar_def_density$SNP_Freq_def / snp_tar_def_density$Length, digits = 0)
+  snp_tar_def_density <- merge(snp_tar_def, chr_length_tar, by = "Chr", all.x = TRUE)
+  snp_tar_def_density <- merge(snp_tar_def_density, chr_length_def, by = "Chr", all.x = TRUE)
+  #calculate SNP density by chromosome, here need to skip some cell which contain missing value
+  snp_tar_def_density <- snp_tar_def_density %>%
+                         mutate(tar_Density = if_else(is.na(Length_tar), true = 0, false = round(SNP_Freq_tar / Length_tar, digits = 0)),
+                                def_Density = if_else(is.na(Length_def), true = 0, false = round(SNP_Freq_def / Length_def, digits = 0)))
 
-  second_y_value <- max(snp_tar_def_density$SNP_Freq_def) / max(snp_tar_def_density$ARS_Density,na.rm = TRUE)
+  snp_tar_def_density$tar_Density <- na_if(snp_tar_def_density$tar_Density, y = 0) #replace SNP density with 0 to NA
+  snp_tar_def_density$def_Density <- na_if(snp_tar_def_density$def_Density, y = 0)
+
+  fwrite(snp_tar_def_density, file = "convert_map/snp_density_chromosome.txt", sep ="\t", quote = FALSE)
+
+
+
+  second_y_value <- max(snp_tar_def_density$SNP_Freq_def) / max(snp_tar_def_density$tar_Density, na.rm = TRUE)
   #add manual color for bar
   #bar_name = as.factor(tarMap_title)
   #color_bar <- c(bar_name = col_3)
@@ -230,15 +241,17 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
     geom_bar(aes(y = SNP_Freq_tar, fill = as.factor(tarMap_title)), stat = "identity", position = "identity") +
     scale_fill_manual(values = col_3) +
     geom_point(aes(y = SNP_Freq_def, shape = defMap_title), stat = "identity", position = "identity", size = 4, color = col_5) +
-    geom_text(aes(y = SNP_Freq_tar + 500, label = Difference), size = 3) +
-    geom_line(aes(y = UMD_Density * second_y_value, group = 1), lwd = 1.2, color = col_6) +
-    geom_line(aes(y = ARS_Density * second_y_value, group = 1), lwd = 1.2, color = col_4) +
-    geom_text(aes(y = ARS_Density * second_y_value, label = ARS_Density)) +
-    geom_text(aes(y = UMD_Density * second_y_value, label = UMD_Density)) +
+    geom_text(aes(y = SNP_Freq_tar + 500, label = Difference), size = 3, color = "red") +
+    geom_line(aes(y = def_Density * second_y_value, group = 1), lwd = 1.2, color = col_6) +
+    geom_line(aes(y = tar_Density * second_y_value, group = 1), lwd = 1.2, color = col_4) +
+    geom_text(aes(y = tar_Density * second_y_value, label = tar_Density)) +
+    geom_text(aes(y = def_Density * second_y_value, label = def_Density)) +
     scale_y_continuous(name = "Number of SNP", sec.axis = sec_axis(~./ second_y_value, name = "SNP Density")) +
     theme_classic() +
-    labs(x = "Chromosome", y = "Number of SNP", shape = NULL, fill = NULL, caption = "**The number represents the number of different SNPS in the two versions") +
-    theme(legend.position = c(0.9, 0.9)) # legend position - 0 is left/bottom, 1 is top/right
+    labs(x = "Chromosome", y = "Number of SNP", shape = NULL, fill = NULL, caption = "**Red number indicates the number of different SNPS between two maps") +
+    theme(legend.position = c(0.9, 0.9),
+          legend.margin=margin(0,0,0,0),
+          legend.box.margin=margin(0,0,0,0)) # legend position - 0 is left/bottom, 1 is top/right
 
   ggsave(plot = diff_density, filename = "convert_map/SNP_difference_density.png", height = height_d, width = width_d, units = "cm", dpi = 350)
 }
