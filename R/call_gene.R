@@ -3,7 +3,7 @@
 #' This function is used for annotating genes over any interval by giving the interval list and reference gene list.
 #' The interval file requires at least four columns: Interval_ID, Chr, Start and End. The first column must be the ID column, the column of Chr should only contain the chromosome number (i.e., no "chr" prefix), and the units of the Start and End columns are the basepair.
 #'
-#' @param refgene a file containing the gene information. This shoul;d be prepared using the [get_refgene()] function.
+#' @param refgene a file containing the gene information. This should be prepared using the [get_refgene()] function.
 #' @param interval a file containing a list of genomic intervals, such as CNVs, ROHs, or QTLs. The file must contain at least the following four columns: Interval_ID, Chr, Start and End
 #' @param clean_cnv the output data from a previous run of the cnv_clean function. If this is provided, additional output files are created that annotate the CNVs
 #' @param folder set the name of the output folder
