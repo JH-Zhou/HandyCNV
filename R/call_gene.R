@@ -78,7 +78,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
   num_CNVR_no_gene <- nrow(unique(cnvr_gene[,c("Chr", "i.Start", "i.End")])) - num_CNVR_has_gene #"i.Start" and "i.End" are the location of Chr
 
   gene_summary <- data.frame(matrix(nrow = 1, ncol = 3)) #create a data table to save summary results
-  names(gene_summary) <- c("Interval_Has_Gene", "Invertal_Without_Gene", "Total_Number_of_Genes") #assign columns name
+  names(gene_summary) <- c("Interval_Has_Gene", "Interval_Without_Gene", "Total_Number_of_Genes") #assign columns name
   gene_summary[1, 1:3] <- c(num_CNVR_has_gene, num_CNVR_no_gene, gene_number) #assign relative value into table
   cat("Summary of annotation results:\n")
   print(gene_summary)
