@@ -1,2 +1,2 @@
-Interval_Has_Gene	Invertal_Without_Gene	Total_Number_of_Genes
+Interval_Has_Gene	Interval_Without_Gene	Total_Number_of_Genes
 502	476	1477

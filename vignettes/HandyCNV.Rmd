@@ -682,7 +682,7 @@ haplotype <- get_haplotype(geno = genotype, pos = region)
 ```
 Now, we can count the frequency of each haplotype in our population and to check what the haploids are in these haplotypes.
 ```{r}
-table(haplotype$hap_type$Recode_Type)
+data.frame(table(haplotype$hap_type$Recode_Type, dnn = "Haplotype"))
 haplotype$hap_index
 ```
 
