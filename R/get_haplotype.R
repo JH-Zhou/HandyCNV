@@ -55,6 +55,7 @@ prep_phased <- function(phased_geno){
 #' @param end end position, unite 'bp'
 #'
 #' @import dplyr
+#' @importFrom tidyr replace_na
 #'
 #' @return SNP position
 #' @export closer_snp
@@ -73,7 +74,8 @@ closer_snp <- function(phased_input, chr = 14, start, end){
 #' @param geno phase genotype and map file from 'prep_phased' function
 #' @param pos start and end position from 'closer_snp' function
 #'
-#' @import dplyr tidyr
+#' @import dplyr
+#' @importFrom tidyr unite replace_na
 #'
 #' @return A list contain Sample with recoded Haplotype and Index of Haplotype and Recode ID
 #' @export get_haplotype
@@ -89,7 +91,9 @@ get_haplotype <- function(geno, pos){
   #construct haplotype
   hap_aim <- geno$geno %>%
     select(paste0("X", start_tar):paste0("X", end_tar)) %>%
-    unite(col = Haplotype, sep = "")
+    na_if(., y = "") %>% #replace missing value as NA
+    unite(col = Haploid, sep = "", remove = TRUE)
+  hap_aim$Haploid <- gsub(pattern = "NA", replacement = "N", x = hap_aim$Haploid) #replace all 'NA' as 'N'
 
   #get the sample index from column for haplotype
   hap_aim_name <- data.frame(id = row.names(hap_aim)) %>%
@@ -103,20 +107,20 @@ get_haplotype <- function(geno, pos){
   #prepare genotype of Haplotype
   print("Recoding Haploid...")
   uniq_hap <- hap_aim %>%
-    group_by(Haplotype) %>%
+    group_by(Haploid) %>%
     summarise(Freq = n()) %>%
     arrange(-Freq) %>%
     mutate(Re_code = seq(1, nrow(.), 1))
 
   print("Generating Haplotype")
   hap_type <- hap_aim_f %>%
-    left_join(uniq_hap, by = "Haplotype") %>%
+    left_join(uniq_hap, by = "Haploid") %>%
     group_by(Sample_ID) %>%
     arrange(Re_code) %>% #make sure no mirror type generated in collapse
     mutate(Recode_Type = paste0(Re_code, collapse = "")) %>%
     select(Sample_ID, Recode_Type) %>%
     unique()
-  data.frame(table(Recode_type = hap_type$Recode_Type))
+  #data.frame(table(Recode_type = hap_type$Recode_Type))
 
   my_list <- list("hap_type" = hap_type, "hap_index" = uniq_hap)
 
