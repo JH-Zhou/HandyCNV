@@ -676,7 +676,7 @@ convert_coord(input_def = "cnv_clean/cleancnv.cnv",
               folder = "convert_coord_penn_cnv")
 ```
 
-We can also convert coordinates from target map to default map, let's try to convert the Penn ARS results to Penn UMD results. After convert coordinates of CNV and CNVR, we could use the results which passed the quality check to make comparison by 'compare_cnv' and 'compare_cnvr' as section 8 and 9 described.
+We can also convert coordinates from the target map to the default map. For example, let's convert the PennCNV ARS results to UMD 3.1. After converting the coordinates of CNVs or CNVRs, we could use the results which passed the quality check to make comparisons with the `compare_cnv` and `compare_cnvr` functions as section 8 and 9 described.
 ```{r}
 convert_coord(input_def = "call_cnvr_standard/cnvr.txt", 
               proxy_range = 100000,
