@@ -205,7 +205,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     #overlap_length_2 <- sum(checkover_pop_length_2$Overlap_length, na.rm = TRUE)
     cnvr_length_2 <- sum(checkover_pop_uniqe_2$Length, na.rm = TRUE)
     overlap_length_prop_2 <- round((overlap_length_2 / cnvr_length_2),3) * 100
-    print(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in first file"))
+    print(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in second file"))
 
     overlap_summary_2 <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs", "In Total"),
                                     "Number of CNVR" = c(nrow(final_pop_overlap_tar), nrow(non_overlap_pop_tar), nrow(final_pop_overlap_tar) + nrow(non_overlap_pop_tar)),
