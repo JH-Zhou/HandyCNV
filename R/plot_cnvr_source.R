@@ -13,7 +13,7 @@
 #'
 plot_cnvr_source <- function(cnvr, clean_cnv, pedigree, Frequent_threshold, height_1 = 30, width_1 = 15, folder = "plot_cnvr_source") {
   cnvr <- fread(cnvr)
-  high_freq <- filter(cnvr, Frequent >= Frequent_threshold)
+  high_freq <- filter(cnvr, n_Sample >= Frequent_threshold)
   print(paste0(nrow(high_freq), " CNVRs passed Frequent_threhold..."))
 
   for (i in 1:nrow(high_freq)){

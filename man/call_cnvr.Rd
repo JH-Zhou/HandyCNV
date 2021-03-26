@@ -19,6 +19,5 @@ call_cnvr(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD")
 Four or five tables: CNVR list, brief summary, and individual CNV and CNVR ID.
 }
 \description{
-Format CNV results from PennCNV and CNVPartition to the standard format
-Call CNVR, summary individual CNVR type, report CNVR frequency and type
+Generate CNVRs, summarize individual CNVR type, report frequency and type of CNVR
 }

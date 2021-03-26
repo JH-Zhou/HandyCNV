@@ -38,7 +38,7 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
     cnvr <- fread(file = cnvr)
     cnvr <- unite(cnvr, "title", names(cnvr[, c("Chr", "Start", "End", "Type")]), remove = FALSE) #generate a new columns name
     high_freq <- cnvr %>%
-      filter(Frequent >= sample_size * common_cnv_threshold) %>%
+      filter(n_Sample >= sample_size * common_cnv_threshold) %>%
       arrange(Length)
     if(nrow(high_freq) == 0){
       print("No CNVRs passed the high frequency threshold, please reset your common_cnv_threshold!")

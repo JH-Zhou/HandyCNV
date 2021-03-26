@@ -139,8 +139,8 @@ cnvr_plot <- function(cnvr, assembly = "ARS", legend_x = 127, legend_y = 30, cle
   else {
     cnvr <- fread(file = cnvr) # read cnvr result from call_cnvr function
     # high_freq <- cnvr[which(cnvr[, cnvr$Frequent >= sample_size * 0.05]), ] #call common CNVRs
-    high_freq <- filter(cnvr, Frequent >= sample_size * common_cnv_threshold)
-    print(paste0("There ", nrow(high_freq), " high frequent CNVR passed the customized threshold."))
+    high_freq <- filter(cnvr, n_Sample >= sample_size * common_cnv_threshold)
+    print(paste0("There ", nrow(high_freq), " high frequency CNVR passed the customized threshold."))
     for (i in 1:nrow(high_freq)) {
       print(paste0("Ploting CNVR ", i, "..." ))
       cnv_visual(clean_cnv = clean_cnv, chr_id = high_freq$Chr[i], start_position = high_freq$Start[i]/1000000, end_position = high_freq$End[i]/1000000, refgene = refgene, folder = folder, gene_font_size = gene_font_size, height_1 = height_1, width_1 = width_1, col_gene = col_gene)
