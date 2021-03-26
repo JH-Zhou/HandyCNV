@@ -5,3 +5,7 @@
 ^\.github$
 ^codecov\.yml$
 ^LICENSE\.md$
+^vignettes$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
