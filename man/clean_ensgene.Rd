@@ -2,10 +2,7 @@
 % Please edit documentation in R/get_refgene.R
 \name{clean_ensgene}
 \alias{clean_ensgene}
-\title{Title clean_ensgene
-clean refgene for ensembl gene.
-Main works are add column names for table, add gene names to new table, replace missing gene names
-with Ensembl ID then remove duplicated gene, then return the clean formatted gene list.}
+\title{Clean Ensembl reference gene list}
 \usage{
 clean_ensgene(refgene, ens_id)
 }
@@ -18,8 +15,6 @@ clean_ensgene(refgene, ens_id)
 formatted gene list.
 }
 \description{
-Title clean_ensgene
-clean refgene for ensembl gene.
-Main works are add column names for table, add gene names to new table, replace missing gene names
+Main works are add column names for the table, add gene names to new table, replace missing gene names
 with Ensembl ID then remove duplicated gene, then return the clean formatted gene list.
 }

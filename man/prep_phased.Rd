@@ -2,9 +2,7 @@
 % Please edit documentation in R/get_haplotype.R
 \name{prep_phased}
 \alias{prep_phased}
-\title{Title prep_phased
-This function used to prepare phased genotype file to standard format in 'HandyCNV' to get haplotype for any interested genomic region,
-The input file should phased by Beagle 5.1.}
+\title{Prepare the phased genotype into the standard format}
 \usage{
 prep_phased(phased_geno)
 }
@@ -15,7 +13,6 @@ prep_phased(phased_geno)
 A list contain map and genotype information
 }
 \description{
-Title prep_phased
 This function used to prepare phased genotype file to standard format in 'HandyCNV' to get haplotype for any interested genomic region,
 The input file should phased by Beagle 5.1.
 }

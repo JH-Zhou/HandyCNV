@@ -2,7 +2,7 @@
 % Please edit documentation in R/call_cnvr.R
 \name{call_cnvr}
 \alias{call_cnvr}
-\title{Call CNV Regions}
+\title{Generate CNV Regions (CNVR)}
 \usage{
 call_cnvr(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD")
 }

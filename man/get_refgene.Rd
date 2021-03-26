@@ -2,8 +2,7 @@
 % Please edit documentation in R/get_refgene.R
 \name{get_refgene}
 \alias{get_refgene}
-\title{Title get_refgene
-Download and make standard format of reference gene from UCSC website}
+\title{Get reference gene}
 \usage{
 get_refgene(gene_version = NULL)
 }
@@ -14,6 +13,5 @@ get_refgene(gene_version = NULL)
 Standard formatted reference gene list
 }
 \description{
-Title get_refgene
-Download and make standard format of reference gene from UCSC website
+Download and make standard format of reference gene from UCSC website.
 }

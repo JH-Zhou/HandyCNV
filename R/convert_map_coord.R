@@ -1,5 +1,6 @@
-#' Title convert_map
-#' Prepare map file for PennCNV and Plink with Default and Target assembly.
+#' Convert map file
+#'
+#' Prepare map files for PennCNV and Plink with Default and Target assembly.
 #' Four columns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position
 #'
 #' @param default_map the map file to be converted

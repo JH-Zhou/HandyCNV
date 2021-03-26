@@ -2,8 +2,7 @@
 % Please edit documentation in R/roh_visual.R
 \name{roh_visual}
 \alias{roh_visual}
-\title{Title
-Visualizing ROH on both population level and individual level}
+\title{Custom Visualizing ROH}
 \usage{
 roh_visual(
   clean_roh,
@@ -33,15 +32,15 @@ roh_visual(
 
 \item{max_chr}{the maximum number of chromosomes to plot, it used for plot all chromosomes at once}
 
-\item{chr_id}{the number of chromosome want to plot}
+\item{chr_id}{the number of chromosome want to plot, integer type, such as '1' indicate the Chromosome 1.}
 
-\item{chr_length}{set the length for the chromosome}
+\item{chr_length}{set the length for the chromosome, unnecessary at the moment.}
 
-\item{start_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
+\item{start_position}{decimal digit, default unit in 'Mb'. such as 23.2112}
 
-\item{end_position}{decimal digit, default unit is 'Mb'. such as 23.2112}
+\item{end_position}{decimal digit, default unit in 'Mb'. such as 23.2112}
 
-\item{individual_id}{reporting ID of individuals while plotting}
+\item{individual_id}{sample ID, which used to plot ROH by interested Samples.}
 
 \item{refgene}{if true, will plot gene above roh plot}
 
@@ -73,6 +72,6 @@ roh_visual(
 ROH distribution plot
 }
 \description{
-Title
-Visualizing ROH on both population level and individual level
+This function is designed to custom visualizing ROH. It support to plot ROH by Chromosome, Interested region, Single sample, Target gene, and combine ROH plot with Gene annotation plot.
+It also support users to customize the color and size of final graph.
 }

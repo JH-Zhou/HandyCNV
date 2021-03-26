@@ -2,8 +2,7 @@
 % Please edit documentation in R/get_refgene.R
 \name{clean_ucsc}
 \alias{clean_ucsc}
-\title{Title clean_ucsc
-clean refgene for UCSC gene}
+\title{Clean USCS reference gene list}
 \usage{
 clean_ucsc(refgene)
 }
@@ -14,6 +13,5 @@ clean_ucsc(refgene)
 formatted gene list.
 }
 \description{
-Title clean_ucsc
-clean refgene for UCSC gene
+Clean USCS reference gene list
 }

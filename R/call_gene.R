@@ -1,4 +1,4 @@
-#' call_gene
+#' Annotate gene for intervals (CNV, CNVR, ROH or QTL)
 #'
 #' This function is used for annotating genes over any interval by giving the interval list and reference gene list.
 #' The interval file requires at least four columns: Interval_ID, Chr, Start and End. The first column must be the ID column, the column of Chr should only contain the chromosome number (i.e., no "chr" prefix), and the units of the Start and End columns are the basepair.

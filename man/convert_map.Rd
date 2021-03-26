@@ -2,9 +2,7 @@
 % Please edit documentation in R/convert_map_coord.R
 \name{convert_map}
 \alias{convert_map}
-\title{Title convert_map
-Prepare map file for PennCNV and Plink with Default and Target assembly.
-Four columns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position}
+\title{Convert map file}
 \usage{
 convert_map(
   default_map,
@@ -62,7 +60,6 @@ convert_map(
 Details of comparison results between given map, and standard input map files used in PennCNV and Plink
 }
 \description{
-Title convert_map
-Prepare map file for PennCNV and Plink with Default and Target assembly.
+Prepare map files for PennCNV and Plink with Default and Target assembly.
 Four columns in fixed order are required for both default and target map file, they are Chr, Name, Morgan, Position
 }

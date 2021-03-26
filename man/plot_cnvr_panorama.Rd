@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_cnvr_panorama.R
 \name{plot_cnvr_panorama}
 \alias{plot_cnvr_panorama}
-\title{Title plot_cnvr_panorama}
+\title{Plotting CNVR with all relevant information}
 \usage{
 plot_cnvr_panorama(
   cnvr,
@@ -66,5 +66,5 @@ plot_cnvr_panorama(
 cnvr plot with all CNVs, annotated genes, Log R Ratio, B Allele Frequency, Genotyping rate and LD...
 }
 \description{
-Title plot_cnvr_panorama
+Plotting CNVR with all relevant information
 }

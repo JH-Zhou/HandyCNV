@@ -2,8 +2,7 @@
 % Please edit documentation in R/get_haplotype.R
 \name{closer_snp}
 \alias{closer_snp}
-\title{Title closer_snp
-Get colser snp within given interval, working for 'map' file generated from 'pre_phased function'}
+\title{Pick out the names and positions of start and end SNPs of a genomic interval}
 \usage{
 closer_snp(phased_input, chr = 14, start, end)
 }
@@ -12,14 +11,13 @@ closer_snp(phased_input, chr = 14, start, end)
 
 \item{chr}{chromosome ID}
 
-\item{start}{start position, unite 'bp'}
+\item{start}{start position, unite in bp'}
 
-\item{end}{end position, unite 'bp'}
+\item{end}{end position, unite in 'bp'}
 }
 \value{
 SNP position
 }
 \description{
-Title closer_snp
-Get colser snp within given interval, working for 'map' file generated from 'pre_phased function'
+Get the closest SNPs within the given interval, working on the 'map' file generated from 'pre_phased function'.
 }

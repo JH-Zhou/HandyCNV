@@ -2,9 +2,7 @@
 % Please edit documentation in R/compare_gene.R
 \name{compare_gene}
 \alias{compare_gene}
-\title{Title compare_gene
-Do comparison of genes between two annotated gene frequency list. The default genelist file was generate by call_gene function.
-If the users customize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)}
+\title{Find the consensus genes by comparing the frequency of gene in which has CNV status}
 \usage{
 compare_gene(
   gene_freq_1,
@@ -59,10 +57,9 @@ compare_gene(
 \item{col_4}{set color for High_Freq_list_2 in two gene lists comparison plot}
 }
 \value{
-Coparison summary results and plots.
+Comparison summary results and plots.
 }
 \description{
-Title compare_gene
-Do comparison of genes between two annotated gene frequency list. The default genelist file was generate by call_gene function.
+Do comparison of genes between multiple annotated gene frequency lists. The default genelist file was generate by call_gene function.
 If the users customize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)
 }

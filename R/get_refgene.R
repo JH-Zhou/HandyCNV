@@ -1,8 +1,9 @@
-#' Title clean_ensgene
-#' clean refgene for ensembl gene.
-#' Main works are add column names for table, add gene names to new table, replace missing gene names
+#' Clean Ensembl reference gene list
+#'
+#' Main works are add column names for the table, add gene names to new table, replace missing gene names
 #' with Ensembl ID then remove duplicated gene, then return the clean formatted gene list.
-#' @param refgene ensembl reference gene download from UCSC website
+#'
+#'@param refgene ensembl reference gene download from UCSC website
 #' @param ens_id ensembl id download from UCSC website
 #'
 #' @import dplyr
@@ -27,8 +28,10 @@ clean_ensgene <- function(refgene , ens_id){
   return(refgene_t)
 }
 
-#' Title clean_ucsc
-#' clean refgene for UCSC gene
+
+#' Clean USCS reference gene list
+#'
+#'
 #' @param refgene reference gene list with UCSC version which download from UCSC website
 #'
 #' @import dplyr
@@ -47,8 +50,10 @@ clean_ucsc <- function(refgene){
 }
 
 
-#' Title get_refgene
-#' Download and make standard format of reference gene from UCSC website
+#' Get reference gene
+#'
+#' Download and make standard format of reference gene from UCSC website.
+#'
 #' @param gene_version The version of reference gene 'HandyCNV' support to download, if now don't have the version of the gene you want, please feel free to cotact the Maintainer to help you updating this function.
 #'
 #' @importFrom R.utils gunzip gunzip.default

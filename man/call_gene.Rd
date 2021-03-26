@@ -2,7 +2,7 @@
 % Please edit documentation in R/call_gene.R
 \name{call_gene}
 \alias{call_gene}
-\title{call_gene}
+\title{Annotate gene for intervals (CNV, CNVR, ROH or QTL)}
 \usage{
 call_gene(
   refgene = "ARS_ens",

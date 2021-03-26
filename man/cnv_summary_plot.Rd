@@ -2,7 +2,7 @@
 % Please edit documentation in R/cnv_summary.R
 \name{cnv_summary_plot}
 \alias{cnv_summary_plot}
-\title{cnv_summary_plot}
+\title{Summary plots for CNVs}
 \usage{
 cnv_summary_plot(
   clean_cnv,

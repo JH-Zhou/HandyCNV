@@ -2,7 +2,7 @@
 % Please edit documentation in R/roh_window.R
 \name{roh_window}
 \alias{roh_window}
-\title{Title window_size}
+\title{Sliding window to capture the high frequent ROH region}
 \usage{
 roh_window(
   roh,
@@ -49,5 +49,9 @@ and 1000*0.5 = 500, the value of histogram above 500 will be color as red and th
 Summary results of ROH by sliding windows across all chromosomes.
 }
 \description{
-Title window_size
+This function is used to summarize ROH by window size
+Contain three functions
+First is to generate sliding windows by the customized size for all Chromosomes
+Second is to find out the overlap between sliding windows and roh by Chromosome, Start and End position
+Third is to summary results, count the roh frequency in each sliding window
 }

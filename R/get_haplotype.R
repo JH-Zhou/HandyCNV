@@ -1,4 +1,5 @@
-#' Title prep_phased
+#' Prepare the phased genotype into the standard format
+#'
 #' This function used to prepare phased genotype file to standard format in 'HandyCNV' to get haplotype for any interested genomic region,
 #' The input file should phased by Beagle 5.1.
 #'
@@ -46,13 +47,14 @@ prep_phased <- function(phased_geno){
 }
 
 
-#6.pick up the region interested
-#' Title closer_snp
-#' Get colser snp within given interval, working for 'map' file generated from 'pre_phased function'
+#' Pick out the names and positions of start and end SNPs of a genomic interval
+#'
+#' Get the closest SNPs within the given interval, working on the 'map' file generated from 'pre_phased function'.
+#'
 #' @param phased_input map file
 #' @param chr chromosome ID
-#' @param start start position, unite 'bp'
-#' @param end end position, unite 'bp'
+#' @param start start position, unite in bp'
+#' @param end end position, unite in 'bp'
 #'
 #' @import dplyr
 #' @importFrom tidyr replace_na
@@ -68,8 +70,9 @@ closer_snp <- function(phased_input, chr = 14, start, end){
 }
 
 
-#' Title get_haplotype
-#' Generate haplotype from Phased genotype file by given region
+#' Get haplotype
+#'
+#' Generate haplotypes from Phased genotype file by given region.
 #'
 #' @param geno phase genotype and map file from 'prep_phased' function
 #' @param pos start and end position from 'closer_snp' function

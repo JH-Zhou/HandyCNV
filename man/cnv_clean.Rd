@@ -2,7 +2,7 @@
 % Please edit documentation in R/cnv_clean.R
 \name{cnv_clean}
 \alias{cnv_clean}
-\title{cnv_clean}
+\title{Clean CNV}
 \usage{
 cnv_clean(
   cnvpartition = NULL,
@@ -31,4 +31,5 @@ Formatted CNV results and brief summary files.
 }
 \description{
 Import CNV call results produced by the software packages PennCNV and CNVPartition, and converts them into a standard format for use in other functions in the `HandyCNV` package.
+It now support to accept a CNV list in the standard format, the standard format should have at least five columns with header: Sample_ID, Chr, Start, End, CNV_Value
 }

@@ -2,8 +2,7 @@
 % Please edit documentation in R/get_haplotype.R
 \name{get_haplotype}
 \alias{get_haplotype}
-\title{Title get_haplotype
-Generate haplotype from Phased genotype file by given region}
+\title{Get haplotype}
 \usage{
 get_haplotype(geno, pos)
 }
@@ -16,6 +15,5 @@ get_haplotype(geno, pos)
 A list contain Sample with recoded Haplotype and Index of Haplotype and Recode ID
 }
 \description{
-Title get_haplotype
-Generate haplotype from Phased genotype file by given region
+Generate haplotypes from Phased genotype file by given region.
 }

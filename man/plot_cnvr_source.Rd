@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_cnvr_source.R
 \name{plot_cnvr_source}
 \alias{plot_cnvr_source}
-\title{Title plot_cnv_source}
+\title{Plotting CNVs by the source information}
 \usage{
 plot_cnvr_source(
   cnvr,
@@ -33,5 +33,5 @@ plot_cnvr_source(
 CNVR source plot
 }
 \description{
-Title plot_cnv_source
+Plotting CNVs by the source information
 }

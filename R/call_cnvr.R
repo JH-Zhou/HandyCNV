@@ -1,4 +1,4 @@
-#' Call CNV Regions
+#' Generate CNV Regions (CNVR)
 #'
 #' Generate CNVRs, summarize individual CNVR type, report frequency and type of CNVR
 #'

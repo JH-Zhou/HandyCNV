@@ -1,5 +1,6 @@
-#' Title compare_gene
-#' Do comparison of genes between two annotated gene frequency list. The default genelist file was generate by call_gene function.
+#' Find the consensus genes by comparing the frequency of gene in which has CNV status
+#'
+#' Do comparison of genes between multiple annotated gene frequency lists. The default genelist file was generate by call_gene function.
 #' If the users customize the genelists, it requires at least two columns in each gene list, including fixed column names name2(Gene name) and Frequency(frequency of gene)
 #'
 #' @param gene_freq_1 first genelist, the default file was generated from call_gene function
@@ -23,7 +24,7 @@
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
 #' @importFrom graphics legend text
 #'
-#' @return Coparison summary results and plots.
+#' @return Comparison summary results and plots.
 #' @export compare_gene
 #'
 compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq_4 = NULL, common_gene_threshold = 3, title_1 = "list_1", title_2 = "list_2", title_3 = "list_3", title_4 = "list_4", height_1 = 10, width_1 =14, folder = "compre_gene", col_1 = "red", col_2 = "yellow", col_3 = "dodgerblue", col_4 = "pink2"){

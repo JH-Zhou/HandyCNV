@@ -2,10 +2,7 @@
 % Please edit documentation in R/generate_dome_data.R
 \name{get_demo}
 \alias{get_demo}
-\title{Title get_demo
-The purpose of this function is to prepare demo data for 'HandyCNV'. The main reason is because of the SNP Signal Intensity and Genotype files always too large,
-when we making plots can select the data inside all CNVR regions instead of using the whole file. The output will extract all Signal Intensity, genotype and map
-information of given CNVRs. The new generated ped and map files keeps the same format with Plink Software, so we can --make-bed or --recode in Plink as well.}
+\title{Get demo data}
 \usage{
 get_demo(
   intensity = NULL,
@@ -33,7 +30,6 @@ get_demo(
 Demo data of Intensity, Map, Ped file which appears only in CNVRs
 }
 \description{
-Title get_demo
 The purpose of this function is to prepare demo data for 'HandyCNV'. The main reason is because of the SNP Signal Intensity and Genotype files always too large,
 when we making plots can select the data inside all CNVR regions instead of using the whole file. The output will extract all Signal Intensity, genotype and map
 information of given CNVRs. The new generated ped and map files keeps the same format with Plink Software, so we can --make-bed or --recode in Plink as well.

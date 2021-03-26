@@ -1,6 +1,7 @@
-#' cnv_clean
+#' Clean CNV
 #'
 #' Import CNV call results produced by the software packages PennCNV and CNVPartition, and converts them into a standard format for use in other functions in the `HandyCNV` package.
+#' It now support to accept a CNV list in the standard format, the standard format should have at least five columns with header: Sample_ID, Chr, Start, End, CNV_Value
 #'
 #' @param cnvpartition load CNV results from CNVPartition
 #' @param penncnv load CNV results from PennCNV
@@ -93,7 +94,7 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
                             "Max Length" = max(Length))
     cat("Basic summary stats by CNV type:\n")
     print(summary_cnv)
-	
+
     fwrite(penn, file = paste0(folder, "/penncnv_clean.cnv"), sep ="\t", quote = FALSE)
     fwrite(summary_cnv, file = paste0(folder, "/penncnv_summary.txt"), sep = "\t", quote = FALSE, col.names = TRUE)
     if (file.exists(paste0(folder, "/penncnv_clean.cnv"))){
