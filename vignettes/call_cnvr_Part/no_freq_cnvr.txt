@@ -1,4 +1,4 @@
-CNVR_ID	Chr	Start	End	Frequency	n_samples
+CNVR_ID	Chr	Start	End	Frequency	n_Sample
 CNVR_1	1	14652420	14717338	1	1
 CNVR_2	1	15937076	16069418	1	1
 CNVR_3	1	16277524	17021138	2	2
