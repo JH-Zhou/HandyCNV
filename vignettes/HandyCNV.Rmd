@@ -1,6 +1,6 @@
 ---
 title: "HandyCNV Vignette"
-author: JH ZHOU, TJ Lopdell, LY Liu
+author: Jinghang ZHOU, Thomas Lopdell, Liyuan Liu
 package: HandyCNV
 date: February 14, 2021
 output: 
