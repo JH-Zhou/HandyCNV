@@ -82,14 +82,15 @@
 <div id="installation-and-prerequisites" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation-and-prerequisites" class="anchor"></a>Installation and Prerequisites</h2>
-<p>First, to run this package, we need to make sure that R (Version &gt;= 3.5.2) is installed in your computer (R download link: <a href="https://www.r-project.org/" class="uri">https://www.r-project.org/</a>). Once R is installed, the ‘HandyCNV’ package can be installed from Github repository by running the following script:</p>
+<p>First, to run this package, we need to make sure that R (Version &gt;= 3.5.2) is installed in your computer (R download link: <a href="https://www.r-project.org/" class="uri">https://www.r-project.org/</a>). Once R is installed, the ‘HandyCNV’ package can be installed from Github repository by running the following script. If you rarely used R, it may take more time to install the ‘HandyCNV’ for the first time.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">#library(remotes)</span>
-<span class="co">#install_github(repo = "JH-Zhou/HandyCNV", auth_token = "3d2ac98e4c297bab332f1e68b3b2d49f3a17d6aa")</span></code></pre></div>
+<code class="sourceCode R"><span class="co">#install.packages("remotes")</span>
+<span class="co">#library(remotes)</span>
+<span class="co">#install_github(repo = "JH-Zhou/HandyCNV")</span></code></pre></div>
 <p>Then, we need to load the ‘HandyCNV’ package in order to run the following examples. This can be done using the <code>library</code> function as shown below.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">HandyCNV</span><span class="op">)</span></code></pre></div>
-<p>To start playing with this package, we first need to prepare at least one CNV result list. With only CNV results as an input file, we can explore the functions from section 1 to section 10 as below. But to get more interesting and potentially valuable results, we will have to prepare additional input files, including the map file and signal intensity file for the SNP chip used to generate the CNV list, the pedigree of the samples, and Plink format (bed, bim and fam) genotype files. Many of these files are already required during CNV discovery, and by generating them eaarly in the pipeline, you will find that the rest of workflow will be much easier and faster. We will be introducing how to prepare each of the input files in the relevant chunks below.</p>
+<p>To start playing with this package, we first need to prepare at least one CNV result list. With only CNV results as an input file, we can explore the functions from section 1 to section 10 as below. But to get more interesting and potentially valuable results, we will have to prepare additional input files, including the map file and signal intensity file for the SNP chip used to generate the CNV list, the pedigree of the samples, and Plink format (bed, bim and fam) genotype files. Many of these files are already required during CNV discovery, and by generating them early in the pipeline, you will find that the rest of workflow will be much easier and faster. We will be introducing how to prepare each of the input files in the relevant chunks below.</p>
 </div>
 <div id="demo-data" class="section level2">
 <h2 class="hasAnchor">
@@ -1307,7 +1308,7 @@ Chr   SNP           MorganPos PhysicalPos
 
 
       <footer><div class="copyright">
-  <p>Developed by JH Zhou.</p>
+  <p>Developed by Jinghang Zhou, Liyuan Liu, Thomas Lopdell, Dorian Garrick, Yuangang Shi.</p>
 </div>
 
 <div class="pkgdown">
