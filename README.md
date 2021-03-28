@@ -17,7 +17,7 @@ First, to run this package, we need to make sure that R (Version >= 3.5.2) is in
 ```{r}
 #install.packages("remotes")
 #library(remotes)
-#install_github(repo = "JH-Zhou/HandyCNV", auth_token = "3d2ac98e4c297bab332f1e68b3b2d49f3a17d6aa")
+#install_github(repo = "JH-Zhou/HandyCNV")
 ```
 Then, we need to load the 'HandyCNV' package in order to run the following examples. This can be done using the `library` function as shown below.
 ```{r setup}
@@ -64,7 +64,7 @@ Click the following link to browse the output in examples.
 [18. How do we convert coordinates for CNV, CNVR, ROH, or any other intervals?](https://jh-zhou.github.io/HandyCNV/articles/HandyCNV.html#18-how-do-we-convert-coordinates-for-cnv-cnvr-roh-or-any-other-intervals-)
 
 # Feature request
-If you have any speicial requirments for this package, please fell free to sumbit your demands via this link: [Submit Requirments](https://github.com/JH-Zhou/HandyCNV/issues/new?assignees=&labels=&template=feature-request.md), we are happy to add the new features to meet your needs. 
+If you have any special requirements for this package, please feel free to sumbit your demands via this link: [Submit Requirments](https://github.com/JH-Zhou/HandyCNV/issues/new?assignees=&labels=&template=feature-request.md), we are happy to add the new features to meet your needs. 
 
 # Bug report
-If you find any bug while using this package, please tell us via this link: [Bug Report](https://github.com/JH-Zhou/HandyCNV/issues/new?assignees=&labels=&template=bug_report.md), we will fix it as soon as possiable.
+If you find any errors while using this package, please tell us via this link: [Bug Report](https://github.com/JH-Zhou/HandyCNV/issues/new?assignees=&labels=&template=bug_report.md), we will fix it as soon as possible.
