@@ -63,3 +63,8 @@ Click the following link to browse the output in examples.
 
 [18. How do we convert coordinates for CNV, CNVR, ROH, or any other intervals?](https://jh-zhou.github.io/HandyCNV/articles/HandyCNV.html#18-how-do-we-convert-coordinates-for-cnv-cnvr-roh-or-any-other-intervals-)
 
+# Feature request
+If you have any speicial requirments for this package, please fell free to sumbit your demands via this link: [Submit Requirments](https://github.com/JH-Zhou/HandyCNV/issues/new?assignees=&labels=&template=feature-request.md), we are happy to add the new features to meet your needs. 
+
+# Bug report
+If you find any bug while using this package, please tell us via this link: [Bug Report](https://github.com/JH-Zhou/HandyCNV/issues/new?assignees=&labels=&template=bug_report.md), we will fix it as soon as possiable.
