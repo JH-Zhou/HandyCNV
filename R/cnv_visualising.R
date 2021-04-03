@@ -45,7 +45,12 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   }
 
   #prepare for population data
-  cnv <- fread(file = clean_cnv)
+  if(typeof(clean_cnv) == "character"){
+    cnv <- fread(file = clean_cnv, header = TRUE, sep ="\t")
+  } else {
+    cnv = clean_cnv
+  }
+
   standard_col <- c("Sample_ID", "Chr", "Start", "End")
   standard_col_anot <- c("Sample_ID", "Chr", "CNV_Start", "CNV_End")
   if(all(standard_col %in% colnames(cnv))){
