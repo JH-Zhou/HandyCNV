@@ -51,6 +51,8 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
     fwrite(cnvpart_pure, file = paste0(folder, "/cnvpart_clean.cnv"), sep = "\t", quote = FALSE)
     fwrite(cnvpart_roh, file = paste0(folder, "/cnvpart_roh.cnv"), sep = "\t", quote = FALSE)
 
+    return(cnvpart_pure)
+
     if (file.exists(paste0(folder,"/cnvpart_clean.cnv"))){
        cat(paste0("Task finished. Clean CNV, ROH, and CNV summary results have been saved in the '", folder, "' directory.\n"))
      }
@@ -97,6 +99,8 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
 
     fwrite(penn, file = paste0(folder, "/penncnv_clean.cnv"), sep ="\t", quote = FALSE)
     fwrite(summary_cnv, file = paste0(folder, "/penncnv_summary.txt"), sep = "\t", quote = FALSE, col.names = TRUE)
+
+    return(penn)
     if (file.exists(paste0(folder, "/penncnv_clean.cnv"))){
       cat(paste0("Task finished. Please check clean CNV results in the '", folder, "' directory.\n"))
     }
@@ -135,6 +139,8 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
       #write output
       fwrite(user_cnv, file = paste0(folder, "/cleancnv.cnv"), sep = "\t", quote = FALSE, col.names = TRUE)
       fwrite(summary_cnv, file = paste0(folder, "/cnv_summary.txt"), sep = "\t", quote = FALSE, col.names = TRUE)
+
+      return(user_cnv)
       if (file.exists(paste0(folder, "/cleancnv.cnv"))){
         cat(paste0("Task finished. Please check clean CNV results in the '", folder, "' directory.\n"))
       }
