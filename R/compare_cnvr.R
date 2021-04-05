@@ -35,7 +35,7 @@
 compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, height_1 = 15, hjust_prop = 0.0, hjust_num = 1.5, folder = "compare_cnvr", col_1 = "gray20", col_2 = "springgreen4") {
   if(!file.exists(folder)){
     dir.create(folder)
-    print(paste0("A new folder ", folder, " was created in working directory."))
+    cat(paste0("A new folder ", folder, " was created in working directory.\n"))
   }
 
   #default plot function
@@ -64,7 +64,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
                       prop_num = round(num_CNVR / sum(num_CNVR),3))
     #cnvr_cal %>% add_row(Total = "")
 
-    print(paste0("CNVR comparison summary results in ", title_f," as following:"))
+    cat(paste0("CNVR comparison summary results in ", title_f," as following:\n"))
     print(cnvr_cal)
 
     #prepare title for plot
@@ -119,11 +119,11 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     final_pop_overlap_def <- unique(pop_overlap_def)
     non_overlap_pop_def <- dplyr::setdiff(cnv_def, final_pop_overlap_def)
     if (nrow(non_overlap_pop_def) + nrow(final_pop_overlap_def) == nrow(cnv_def)) {
-      print(paste0("Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_def)))
-    } else {print("Comparison to the first file was failed in validation, please use the original output files from HandyCNV as the input files")}
+      cat(paste0("Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_def)), "\n")
+    } else {stop("Comparison to the first file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
-    fwrite(final_pop_overlap_def, file = paste0(folder, "/overlap_cnv_1.popu"), sep = "\t", quote = FALSE)
-    fwrite(non_overlap_pop_def, file = paste0(folder, "/non_overlap_cnv_1.popu"), sep = "\t", quote = FALSE)
+    fwrite(final_pop_overlap_def, file = paste0(folder, "/overlap_cnvr_def.popu"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_pop_def, file = paste0(folder, "/non_overlap_cnvr_def.popu"), sep = "\t", quote = FALSE)
 
     #make comparison plot
     final_pop_overlap_def$Check_overlap <- "Overlap"
@@ -144,25 +144,25 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     #DEF overlap number
     overlap_percent_pop <- round(nrow(final_pop_overlap_def) / nrow(cnv_def), 3) * 100
     non_overlap_percent_pop <- round(nrow(non_overlap_pop_def) / nrow(cnv_def), 3) * 100
-    print(paste0("The number of overlaped CNVRs on population level is ", nrow(final_pop_overlap_def), ", which is around ", overlap_percent_pop, " percent in first file."))
-    print(paste0("The number of Non-overlaped CNVRs on population level is ", nrow(non_overlap_pop_def), ", which is around ", non_overlap_percent_pop, " percent in first file"))
+    cat(paste0("The number of overlaped CNVRs on population level is ", nrow(final_pop_overlap_def), ", which is around ", overlap_percent_pop, " percent in first file.\n"))
+    cat(paste0("The number of Non-overlaped CNVRs on population level is ", nrow(non_overlap_pop_def), ", which is around ", non_overlap_percent_pop, " percent in first file\n"))
 
     #overlap length
     overlap_length_1 <- sum(pop_overlap$Overlap_length, na.rm = TRUE)
     #overlap_length_1 <- sum(checkover_pop_length$Overlap_length, na.rm = TRUE)
     cnvr_length_1 <- sum(checkover_pop_uniqe_1$Length, na.rm = TRUE)
     overlap_length_prop <- round((overlap_length_1 / cnvr_length_1),3) * 100
-    print(paste0("The overlapping length is ", overlap_length_1, " bp, which is around ", overlap_length_prop, " percent in first file"))
+    cat(paste0("The overlapping length is ", overlap_length_1, " bp, which is around ", overlap_length_prop, " percent in first file\n"))
 
     overlap_summary <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs", "In Total"),
                                   "Number of CNVR" = c(nrow(final_pop_overlap_def), nrow(non_overlap_pop_def), nrow(final_pop_overlap_def) + nrow(non_overlap_pop_def)),
                                   "Proportion of Number (%)" = c(overlap_percent_pop, non_overlap_percent_pop, 100),
                                   "Length(bp)" = c(overlap_length_1, cnvr_length_1- overlap_length_1, cnvr_length_1),
                                   "Proportion of Length (%)" = c(overlap_length_prop, 100 - overlap_length_prop, 100))
-    print("The final comparison results of the first file as follows: ")
+    cat("The final comparison results of the first file as follows: \n")
     print(overlap_summary)
     fwrite(overlap_summary, file = paste0(folder, "/overlap_cnv_1.summary"), sep = "\t", quote = FALSE)
-    print("Comparison to the first file was finished.")
+    cat("Comparison to the first file was finished.\n")
 
 
   ##########compare results in TAR at second-------------------------------------------------------------------
@@ -175,11 +175,11 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     final_pop_overlap_tar <- unique(pop_overlap_tar)
     non_overlap_pop_tar <- dplyr::setdiff(cnv_tar, final_pop_overlap_tar)
     if (nrow(non_overlap_pop_tar) + nrow(final_pop_overlap_tar) == nrow(cnv_tar)) {
-      print(paste0("Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_tar)))
-    } else {print("Comparison to the second file was failed in validation, please use the original output files from HandyCNV as the input files")}
+      cat(paste0("Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of ", nrow(cnv_tar),"\n"))
+    } else {stop("Comparison to the second file was failed in validation, please use the original output files from HandyCNV as the input files")}
 
-    fwrite(final_pop_overlap_tar, file = paste0(folder, "/overlap_cnv_tar.popu"), sep = "\t", quote = FALSE)
-    fwrite(non_overlap_pop_tar, file = paste0(folder, "/non_overlap_cnv_tar.popu"), sep = "\t", quote = FALSE)
+    fwrite(final_pop_overlap_tar, file = paste0(folder, "/overlap_cnvr_tar.popu"), sep = "\t", quote = FALSE)
+    fwrite(non_overlap_pop_tar, file = paste0(folder, "/non_overlap_cnvr_tar.popu"), sep = "\t", quote = FALSE)
 
     final_pop_overlap_tar$Check_overlap <- "Overlap"
     non_overlap_pop_tar$Check_overlap <- "Non-Overlap"
@@ -199,25 +199,87 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     #TAR
     overlap_percent_pop_2 <- round(nrow(final_pop_overlap_tar) / nrow(cnv_tar), 3) * 100
     non_overlap_percent_pop_2 <- round(nrow(non_overlap_pop_tar) / nrow(cnv_tar), 3) * 100
-    print(paste0("The number of overlaped CNVRs in seceond file on population level are ", nrow(final_pop_overlap_tar), ", which is around ", overlap_percent_pop_2, " percent"))
-    print(paste0("The number of Non-overlaped CNVRs in second file on population level are ", nrow(non_overlap_pop_tar), ", which is around ", non_overlap_percent_pop_2, " percent"))
+    cat(paste0("The number of overlaped CNVRs in seceond file on population level are ", nrow(final_pop_overlap_tar), ", which is around ", overlap_percent_pop_2, " percent\n"))
+    cat(paste0("The number of Non-overlaped CNVRs in second file on population level are ", nrow(non_overlap_pop_tar), ", which is around ", non_overlap_percent_pop_2, " percent\n"))
 
     #overlap length
     overlap_length_2 <- sum(pop_overlap_2$Overlap_length, na.rm = TRUE)
     #overlap_length_2 <- sum(checkover_pop_length_2$Overlap_length, na.rm = TRUE)
     cnvr_length_2 <- sum(checkover_pop_uniqe_2$Length, na.rm = TRUE)
     overlap_length_prop_2 <- round((overlap_length_2 / cnvr_length_2),3) * 100
-    print(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in second file"))
+    cat(paste0("The overlapping length is ", overlap_length_2, " bp, which is around ", overlap_length_prop_2, " percent in second file\n"))
 
     overlap_summary_2 <- data.frame("Item" = c("Overlapped CNVRs", "Non-overlapped CNVRs", "In Total"),
                                     "Number of CNVR" = c(nrow(final_pop_overlap_tar), nrow(non_overlap_pop_tar), nrow(final_pop_overlap_tar) + nrow(non_overlap_pop_tar)),
                                     "Proportion of Number (%)" = c(overlap_percent_pop_2, non_overlap_percent_pop_2, 100),
                                     "Length(bp)" = c(overlap_length_2, cnvr_length_2- overlap_length_2, cnvr_length_2),
                                     "Proportion of Length (%)" = c(overlap_length_prop_2, 100 - overlap_length_prop_2, 100))
-    print("The final comparison results of the second file as follows: ")
+    cat("The final comparison results of the second file as follows: \n")
     print(overlap_summary_2)
     fwrite(overlap_summary_2, file = paste0(folder, "/overlap_cnv_2.summary"), sep = "\t", quote = FALSE)
-    print("Task done. Comparison results were saved in the working directory")
+
+
+    #check how many unique CNVRs can those overlapped CNVRs generated?
+    #the idea is to extract the Chr, Start and End position from both overlapped CNVRs, then unite two list to generate new unique larger intervals
+    #the final results is the common CNVR between two results
+    ocnvr_def <- final_pop_overlap_def %>%
+                 select(Chr_DEF, Start_DEF, End_DEF) %>%
+                 rename(Chr = Chr_DEF, Start = Start_DEF, End = End_DEF)
+
+    ocnvr_tar <- final_pop_overlap_tar %>%
+                 select(Chr_TAR, Start_TAR, End_TAR) %>%
+                 rename(Chr = Chr_TAR, Start = Start_TAR, End = End_TAR)
+
+    ocnvr_def_tar <- base::rbind(ocnvr_def, ocnvr_tar)
+
+    merge_cnvr <- function(cnv) {
+      if (nrow(cnv) == 1) {
+        return(cnv)
+      }
+
+      cnv <- cnv[order(cnv$Chr, cnv$Start),]
+      cnvr_union = cnv[1, ]
+
+      for (i in 2:nrow(cnv)) {
+        rest_cnv <- cnv[i, ]
+
+        if (cnvr_union$End[nrow(cnvr_union)] < rest_cnv$Start) {
+          cnvr_union <- bind_rows(cnvr_union, rest_cnv)
+        } else if (cnvr_union$End[nrow(cnvr_union)] == rest_cnv$Start) {
+          cnvr_union$End[nrow(cnvr_union)] <- rest_cnv$End
+        }
+
+        if (rest_cnv$End > cnvr_union$End[nrow(cnvr_union)]) {
+          cnvr_union$End[nrow(cnvr_union)] <- rest_cnv$End
+        }
+      }
+      return(cnvr_union)
+    }
+
+    get_cnvr <- function(interval){
+
+      interval <- interval
+      max_chr <- max(interval$Chr)
+      cnvr <- data.frame()
+
+      cat("Processing the unique common CNVRs list by uniting overlepped CNVRs between two results \n")
+
+      for (i in 1:max_chr){
+        cnv_chr <- interval[which(interval$Chr == i), ]
+        cnvr_chr <- merge_cnvr(cnv = cnv_chr)
+        cnvr <- rbind(cnvr, cnvr_chr)
+      }
+
+      return(cnvr)
+    }
+
+    unique_overlap_cnvr <- get_cnvr(interval = ocnvr_def_tar)
+
+    cat(paste0("There are ", nrow(unique_overlap_cnvr), " unique and mutual CNVRs after uniting the overlapped CNVRs between two results \n"))
+
+    fwrite(unique_overlap_cnvr, file = paste0(folder, "/common_cnvr.txt"), sep = "\t", quote = FALSE)
+
+    cat("Task done. Comparison results were saved in the working directory\n")
   }
 
   # else {
