@@ -68,3 +68,8 @@ If you have any special requirements for this package, please feel free to sumbi
 
 # Bug report
 If you find any errors while using this package, please tell us via this link: [Bug Report](https://github.com/JH-Zhou/HandyCNV/issues/new?assignees=&labels=&template=bug_report.md), we will fix it as soon as possible.
+
+# Citation
+If this tool is useful for your academic research, please cite our publication: [Browse publication](https://www.biorxiv.org/content/10.1101/2021.04.05.438403v1)
+
+J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH,” doi: 10.1101/2021.04.05.438403.
