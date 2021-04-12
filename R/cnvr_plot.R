@@ -63,6 +63,9 @@ cnvr_plot <- function(cnvr, assembly = "ARS", overlap_cnvr = NULL, label_prop = 
                       107.310763, 104.305016, 105.70825, 113.384836, 112.638659, 119.458736,
                       121.1914245, 120.829699, 121.430405, 137.060424, 158.337067)
       chr_name <- paste0("chr", seq(from = 29, to = 1, by = -1))
+
+      chr_len <- data.frame("Chr" = seq(from = 29, to = 1, by = -1), "Length" = chr_length)
+
     } else if(assembly == "ARS"){
       # The length of X Chromsome is 139.009144 in ARS reference genome
       # ARS assembly
@@ -73,6 +76,8 @@ cnvr_plot <- function(cnvr, assembly = "ARS", overlap_cnvr = NULL, label_prop = 
                            103.308737, 105.454467, 113.31977, 110.682743, 117.80634,
                            120.089316, 120.000601, 121.005158, 136.231102, 158.53411)
       chr_name <- paste0("chr", seq(from = 29, to = 1, by = -1))
+
+      chr_len <- data.frame("Chr" = seq(from = 29, to = 1, by = -1), "Length" = chr_length)
     } else {
       #construct the border of each chromosome from imput data
       chr_length <- cnvr_plot_part %>%
@@ -84,6 +89,8 @@ cnvr_plot <- function(cnvr, assembly = "ARS", overlap_cnvr = NULL, label_prop = 
                     t() %>%
                     as.vector()
       chr_name <- paste0("chr", seq(from = max(as.integer(cnvr_plot_part$Chr)), to = 1, by = -1))
+
+      chr_len <- data.frame("Chr" = seq(from = max(as.integer(cnvr_plot_part$Chr)), to = 1, by = -1), "Length" = chr_length)
     }
 
     #4.6.1 prepare CNVPartition plot input data-----
@@ -112,7 +119,7 @@ cnvr_plot <- function(cnvr, assembly = "ARS", overlap_cnvr = NULL, label_prop = 
         width = width_1, height = height_1, units = "cm", bg = "transparent")
 
     #setting the graphic parameter
-    par(lab=c(max(cnvr_plot_part$Chr),max(cnvr_plot_part$Chr),3),las=1,yaxt="s",xaxt="s",mar=c(7,7,4,6))
+    par(lab=c(max(cnvr_plot_part$Chr),max(cnvr_plot_part$Chr),3),las=1,yaxt="s",xaxt="s",mar=c(4,5,2,2))
 
     #draw a bar plot and setup each bar name
     bar <- barplot(chr_length, horiz=TRUE,width=1.5,space=1,xlim=c(0,max(chr_length)+6),
@@ -132,11 +139,10 @@ cnvr_plot <- function(cnvr, assembly = "ARS", overlap_cnvr = NULL, label_prop = 
 
     #condition. add summary label for each chromosome
     if(label_prop == "TRUE"){
-      # chr_len_max <- cnvr_plot_part %>%
-      #                group_by(Chr) %>%
-      #                summarise(length = max(End) / 1000000)
 
-      chr_len_max <- data.frame("Chr" = seq(from = max(as.integer(cnvr_plot_part$Chr)), to = 1, by = -1), "Length" = chr_length)
+      unique_chr <- data.frame("Chr" = unique(cnvr_plot_part$Chr))
+      chr_len_max <- merge(x = unique_chr, y = chr_len, all.x = TRUE)
+
       chr_len_max$Chr <- as.character(chr_len_max$Chr)
 
       chr_label <- cnvr_plot_part %>%
