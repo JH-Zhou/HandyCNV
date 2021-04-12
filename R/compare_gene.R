@@ -19,6 +19,7 @@
 #' @param col_2 set color for common_low in two gene lists comparison plot or the color of Low frequency gene in multiple comparison heatmap plot
 #' @param col_3 set color for High_Freq_list_1 in two gene lists comparison plot
 #' @param col_4 set color for High_Freq_list_2 in two gene lists comparison plot
+#' @param color_label if TRUE, the color of gene labels will marked in heatmap, the red labels are genes that passed common threshold
 #'
 #' @import dplyr ggplot2 scatterplot3d
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
@@ -27,7 +28,7 @@
 #' @return Comparison summary results and plots.
 #' @export compare_gene
 #'
-compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq_4 = NULL, common_gene_threshold = 3, title_1 = "list_1", title_2 = "list_2", title_3 = "list_3", title_4 = "list_4", height_1 = 10, width_1 =14, folder = "compre_gene", col_1 = "red", col_2 = "yellow", col_3 = "dodgerblue", col_4 = "pink2"){
+compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq_4 = NULL, common_gene_threshold = 3, title_1 = "list_1", title_2 = "list_2", title_3 = "list_3", title_4 = "list_4", height_1 = 10, width_1 =14, folder = "compre_gene", col_1 = "red", col_2 = "yellow", col_3 = "dodgerblue", col_4 = "pink2", color_label = FALSE){
   #check and create folder
   if(!file.exists(folder)){
      dir.create(folder)
@@ -150,13 +151,13 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
 
 
     #merge gene lists
-    print("Starting merging gene lists...")
+    cat("Starting merging gene lists...\n")
     two_gene <- merge(list_1, list_2, by.x = "name2_1", by.y = "name2_2", all = TRUE)
     three_gene <- merge(two_gene, list_3, by.x = "name2_1", by.y = "name2_3", all = TRUE)
     four_gene <- merge(three_gene, list_4, by.x = "name2_1", by.y = "name2_4", all = TRUE)
     four_gene[is.na(four_gene)] <- 0
 
-    print("Clustering common gene among four gene lists...")
+    cat("Clustering common gene among four gene lists...\n")
     # 2 = common_low, 1 = common_high, 3 = High_and_low
     four_gene <- four_gene %>%
                  mutate(Common_check = case_when(Frequency_1 >= common_gene_threshold & Frequency_2 >= common_gene_threshold & Frequency_3 >= common_gene_threshold & Frequency_4 >= common_gene_threshold ~ "Common_high",
@@ -164,31 +165,51 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
                                                 TRUE ~ "High_and_Low"))
 
     four_gene_summary <- four_gene %>% group_by(Common_check) %>% count(Common_check, name = "Number_Gene")
-    print(paste0(length(which(four_gene$Common_check == "Common_high")), " genes with higher frequency in all three gene lists, they are: "))
+    cat(paste0(length(which(four_gene$Common_check == "Common_high")), " genes with higher frequency in all gene lists, they are: \n"))
     print(subset(four_gene[four_gene$Common_check == "Common_high", ],
                  select = c("name2_1", "Frequency_1","Frequency_2", "Frequency_3", "Frequency_4", "Common_check"))) #here only plot selected columns
-    print("Brief summary:")
+    cat("Brief summary:\n")
     print(four_gene_summary)
 
     plot_data <- four_gene %>%
                  select(name2_1, Frequency_1, Frequency_2, Frequency_3, Frequency_4) %>%
                  filter(Frequency_1 >= common_gene_threshold | Frequency_2 >= common_gene_threshold | Frequency_3 >= common_gene_threshold | Frequency_4 >= common_gene_threshold)
     plot_data <- reshape2::melt(plot_data, id.vars = "name2_1")
+
+    #extract common genes
+    common_high_name <- four_gene %>%
+                        filter(Common_check == "Common_high")
+
+    #add color of gene labels
+    # color_group <- plot_data %>%
+    #                mutate(color_group = if_else(name2_1 %in% common_high_name$name2_1, true = "red", false = "black")) %>%
+    #                select(name2_1, color_group) %>%
+    #                unique(.) %>%
+    #                arrange(desc(name2_1))
+    if(color_label == "TRUE"){
+      plot_data_desc <- plot_data %>%
+                        select(name2_1) %>%
+                        unique(.) %>%
+                        arrange(desc(name2_1))
+      color_group <- ifelse(plot_data_desc$name2_1  %in% common_high_name$name2_1, yes = "red", no = "black")
+    }
+
     ggplot(plot_data, aes(x = variable , y = name2_1, fill = value)) +
       geom_tile() +
       #scale_fill_gradientn(colours = c("yellow", "red"), na.value = "black") +
       scale_fill_gradientn(colours = c(col_2, col_1), na.value = "black") +
       theme_classic() +
       scale_x_discrete(labels = c(title_1, title_2, title_3, title_4)) +
+      {if(color_label == "TRUE")theme(axis.text.y = element_text(color = rev(color_group)))} +
       labs(x = NULL, y = "Gene", fill = "Quantity")
     ggsave(filename = paste0(folder, "/four_gene_heatmap.png"), dpi = 300, height = height_1, width = width_1, units = "cm")
 
     fwrite(four_gene, file = paste0(folder, "/four_gene_comparison.txt"), sep = "\t", quote = FALSE)
     fwrite(four_gene_summary, file = paste0(folder, "/four_gene_comparison_summary.txt"), sep = "\t", quote = FALSE)
     if(file.exists(paste0(folder, "/four_gene_comparison.txt")) & file.exists(paste0(folder, "/four_gene_comparison_summary.txt")) & file.exists(paste0(folder, "/four_gene_heatmap.png"))){
-      print("Gene comparison list, brife summary and comparison plot was saved in working directory.")
+      cat("\nGene comparison list, brife summary and comparison plot was saved in working directory.\n")
     } else{
-      print("Checking outputs files was faild, please check the input files and resetting a working directory!")
+      warning("Checking outputs files was faild, please check the input files and resetting a working directory!")
     }
   }
 
