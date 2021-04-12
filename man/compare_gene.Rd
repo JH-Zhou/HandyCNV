@@ -20,7 +20,8 @@ compare_gene(
   col_1 = "red",
   col_2 = "yellow",
   col_3 = "dodgerblue",
-  col_4 = "pink2"
+  col_4 = "pink2",
+  color_label = FALSE
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ compare_gene(
 \item{col_3}{set color for High_Freq_list_1 in two gene lists comparison plot}
 
 \item{col_4}{set color for High_Freq_list_2 in two gene lists comparison plot}
+
+\item{color_label}{if TRUE, the color of gene labels will marked in heatmap, the red labels are genes that passed common threshold}
 }
 \value{
 Comparison summary results and plots.

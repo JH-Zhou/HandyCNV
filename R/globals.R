@@ -10,4 +10,4 @@ utils::globalVariables(c(".", "..count..", "ARS_Density", "B Allele Freq", "CNVR
                          "percent_total", "pos", "prop_overlap_len", "prop_roh", "three_gene_summary", "total_length", "value", "variable", "window_id",
                          "x", "y", "y_max", "y_min", "Frequency", "chr_top", "all_of", "name", "gene", "CNV_Start", "CNV_End", "SNP Name", "Var1", "Var2",
                          "End_def", "End_tar", "Start_def", "Start_tar", "converted_len", "length_diff", "original_len", "qc_check","Freq","Haplotype",
-                         "Re_code","Recode_Type", "Length_def", "Length_tar", "def_Density", "tar_Density", "Haploid", "n_Sample"))
+                         "Re_code","Recode_Type", "Length_def", "Length_tar", "def_Density", "tar_Density", "Haploid", "n_Sample", "total_len"))
