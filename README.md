@@ -73,3 +73,41 @@ If you find any errors while using this package, please tell us via this link: [
 If this tool is useful for your academic research, please cite our publication: [Browse publication](https://www.biorxiv.org/content/10.1101/2021.04.05.438403v1)
 
 J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH,” doi: 10.1101/2021.04.05.438403.
+
+# Current release: HandyCNV v1.1.0 Release Date: 2021/04/12
+
+# What's new
+
+## 1. Update call_cnvr.R …
+1. The CNV list could only be loaded from the local directory through a 'Path' before, now supports to read data from working environment by checking the type of input file;
+2. Support to return the CNVR list to working environment.
+
+## 2. Update cnv_clean.R …
+1. Support to return Clean CNV List to working environment.
+
+## 3. Update cnv_visualising.R …
+1. Support to load CNV List from working environment.
+
+## 4. Update compare_cnvr.R …
+1. Add new function to generate the Unique and Mutual CNVRs by uniting the overlapped CNVRs between two results. There are two purposes of this work, one is to better understand the overlapping CNVRs, the other is to mark the common regions on CNVR distribution map in 'cnvr_plot' function;
+
+## 5. Update 'cnvr_plot' …
+1. Add 'overlap_cnvr' argument to support to mark overlapped region on CNVR distribution map;
+2. Add 'label_prop' argument to show the proportion of CNVRs length to total length of relative chromosome on CNVR map;
+3. Add 'chr_col' argument to customize the color of Chromosome;
+4. Add 'overlap_col' argument to customize color of overlapped CNVRs
+5. Reduce the margin of final CNVR distribution map.
+
+### New feature demo
+```{r}
+# Demo code:
+cnvr_plot(cnvr = "./cnvr_combine_part_penn_umd/cnvr.txt", assembly = "UMD", 
+          sample_size =  388, common_cnv_threshold = 0.05, 
+          overlap_cnvr = "./compare_cnvr_Penn_UMD_Vs_Part_UMD/common_cnvr.txt", 
+          gain_col = "deeppink1", loss_col = "deepskyblue3", mixed_col = "springgreen3", 
+          folder = "./cnvr_combine_part_penn_umd/cnvr_map_common")
+```       
+![Fig.2 CNVR Map](https://github.com/JH-Zhou/HandyCNV/blob/master/vignettes/cnvr_plot.png)
+
+## 6. Update compare_gene.R …
+1. Add 'color_label' argument to display the color of genes that passed common threshold in the Heatmap;
