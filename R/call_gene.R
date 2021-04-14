@@ -135,10 +135,16 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
     }
 
     dup_gene <- cnvr_has_gene_unique[check_dup_gene(cnvr_has_gene_unique), ] # extract all duplicated genes
-    warning("The following genes are duplicated in multiple CNVRs, and will only be annotated on the first CNVR_ID in the final gene frequency list report!")
-    print(dup_gene)
 
-    cnvr_has_gene_unique_pure <- cnvr_has_gene_unique[-which(duplicated(cnvr_has_gene_unique$name2)), ] # exclude the rows with duplicated gene name, only remained the first value
+    if(!nrow(dup_gene) == 0){
+      warning("The following genes are duplicated in multiple CNVRs, and will only be annotated on the first CNVR_ID in the final gene frequency list report!\n")
+      print(dup_gene)
+
+      cnvr_has_gene_unique_pure <- cnvr_has_gene_unique[-which(duplicated(cnvr_has_gene_unique$name2)), ] # exclude the rows with duplicated gene name, only remained the first value
+    } else {
+      cnvr_has_gene_unique_pure <- cnvr_has_gene_unique
+    }
+
     gene_freq_location <- merge(gene_freq, cnvr_has_gene_unique_pure, by = "name2", all.x = TRUE)
     names(gene_freq_location)[names(gene_freq_location) == "i.Start"] = "CNVR_Start"
     names(gene_freq_location)[names(gene_freq_location) == "i.End"] = "CNVR_End"
