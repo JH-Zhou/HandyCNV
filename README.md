@@ -74,7 +74,7 @@ If this tool is useful for your academic research, please cite our publication: 
 
 J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH,” doi: 10.1101/2021.04.05.438403.
 
-# Current release: HandyCNV v1.1.0 Release Date: 2021/04/12
+# Current release: HandyCNV v1.1.1 Release Date: 2021/04/14
 
 # What's new
 
