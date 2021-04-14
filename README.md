@@ -17,7 +17,7 @@ First, to run this package, we need to make sure that R (Version >= 3.5.2) is in
 ```{r}
 #install.packages("remotes")
 #library(remotes)
-#install_github(repo = "JH-Zhou/HandyCNV@v1.1.0")
+#install_github(repo = "JH-Zhou/HandyCNV@v1.1.1")
 ```
 Then, we need to load the 'HandyCNV' package in order to run the following examples. This can be done using the `library` function as shown below.
 ```{r setup}
