@@ -1,7 +1,7 @@
 Package: HandyCNV
 Type: Package
 Title: HandyCNV: An R package for Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH 
-Version: 1.1.0
+Version: 1.1.2
 Authors@R: c(person("Jinghang", "Zhou", email = "jinghangzhou@qq.com", role = c("aut", "cre", "cph")),
              person("Liyuan", "Liu", role = c("aut")),
              person("Thomas","Lopdell", role = c("aut")),
