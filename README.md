@@ -17,7 +17,7 @@ First, to run this package, we need to make sure that R (Version >= 3.5.2) is in
 ```{r}
 #install.packages("remotes")
 #library(remotes)
-#install_github(repo = "JH-Zhou/HandyCNV@v1.1.1")
+#install_github(repo = "JH-Zhou/HandyCNV@v1.1.2")
 ```
 Then, we need to load the 'HandyCNV' package in order to run the following examples. This can be done using the `library` function as shown below.
 ```{r setup}
@@ -74,7 +74,13 @@ If this tool is useful for your academic research, please cite our publication: 
 
 J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH,” doi: 10.1101/2021.04.05.438403.
 
-# Current release: HandyCNV v1.1.1 Release Date: 2021/04/14
+# Current release: HandyCNV v1.1.2 Release Date: 2021/04/18
+
+# What's new
+
+Corrected the version number.
+
+# Released Version: HandyCNV v1.1.1 Release Date: 2021/04/14
 
 # What's new
 
