@@ -14,10 +14,20 @@ The details examples please visit our Github pages: https://jh-zhou.github.io/Ha
 
 # Installation and Prerequisites
 First, to run this package, we need to make sure that R (Version >= 3.5.2) is installed in your computer (R download link: https://www.r-project.org/). Once R is installed, the 'HandyCNV' package can be installed from Github repository by running the following script. If you rarely used R, it may take more time to install the 'HandyCNV' for the first time.
+## 1. Method one, install from Github Repo directly
 ```{r}
-#install.packages("remotes")
-#library(remotes)
-#install_github(repo = "JH-Zhou/HandyCNV@v1.1.2")
+install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
+remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.2")
+```
+
+## 2. Method two, install manually 
+
+If the first method cannnot work well for some reasons, we can manually download the 'Source code (Zip)' from the newly released tag at here: [Download Source Code](https://github.com/JH-Zhou/HandyCNV/releases/tag/v1.1.2)
+
+Then install the Source Code from the local path by following code:
+```{r}
+install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
+remotes::install_local(path = "C:/Users/HandyCNV-1.1.2.zip") # Repalce 'C:/Users/' to your local path where you downloaded the Source Code
 ```
 Then, we need to load the 'HandyCNV' package in order to run the following examples. This can be done using the `library` function as shown below.
 ```{r setup}
