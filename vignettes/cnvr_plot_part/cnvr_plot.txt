@@ -1,4 +1,4 @@
-Chr	CNVR_ID	Start	End	Frequency	n_Sample	0	1	3	4	Type	Length	start_left	end_right	chr_top	chr_bottom <- chr_top - 1.5
+Chr	CNVR_ID	Start	End	Frequency	n_Sample	0	1	3	4	Type	Length	start_left	end_right	chr_top	chr_bottom
 1	CNVR_1	14652420	14717338	1	1	1				Loss	64919	14.65242	14.717338	87	85.5
 1	CNVR_2	15937076	16069418	1	1			1		Gain	132343	15.937076	16.069418	87	85.5
 1	CNVR_3	16277524	17021138	2	2	1	1			Loss	743615	16.277524	17.021138	87	85.5

@@ -727,3 +727,26 @@ convert_coord(input_def = "call_cnvr_standard/cnvr.txt",
               def_tar_map = "convert_map/def_tar_map.map", 
               folder = "convert_coord_penn_cnvR")
 ```
+
+
+## 19. How do we make a fast SNP density plot from Plink map file?
+
+Plotting SNP density may help us learn about the SNP distribution on chromosomes. The parameter of SNP density may affect ROH detection in some tools. 'plot_snp_density' only working with map file that has four columns in the order as follows: Chromosome, SNP ID, Position in Morgans, Physical Position. No header required.  
+
+```{r, warning=FALSE}
+plot_snp_density(map = "convert_map/target_plink.map", 
+                 max_chr = 24, #optional
+                 top_density = 60, #optional 
+                 low_density = 20, #optional
+                 color_top = "red", #optional
+                 color_low = "blue", #optional
+                 color_mid = "black", #optional
+                 legend_position = c(0.9, 0.1), #optional 
+                 x_label = "Physical position\n物理位置", #optional
+                 y_label = "SNPs/Mb\n每1Mb区间的SNP数",#optional
+                 ncol_1 = 5) 
+#save the plot by 'ggsave'
+#ggsave(filename = "snp_density.png", width = 26, height = 18, units = "cm", dpi = 350)
+```
+
+
