@@ -25,7 +25,7 @@
 #' @return Details of comparison results between given map, and standard input map files used in PennCNV and Plink
 #' @export convert_map
 #'
-convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "UMD 3.1", tarMap_title = "ARS .12", species = "Bovine", col_1 = "green4", col_2 = "red1", col_3 = "deeppink2", col_4 = "deeppink2", col_5 ="turquoise3", col_6 = "turquoise3", height_c = 16, width_c  = 22, height_d = 15, width_d = 25){
+convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "UMD 3.1", tarMap_title = "ARS 1.2", species = "Bovine", col_1 = "green4", col_2 = "red1", col_3 = "deeppink2", col_4 = "deeppink2", col_5 ="turquoise3", col_6 = "turquoise3", height_c = 16, width_c  = 22, height_d = 15, width_d = 25){
   if(!dir.exists(paths = "convert_map")){
     dir.create(path = "convert_map")
     print("New folder convert_map was created.")
@@ -38,14 +38,14 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
     #repalce X, Y, MT to 30, 31, and 32
     def_map$Chr_def <- sub("X", "30", def_map$Chr_def)
     def_map$Chr_def <- sub("Y", "31", def_map$Chr_def)
-    def_map$Chr_def <- sub("MT", "32", def_map$Chr_def)
+    def_map$Chr_def <- sub("MT", "33", def_map$Chr_def)
     def_map$Chr_def <- as.integer(def_map$Chr_def)
 
     names(tar_map) <- c("Chr_tar","Name", "Mb_tar", "Position_tar")
     #repalce X, Y, MT to 30, 31, and 32
     tar_map$Chr_tar <- sub("X", "30", tar_map$Chr_tar)
     tar_map$Chr_tar <- sub("Y", "31", tar_map$Chr_tar)
-    tar_map$Chr_tar <- sub("MT", "32", tar_map$Chr_tar)
+    tar_map$Chr_tar <- sub("MT", "33", tar_map$Chr_tar)
     tar_map$Chr_tar <- as.integer(tar_map$Chr_tar)
 
   } else if(!(species == "Bovine")) {
@@ -104,7 +104,7 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
 
   print("Ploting SNP comparison results.....")
   if(species == "Bovine"){
-    note = "Note: 30 = X, 31 = Y, 32 = MT, 99 = Only found in one map"
+    note = "Note: 30 = X, 31 = Y, 32 = PAR, 33 = MT, 99 = Only found in one map"
   } else if (!(species == "Bovine")){
     note = "Note: 87 = X, 88 = Y, 89 = MT, 99 = Only found in one map"
   }
