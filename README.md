@@ -17,7 +17,7 @@ First, to run this package, we need to make sure that R (Version >= 3.5.2) is in
 ## 1. Method one, install from Github Repo directly
 ```{r}
 install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
-remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.2")
+remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.3")
 ```
 
 ## 2. Method two, install manually 
