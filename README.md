@@ -88,7 +88,7 @@ J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standard
 
 # What's new
 
-1. New fucntion to plot SNP density from SNP genotyping map.
+1. New function to plot SNP density from SNP genotyping map.
 ```{r, warning=FALSE}
 plot_snp_density(map = "convert_map/target_plink.map", 
                  max_chr = 24, #optional
