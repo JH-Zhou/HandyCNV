@@ -84,7 +84,32 @@ If this tool is useful for your academic research, please cite our publication: 
 
 J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH,” doi: 10.1101/2021.04.05.438403.
 
-# Current release: HandyCNV v1.1.2 Release Date: 2021/04/18
+# Current release: HandyCNV v1.1.3 Release Date: 2021/05/26
+
+# What's new
+
+1. New fucntion to plot SNP density from SNP genotyping map.
+```{r, warning=FALSE}
+plot_snp_density(map = "convert_map/target_plink.map", 
+                 max_chr = 24, #optional
+                 top_density = 60, #optional 
+                 low_density = 20, #optional
+                 color_top = "red", #optional
+                 color_low = "blue", #optional
+                 color_mid = "black", #optional
+                 legend_position = c(0.9, 0.1), #optional 
+                 x_label = "Physical position\n物理位置", #optional
+                 y_label = "SNPs/Mb\n每1Mb区间的SNP数",#optional
+                 ncol_1 = 5) 
+#save the plot by 'ggsave'
+#ggsave(filename = "snp_density.png", width = 26, height = 18, units = "cm", dpi = 350)
+```
+![Fig.Demo SNP density distribution](https://github.com/JH-Zhou/HandyCNV/blob/master/vignettes/snp_density.png)
+
+2. Revised CNVs status distribution plot in 'cnv_summary_plot' function, force to appear the boxplot and line on chromosome that has no CNVs.
+
+
+# Previous release: HandyCNV v1.1.2 Release Date: 2021/04/18
 
 # What's new
 
