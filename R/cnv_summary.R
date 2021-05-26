@@ -83,6 +83,9 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
   chr_freq <- cnv_input %>%
               group_by(Chr) %>%
               count(CNV_Value, name = "Freq")
+
+  max_chr <- max(cnv_input$Chr)
+
   png(res = 350, filename = paste0(folder, "/f1_cnv_distribution.png"), height = 3500, width = 4000, bg = "transparent")
   adj_y <- max(cnv_input$Length)/max(chr_freq$Freq)
   cnv_distri <- ggplot(cnv_input) +
@@ -92,11 +95,13 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
     scale_color_manual(values = color_copy) +
     geom_text(aes(x = as.factor(Chr), label = ..count..), stat = 'count') +
     scale_y_continuous(name = "Frequency of CNV (N)", sec.axis = sec_axis(~.*adj_y / 1000, name = "Length of CNV (Kb)")) +
+    scale_x_discrete(breaks = seq(from = 1, to = max_chr, by = 1), drop = FALSE) + # drop = F, force appear the boxplot and line on Chrs has no CNVs
     theme_classic() +
     theme(legend.position = "top",
           strip.text.x = element_blank()) +
     labs(x = "Chromosome", fill = "CNV Value", color = "Frequency of CNV") +
     facet_wrap(~CNV_Value, ncol = 1, scales = "free")
+
 
   print(cnv_distri)
   dev.off()
@@ -175,9 +180,9 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
   print(f1c_chr)
   dev.off()
   if(file.exists(paste0(folder, "/f4_chr.png"))){
-    print("Distribution of CNV type on chromosome plot was saved in working directory.")
+    cat("Distribution of CNV type on chromosome plot was saved in working directory.\n")
   } else {
-    print("Task faild, please check your input data format and paramter used!")
+    cat("Task faild, please check your input data format and paramter used!\n")
   }
 
   #plot individual CNV number
