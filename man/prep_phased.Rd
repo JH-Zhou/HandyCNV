@@ -4,10 +4,12 @@
 \alias{prep_phased}
 \title{Prepare the phased genotype into the standard format}
 \usage{
-prep_phased(phased_geno)
+prep_phased(phased_geno, convert_letter = FALSE)
 }
 \arguments{
 \item{phased_geno}{phased genotype file from Beagle 5.1, the first nine columns contain basic information, the rest are genotype}
+
+\item{convert_letter}{convert allele from 0, 1 to letter in REF and ALF}
 }
 \value{
 A list contain map and genotype information
