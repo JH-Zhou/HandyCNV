@@ -9,7 +9,7 @@ convert_map(
   target_map,
   chr_set = 29,
   defMap_title = "UMD 3.1",
-  tarMap_title = "ARS .12",
+  tarMap_title = "ARS 1.2",
   species = "Bovine",
   col_1 = "green4",
   col_2 = "red1",

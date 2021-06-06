@@ -7,8 +7,10 @@
 roh_window(
   roh,
   window_size = 5,
+  max_chr = 29,
   length_autosomal = 2489.386,
   threshold = 0.3,
+  length_group = c(1, 2, 4, 8, 16),
   folder = "roh_window",
   col_higher = "red",
   col_lower = "black",
@@ -16,7 +18,9 @@ roh_window(
   width_1 = 21,
   legend_x = 0.9,
   legend_y = 0.1,
-  ncol_1 = 6
+  ncol_1 = 6,
+  x_label = "Physical Position (Mb)",
+  y_label = "Number of Samples"
 )
 }
 \arguments{
@@ -24,10 +28,14 @@ roh_window(
 
 \item{window_size}{the length of sliding windows for dividing the chromosome, the unit is Mb}
 
+\item{max_chr}{The maximum number of chromosome}
+
 \item{length_autosomal}{Important, total autosomal length of the corresponding species, used in calculated the F_ROH}
 
 \item{threshold}{the proportion used in the roh windows distribution plot. For example 1000 samples, if threshold set as 0.5,
 and 1000*0.5 = 500, the value of histogram above 500 will be color as red and the group below 500 will filling with other color}
+
+\item{length_group}{Vector, must be 5 integer unit in 'Mb'. The default value are 1, 2, 4, 8 and 16 Mb, used for category the length group of ROH}
 
 \item{folder}{set name of new created folder}
 
@@ -44,6 +52,10 @@ and 1000*0.5 = 500, the value of histogram above 500 will be color as red and th
 \item{legend_y}{set position of legend, 0 to 1 indicate from bottom to top}
 
 \item{ncol_1}{set how many columns to present in facet plot}
+
+\item{x_label}{customize the label of x axis in ROH plot, default text is "Physical Position (Mb)"}
+
+\item{y_label}{customize the label of y axis in ROH plot, default text is "Number of Samples"}
 }
 \value{
 Summary results of ROH by sliding windows across all chromosomes.
