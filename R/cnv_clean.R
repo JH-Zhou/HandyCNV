@@ -42,7 +42,7 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
     cat(paste0("There are ", length(unique(cnvpart_pure$Sample_ID))," individuals with ",  nrow(cnvpart_pure), " CNVs in total.\n"))
     cat(paste0("The average number of CNV on each Individual is ", average_indiv_cnv, "\n"))
 
-    summary_cnvpart <- cnvpart_pure %>% group_by(CNV_Value) %>% summarise("N" = n(), "Average Length" = mean(Length), "Min Length" = min(Length), "Max Length" = max(Length))
+    summary_cnvpart <- cnvpart_pure %>% group_by(CNV_Value) %>% summarise("N" = n(), "Average Length" = round(mean(Length),digits = 0), "Min Length" = min(Length), "Max Length" = max(Length))
     cat("Basic summary stats by CNV type:\n")
     print(summary_cnvpart)
 
@@ -91,7 +91,7 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
     summary_cnv <- penn %>%
                    group_by(CNV_Value) %>%
                    summarise("N" = n(),
-                            "Average Length" = mean(Length),
+                            "Average Length" = round(mean(Length), digits = 0),
                             "Min Length" = min(Length),
                             "Max Length" = max(Length))
     cat("Basic summary stats by CNV type:\n")
@@ -109,7 +109,13 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
     }
     }
     else{
-      user_cnv = fread(standard_cnv, header = TRUE)
+
+      if(typeof(standard_cnv) == "character"){
+        user_cnv = fread(standard_cnv, header = TRUE)
+      } else {
+        user_cnv = standard_cnv
+      }
+
       default_title <- c("Sample_ID", "Chr", "Start", "End", "CNV_Value")
       #check input format
       if(!(all(colnames(user_cnv) %in% default_title))){
@@ -130,7 +136,7 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
       summary_cnv <- user_cnv %>%
                      group_by(CNV_Value) %>%
                      summarise("N" = n(),
-                              "Average Length" = mean(Length),
+                              "Average Length" = round(mean(Length),digits = 0),
                               "Min Length" = min(Length),
                               "Max Length" = max(Length))
       cat("Basic summary stats by CNV type:\n")
