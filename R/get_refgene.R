@@ -66,7 +66,7 @@ get_refgene <- function(gene_version = NULL){
   support_ver <- c("Cow_ARS_UCSC", "Cow_ARS_ENS", "Cow_UMD_UCSC",
                    "Pig_susScr11_UCSC", "Pig_susScr11_ENS",
                    "Human_hg38",
-                   "Sheep_Oar_v4.0_UCSC",
+                   "Sheep_Oar_v4.0_UCSC", "Sheep_Oar_v3.1_UCSC", "Sheep_Oar_v3.1_ENS",
                    "Horse_equCab3.0_UCSC",
                    "Dog_UMICH_Zoey_3.1_UCSC", "Dog_UMICH_Zoey_3.1_ENS")
   support_version <- data.frame(version = c("Cow_ARS_UCSC",
@@ -78,6 +78,9 @@ get_refgene <- function(gene_version = NULL){
                                             "Pig_susScr11_ENS_id",
                                             "Human_hg38",
                                             "Sheep_Oar_v4.0_UCSC",
+                                            "Sheep_Oar_v3.1_UCSC",
+                                            "Sheep_Oar_v3.1_ENS",
+                                            "Sheep_Oar_v3.1_ENS_id",
                                             "Horse_equCab3.0_UCSC",
                                             "Dog_UMICH_Zoey_3.1_UCSC",
                                             "Dog_UMICH_Zoey_3.1_ENS",
@@ -91,6 +94,9 @@ get_refgene <- function(gene_version = NULL){
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/susScr11/database/ensemblToGeneName.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/oviAri4/database/refGene.txt.gz",
+                                        "https://hgdownload.soe.ucsc.edu/goldenPath/oviAri3/database/refGene.txt.gz",
+                                        "https://hgdownload.soe.ucsc.edu/goldenPath/oviAri3/database/ensGene.txt.gz",
+                                        "https://hgdownload.soe.ucsc.edu/goldenPath/oviAri3/database/ensemblToGeneName.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/equCab3/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/ensGene.txt.gz",
@@ -104,14 +110,14 @@ get_refgene <- function(gene_version = NULL){
   } else {
     if(!(file.exists("refgene"))){
       dir.create("refgene")
-      print("New folder 'refgene' was created in working directory.")
+      cat("New folder 'refgene' was created in working directory.\n")
     }
 
     #check if the input gene version in the default list
     if(gene_version %in% support_version$version){
-      print("Link to the website...")
+      cat("Link to the website...\n")
     } else {
-      print("Wrong name of Gene version, Please use 'get_refgene()' to check Supported Reference Gene List!")
+      cat("Wrong name of Gene version, Please use 'get_refgene()' to check Supported Reference Gene List!\n")
     }
 
     #call clean function, check if it is ENS reference list?
@@ -120,19 +126,20 @@ get_refgene <- function(gene_version = NULL){
       line_for_id <- which(support_version$version == paste0(gene_version, "_id"))
       refgene <- fread(input = as.character(support_version$URL[line_num]), header = FALSE)
       ens_id <- fread(input = as.character(support_version$URL[line_for_id]), header = FALSE)
-      print("Converting format...")
+      cat("Converting format...\n")
       gene_version_clean <- clean_ensgene(refgene = refgene, ens_id = ens_id)
       fwrite(gene_version_clean, file = paste0("refgene/", gene_version, ".txt"), sep = "\t", quote = FALSE, col.names = TRUE)
     } else {
       line_num <- which(support_version$version == gene_version)
       refgene <- fread(input = as.character(support_version$URL[line_num]), header = FALSE)
-      print("Converting format...")
+      cat("Converting format...\n")
       gene_version_clean <- clean_ucsc(refgene = refgene)
       fwrite(x = gene_version_clean, file = paste0("refgene/", gene_version, ".txt"), sep = "\t", quote = FALSE, col.names = TRUE)
     }
 
     if(file.exists(paste0("refgene/", gene_version, ".txt"))){
-      print("Task done.")
+      cat("Task done.\n")
     }
+    return(gene_version_clean)
   }
 }
