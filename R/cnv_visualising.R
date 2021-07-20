@@ -41,7 +41,7 @@
 cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL, start_position = NULL, end_position = NULL, individual_id = NULL, target_gene = NULL, max_chr_length = 160, refgene = NULL, plot_title = NULL, report_id = NULL, pedigree = NULL, show_name = c(0,160), width_1 = 13, height_1 = 10, folder = "cnv_visual", col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", col_gene = "gray", gene_font_size = 2.2) {
   if(!file.exists(paste0(folder))){
     dir.create(paste0(folder))
-    print(paste0("A new folder '", folder, "' was created in working directory."))
+    cat(paste0("A new folder '", folder, "' was created in working directory.\n"))
   }
 
   #prepare for population data
@@ -54,13 +54,13 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   standard_col <- c("Sample_ID", "Chr", "Start", "End")
   standard_col_anot <- c("Sample_ID", "Chr", "CNV_Start", "CNV_End")
   if(all(standard_col %in% colnames(cnv))){
-    print("Input data passed requirment check...")
+    cat("Input data passed requirment check...\n")
   } else if(all(standard_col_anot %in% colnames(cnv))){
     cnv <- cnv %>%
            rename(Start = CNV_Start, End = CNV_End)
-    print("Renamed 'CNV_Start' and 'CNV_End' as 'Start' and 'End', input data passed requirment check...")
+    cat("Renamed 'CNV_Start' and 'CNV_End' as 'Start' and 'End', input data passed requirment check...\n")
   } else{
-    print("Missing mandatory columns, please conform that input file at least has four columns: 'Sample_ID', 'Chr', 'Start', 'End' ")
+    cat("Missing mandatory columns, please conform that input file at least has four columns: 'Sample_ID', 'Chr', 'Start', 'End' \n")
   }
 
   #id_coord <- data.frame("Sample_ID" = sort(unique(cnv$Sample_ID))) #extract unique ID prepare coordinate
@@ -91,7 +91,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     cnv <- clean_cnv
     cnv_chr <- cnv[cnv$Chr == chr_id, ]
     if(nrow(cnv_chr) == 0){
-      print("The ID of chromosome not found in the input data, please check and reset the number of Chromosome!")
+      cat("The ID of chromosome not found in the input data, please check and reset the number of Chromosome!\n")
     }
     id_coord <- data.frame("Sample_ID" = sort(unique(cnv_chr$Sample_ID))) #extract unique ID prepare coordinate
     id_coord$Order <- seq(1,nrow(id_coord),1)
@@ -143,7 +143,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       print(paste0("Plotting the CNVs on Chromosome ", i))
     }
 
-    print("Task done")
+    cat("Task done.\n")
 
   #1.plot all CNV on all chromosome on population level
   #cnv_pop <- cnv_coord
@@ -201,7 +201,8 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "Copy")
   print(chr_plot)
   dev.off()
-  print("Task done, plot was stored in working directory.")
+  cat("Task done, plot was stored in working directory.\n")
+  return(chr_plot)
   }
 
   #else if(is.null(start_position & end_position) == "FALSE")
@@ -241,10 +242,11 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       png(res = 350, filename = zoom_name, width = width_1, height = height_1, units = "cm")
       print(zoom_plot)
       dev.off()
-      print("Task done, plot was stored in working directory.")
+      cat("Task done, plot was stored in working directory.\n")
+      return(zoom_plot)
     } else {
       indiv_id <- unique(cnv_chr_zoom$Sample_ID)
-      print("Individual ID in this CNVRs as following: ")
+      cat("Individual ID in this CNVRs as following: \n")
       print(indiv_id)
       #assign("indiv_id", value = cnv_chr_zoom, envir = .GlobalEnv)
       indiv <- cnv_chr_zoom
@@ -252,7 +254,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       if(!(is.null(pedigree))){
         pedb <- fread(pedigree)
         if (exists("pedb")) {
-          print("Pedigree was read in.")
+          cat("Pedigree was read in.\n")
         }
         indiv_id_ped <- merge(indiv, pedb, by.x = "Sample_ID", by.y = "Chip_ID", all.x = TRUE)
         #print(colnames(indiv_id_ped))
@@ -332,7 +334,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
 
     if(!is.null(report_id)) {
       indiv_id <- cnv_chr_zoom$Sample_ID
-      print("Individual ID in this CNVRs as following: ")
+      cat("Individual ID in this CNVRs as following: \n")
       print(indiv_id)
       }
     #gene_freq <- data.table(gene_freq) #convert it to data.table to set key
@@ -380,7 +382,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
       #labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "CNV_Num")
       labs(x = "Position (Mb)", y ="CNV", fill = "Copy")
 
-    print("Plotting gene...")
+    cat("Plotting gene...\n")
     gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, cnv = "yes", gene_font_size = gene_font_size, col_gene = col_gene)
 
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
@@ -389,7 +391,8 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
 
     print(zoom_plot)
     dev.off()
-    print("Task done, plot was stored in working directory.")
+    cat("Task done, plot was stored in working directory.\n")
+    return(zoom_plot)
   }
 
   else if (is.null(individual_id) == "FALSE"){
@@ -421,8 +424,9 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
     labs(x = "Physical Position (Mb)", y ="Autosome", title = indiv_title,  fill= "Copy")
   print(indiv_plot)
   dev.off()
-  print("Task done, plot was stored in working directory.")
-  #return(cnv_coord)
+
+  cat("Task done, plot was stored in working directory.\n")
+  return(indiv_plot)
   }
 
   else if(!(missing(target_gene))){
@@ -473,13 +477,13 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
                 labs(x = "Physical Position (Mb)", y ="Individual ID", title = title_gene, fill = "Copy")
     print(gene_cnv)
     dev.off()
-    print("Task done, plot was stored in working directory.")
+    cat("Task done, plot was stored in working directory.\n")
+    return(gene_cnv)
   }
 
 
   else{
-    print("Warning: Lack of input parameters!!!
-           Warning: Please check input parameters carefully!!!")
+    cat("Warning: Lack of input parameters!!!\nWarning: Please check input parameters carefully!!!\n")
   }
 
 }
