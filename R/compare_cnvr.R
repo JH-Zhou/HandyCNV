@@ -45,20 +45,37 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     drop_name = "Overlap_length"
     cnvr_cal = unique(subset(cnv, select = !(colnames(cnv) %in% drop_name))) %>%
                group_by(Type, Check_overlap) %>%
-               summarise(origi_length = sum(Length),
-                         num_CNVR = n_distinct(CNVR_ID))
+               summarise(origi_length = sum(Length, na.rm = T),
+                         num_CNVR = n_distinct(CNVR_ID, na.rm = T))
+
+
+
+    if(!(cnvr_cal$Type[1] == "Gain" & cnvr_cal$Check_overlap[1] == "Overlap")) {
+      gain_nonover <- data.frame(Type = 'Gain', Check_overlap = 'Non-Overlap', origi_length = 0, num_CNVR = 0)
+      cnvr_cal <- rbind(cnvr_cal, gain_nonover)
+    }
+
     cnvr_over <- cnv %>%
                  group_by(Type, Check_overlap) %>%
-                 summarise(overlap_len = sum(Overlap_length),
+                 summarise(overlap_len = sum(Overlap_length, na.rm = T),
                            num_overlap_oppsite = n_distinct(Overlap_length, na.rm = TRUE))
 
-    cnvr_over[1,3] = cnvr_cal[1,3] + cnvr_cal[2,3] - cnvr_over[2,3]
-    cnvr_over[3,3] = cnvr_cal[3,3] + cnvr_cal[4,3] - cnvr_over[4,3]
-    cnvr_over[5,3] = cnvr_cal[5,3] + cnvr_cal[6,3] - cnvr_over[6,3]
+    #check missing type
+    golden_table <- data.frame(Type = c("Gain","Gain", "Loss", "Loss", "Mixed", "Mixed"),
+                               Check_overlap = c("Non-Overlap", "Overlap", "Non-Overlap", "Overlap", "Non-Overlap", "Overlap"))
 
-    cnvr_cal <- merge(cnvr_cal, cnvr_over, by = c("Type", "Check_overlap"), all.x = TRUE)
 
-    cnvr_cal = cnvr_cal %>%
+    golden_table_i <- merge(golden_table, cnvr_cal, by = c("Type", "Check_overlap"), all.x = T)
+    golden_table_j <- merge(golden_table_i, cnvr_over, by = c("Type", "Check_overlap"), all.x = T)
+
+
+    golden_table_j[1,5] = golden_table_j[1,3] + golden_table_j[2,3] - golden_table_j[2,5]
+    golden_table_j[3,5] = golden_table_j[3,3] + golden_table_j[4,3] - golden_table_j[4,3]
+    golden_table_j[5,5] = golden_table_j[5,3] + golden_table_j[6,3] - golden_table_j[6,3]
+
+    #cnvr_cal <- merge(cnvr_cal, cnvr_over, by = c("Type", "Check_overlap"), all.x = TRUE)
+
+    cnvr_cal = golden_table_j %>%
                group_by(Type) %>%
                mutate(prop_overlap_len = round(overlap_len / sum(origi_length),3),
                       prop_num = round(num_CNVR / sum(num_CNVR),3))
@@ -70,11 +87,11 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     #prepare title for plot
     overlap_sum <- cnvr_cal %>%
                    group_by(Check_overlap) %>%
-                   summarise(num_CNVR = sum(num_CNVR),
-                             overlap_len = sum(overlap_len))
+                   summarise(num_CNVR = sum(num_CNVR, na.rm = T),
+                             overlap_len = sum(overlap_len, na.rm = T))
 
     summary_title <- paste0(overlap_sum$num_CNVR[2]," CNVRs ",
-                            round(overlap_sum$overlap_len[2]/sum(cnvr_cal$origi_length), 4) * 100, "% Overlap Length")
+                            round(overlap_sum$overlap_len[2]/sum(cnvr_cal$origi_length, na.rm = T), 4) * 100, "% Overlap Length")
 
     #add manual color to btar
     color_bar <- c("Non-Overlap" = col_1,
@@ -101,12 +118,23 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
 
   #dealing with data
   if (is.null(def_tar_map)) {
-    cnv_tar <- fread(cnvr_tar)
-    cnv_tar$version <- "Verision_TAR" # add verision in dataframe
+
+    if(typeof(cnvr_tar) == "character"){
+      cnv_tar <- fread(file = cnvr_tar, sep = "\t", header = TRUE)
+    } else {
+      cnv_tar = cnvr_tar
+    }
+
+    cnv_tar$version <- "Verision_TAR" # add version in dataframe
     colnames(cnv_tar) <- paste(colnames(cnv_tar), "TAR", sep = "_") #add suffix to all colnames
     tar_colnames <- colnames(cnv_tar) #set original column names use for extarting columns after matching
 
-    cnv_def <- fread(cnvr_def)
+    if(typeof(cnvr_def) == "character"){
+      cnv_def <- fread(file = cnvr_def, sep = "\t", header = TRUE)
+    } else {
+      cnv_def = cnvr_def
+    }
+
     cnv_def$version <- "Version_DEF"
     colnames(cnv_def) <- paste(colnames(cnv_def), "DEF", sep = "_")
     def_colnames <- colnames(cnv_def)
@@ -266,8 +294,13 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
 
       for (i in 1:max_chr){
         cnv_chr <- interval[which(interval$Chr == i), ]
-        cnvr_chr <- merge_cnvr(cnv = cnv_chr)
-        cnvr <- rbind(cnvr, cnvr_chr)
+        if(nrow(cnv_chr) >= 1){
+          cnvr_chr <- merge_cnvr(cnv = cnv_chr)
+          cnvr <- rbind(cnvr, cnvr_chr)
+          cat(paste0("Chromosome ", i, " has been processed.\n"))
+        } else {
+          cat(paste0("No CNVs detected on Chromosome", i, ".\n"))
+        }
       }
 
       return(cnvr)
