@@ -13,7 +13,7 @@
 #' @return Four or five tables: CNVR list, brief summary, and individual CNV and CNVR ID.
 #' @export call_cnvr
 #'
-call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
+call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "cnvr") {
   if(!file.exists(folder)){
     dir.create(folder)
     cat(paste0("Output folder '", folder, "' was created in the working directory.\n"))
@@ -59,9 +59,13 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
 
   for (i in 1:chr_set){
     cnv_chr <- clean_cnv[which(clean_cnv$Chr == i), ]
-    cnvr_chr <- merge_cnvr(cnv = cnv_chr)
-    cnvr <- rbind(cnvr, cnvr_chr)
-    print(paste0("Chromosome ", i, " has been processed."))
+    if(nrow(cnv_chr) >= 1){
+      cnvr_chr <- merge_cnvr(cnv = cnv_chr)
+      cnvr <- rbind(cnvr, cnvr_chr)
+      cat(paste0("Chromosome ", i, " has been processed.\n"))
+    } else {
+      cat(paste0("No CNVs detected on Chromosome", i, ".\n"))
+    }
   }
 
   #extract CNVR information, recode for CNVR
@@ -88,6 +92,33 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "UMD") {
     cnvr_type <- cnv_cnvr %>% group_by(CNVR_ID) %>% count(CNV_Value, name = "Count")
     cnvr_type2 <- reshape2::dcast(cnvr_type, CNVR_ID ~ CNV_Value, value.var = "Count")
     cnvr_type2$Type <- NA
+
+    #check cnv value completeness
+
+    cnv_value = c("0", "1", "3", "4")
+    if (!all(cnv_value %in% colnames(cnvr_type2))){
+
+      if (!(length(cnvr_type2$`0`) > 0)){
+        cnvr_type2$`0` <- NA
+        cat("No 0-copy type detected in CNV list.\n")
+        }
+
+      if (!(length(cnvr_type2$`1`) > 0)){
+        cnvr_type2$`1` <- NA
+        cat("No 1-copy type detected in CNV list.\n")
+        }
+
+      if (!(length(cnvr_type2$`3`) > 0)){
+        cnvr_type2$`3` <- NA
+        cat("No 3-copy type detected in CNV list.\n")
+        }
+
+      if (!(length(cnvr_type2$`4`) > 0)){
+        cnvr_type2$`4` <- NA
+        cat("No 4-copy type detected in CNV list.\n")
+        }
+      }
+
     for (i in 1:nrow(cnvr_type2)) {
       if (is.na(cnvr_type2[i, c("0")]) & is.na(cnvr_type2[i, c("1")])){
         cnvr_type2$Type[i] <- "Gain"
