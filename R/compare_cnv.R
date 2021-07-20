@@ -85,12 +85,24 @@ compare_cnv <- function(cnv_def, cnv_tar, def_tar_map = NULL, width_1 = 14, heig
 
   #dealing with data
   if (is.null(def_tar_map)) {
-    cnv_tar <- fread(cnv_tar)
+
+    if(typeof(cnv_tar) == "character"){
+      cnv_tar <- fread(file = cnv_tar, sep = "\t", header = TRUE)
+    } else {
+      cnv_tar = cnv_tar
+    }
+
     cnv_tar$version <- "Verision_TAR" # add version in dataframe
     colnames(cnv_tar) <- paste(colnames(cnv_tar), "TAR", sep = "_") #add suffix to all colnames
     tar_colnames <- colnames(cnv_tar) #set original column names use for extracting columns after matching
 
-    cnv_def <- fread(cnv_def)
+
+    if(typeof(cnv_def) == "character"){
+      cnv_def <- fread(file = cnv_def, sep = "\t", header = TRUE)
+    } else {
+      cnv_def = cnv_def
+    }
+
     cnv_def$version <- "Version_DEF"
     colnames(cnv_def) <- paste(colnames(cnv_def), "DEF", sep = "_")
     def_colnames <- colnames(cnv_def)
