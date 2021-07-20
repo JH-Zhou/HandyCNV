@@ -32,7 +32,23 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
   if (!file.exists(folder)){
     dir.create(folder)
   }
-  cnv_input <- fread(file = clean_cnv)
+
+  if(typeof(clean_cnv) == "character"){
+    cnv_input <- fread(file = clean_cnv, sep = "\t", header = TRUE)
+  } else {
+    cnv_input = clean_cnv
+  }
+
+  standard_input <- c("Sample_ID", "Chr", "Start", "End", "CNV_Value")
+
+  if(!all(standard_input %in% colnames(cnv_input))){
+    stop("The input file does not have enough columns.\nPlease includes at least five columns as belows:\nSample_ID, Chr, Start, End, CNV_Value")
+  }
+
+  CNV_Value <- c(0:4)
+  if(!all(unique(cnv_input$CNV_Value) %in% CNV_Value)){
+    stop("Summary plot can only working on 0 to 4 copies now.\n")
+  }
 
   #check input data completeness
   if(!("Length" %in% colnames(cnv_input))){
@@ -42,6 +58,7 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
   }
 
   #divide the length group of CNV
+  cat("Deviding the length group...\n")
   len_int <- as.vector(length_group)
   len_int_bp <- len_int * 1000000 #convert to Mb
   cnv_input <- cnv_input %>%
@@ -86,8 +103,11 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
 
   max_chr <- max(cnv_input$Chr)
 
+  cat("Plotting...\n")
   png(res = 350, filename = paste0(folder, "/f1_cnv_distribution.png"), height = 3500, width = 4000, bg = "transparent")
+
   adj_y <- max(cnv_input$Length)/max(chr_freq$Freq)
+
   cnv_distri <- ggplot(cnv_input) +
     geom_boxplot(aes(x = as.factor(Chr), y = Length/adj_y,  fill = as.factor(CNV_Value)), outlier.shape = NA) +
     scale_fill_manual(values = color_copy) +
@@ -196,15 +216,16 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
     #geom_text(stat = "count", aes(label = ..count..), vjust = -0.12) +
     theme_classic() +
     theme(axis.text.x = element_text(angle = 90)) +
+    #scale_x_discrete(breaks = seq(0, max(cnv_indiv$n_CNV), by = max(cnv_indiv$n_CNV)/10)) +
     labs(x = "Number of CNVs per Sample", y = "Number of Samples")
   print(f1d_indiv)
   dev.off()
   fwrite(cnv_indiv, file = paste0(folder, "/individual_cnv_count.txt"), sep = '\t', quote = FALSE)
 
   if(file.exists(paste0(folder, "/f5_individual.png"))){
-    print("The number of CNV in Individual plot was saved in working directory.")
+    cat("The number of CNV in Individual plot was saved in working directory.\n")
   } else {
-    print("Task faild, please check your input data format and paramter used!")
+    cat("Task faild, please check your input data format and paramter used!\n")
   }
 
 
@@ -216,9 +237,9 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
     print(ad_e)
     dev.off()
     if(file.exists(paste0(folder, "/cnv_summary_plot_1.png"))){
-      print("cnv_summary_plot_1 was saved in working directory.")
+      cat("cnv_summary_plot_1 was saved in working directory.\n")
     } else {
-      print("Task faild, please check your input data format and paramter used!")
+      cat("Task faild, please check your input data format and paramter used!\n")
     }
   }
 
@@ -230,15 +251,15 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
     print(all)
     dev.off()
       if(file.exists(paste0(folder, "/cnv_summaray_plot_2.png"))){
-        print("cnv_summaray_polt_2 was saved in working directory.")
-        print("Task done.")
+        cat("cnv_summaray_polt_2 was saved in working directory.\n")
+        cat("Task done.\n")
       } else {
-        print("Task faild, please check your input data format and paramter used!")
+        cat("Task faild, please check your input data format and paramter used!\n")
       }
   }
 
   else {
-    print("Task done. If you want to combine all these plot together, try arguments in function with plot_sum_1 = 1 and plot_sum_2 = 1")
+    cat("Task done. \nIf you want to combine all these plot together, try arguments in function with plot_sum_1 = 1 and plot_sum_2 = 1\n")
   }
 }
 
