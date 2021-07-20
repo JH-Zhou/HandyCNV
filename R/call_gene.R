@@ -9,19 +9,23 @@
 #' @param folder set the name of the output folder
 #' @import dplyr
 #'
-#' @importFrom  data.table fread fwrite setkey foverlaps
+#' @importFrom  data.table fread fwrite setkey foverlaps setDT
 #'
 #' @return Annotated file and brief summary
 #' @export call_gene
 #'
-call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, folder = "ARS"){
+call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, folder = "call_gene"){
   if(!file.exists(folder)){
     dir.create(folder)
     cat(paste0("Output folder '", folder, "' has been created in the working directory.\n"))
   }
 
   #if(missing(refgene)){
-    gene <- fread(file = refgene, header = TRUE)
+  if(typeof(refgene) == "character"){
+    gene <- fread(file = interval, sep = "\t", header = TRUE)
+  } else {
+    gene = refgene
+  }
   #} else{
   #  gene <- fread(file = refgene, header = FALSE)
   #  names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
@@ -56,7 +60,13 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
   #}
 
   gene$Chr <- suppressWarnings(as.integer(sub("chr", "", gene$Chr))) #convert Chr to integer in order to use foverlap in next step
-  interval <- fread(file = interval, header = TRUE)
+
+  if(typeof(interval) == "character"){
+    interval <- fread(file = interval, sep = "\t", header = TRUE)
+  } else {
+    interval = interval
+  }
+
   if(ncol(interval) < 4){
     stop("Not enought columns provided in the 'interval' list: at least four columns are required:\n'Interval_ID' 'Chr' 'Start' 'End'
         ")
@@ -64,7 +74,9 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
   names(interval)[1] = "ID"    #Replace names of table in order to the summarize in the final step,
                                #It required provide the Interval ID in the first column
                                #And at least four columns, Interval_ID (CNVR or ROH or QTL), Chr, Start and End
+  gene <- setDT(gene)
   setkey(gene, Chr, Start, End)
+  interval <- setDT(interval)
   cnvr_gene <- foverlaps(interval, gene, by.x = c("Chr", "Start", "End"), type = "any")
 
   cat("Checking gene annotation status in the interval file...\n")
@@ -105,8 +117,15 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
   ###########################################################3
   #when the input of clean_cnv provided, run the rest of codes
   if (!is.null(clean_cnv)){
-    cnv <- fread(file = clean_cnv)
+
+    if(typeof(clean_cnv) == "character"){
+      cnv <- fread(file = clean_cnv, sep = "\t", header = TRUE)
+    } else {
+      cnv = clean_cnv
+    }
+
     setkey(gene, Chr, Start, End)
+    cnv <- setDT(cnv)
     cnv_annotation <- foverlaps(cnv, gene)
     cnv_annotation <- cnv_annotation %>%
                       rename(g_Start = Start,
@@ -153,6 +172,9 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
 
     fwrite(cnv_annotation, file = paste0(folder, "/cnv_annotation.txt"), sep = "\t", quote = FALSE)
     fwrite(gene_freq_location, file = paste0(folder, "/gene_freq_cnv.txt"), sep = "\t", quote = FALSE)
+
+    return(gene_freq_location)
+
     if(file.exists(paste0(folder, "/interval_annotation.txt")) & file.exists(paste0(folder, "/call_gene_summary.txt")) & file.exists(paste0(folder, "/cnv_annotation.txt")) & file.exists(paste0(folder, "/gene_freq_cnv.txt"))) {
       cat(paste0("Task done. Files containing the CNVs, CNVR annotations, summary tables, and the frequency of genes in CNV regions have been saved in the '", folder, "'.\n"))
     } else {
