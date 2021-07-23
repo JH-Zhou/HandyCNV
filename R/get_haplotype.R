@@ -136,7 +136,7 @@ get_haplotype <- function(geno, pos){
     left_join(uniq_hap, by = "Haploid") %>%
     group_by(Sample_ID) %>%
     arrange(Re_code) %>% #make sure no mirror type generated in collapse
-    mutate(Recode_Type = paste0(Re_code, collapse = "")) %>%
+    mutate(Recode_Type = paste0(Re_code, collapse = "-")) %>%
     select(Sample_ID, Recode_Type) %>%
     unique()
   #data.frame(table(Recode_type = hap_type$Recode_Type))
