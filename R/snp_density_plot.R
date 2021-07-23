@@ -23,7 +23,12 @@
 #' @export plot_snp_density
 #'
 plot_snp_density <- function(map, max_chr = 29, top_density = 72, low_density = 33, color_top = "yellow", color_low = "blue", color_mid = "red", legend_position = c(0.9, 0.1), x_label = "Physical distance (Mb)", y_label = "Number of SNPs per Mb", ncol_1 = 5){
-  snp_map <- fread(map)
+  if(typeof(map) == "character"){
+    snp_map <- fread(file = map)
+  } else {
+   snp_map = map
+  }
+
   if(!ncol(snp_map) == 4){
     stop("The input map file is incorrectly formatted\n",
          "Four columns are mandatory in the order of Chr, SNP, CM, Position.")
