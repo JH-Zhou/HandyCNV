@@ -67,7 +67,7 @@ get_refgene <- function(gene_version = NULL){
                    "Pig_susScr11_UCSC", "Pig_susScr11_ENS",
                    "Human_hg38",
                    "Sheep_Oar_v4.0_UCSC", "Sheep_Oar_v3.1_UCSC", "Sheep_Oar_v3.1_ENS",
-                   "Horse_equCab3.0_UCSC",
+                   "Horse_equCab3.0_UCSC", "Horse_equCab2.0_UCSC",
                    "Dog_UMICH_Zoey_3.1_UCSC", "Dog_UMICH_Zoey_3.1_ENS")
   support_version <- data.frame(version = c("Cow_ARS_UCSC",
                                             "Cow_ARS_ENS",
@@ -82,6 +82,7 @@ get_refgene <- function(gene_version = NULL){
                                             "Sheep_Oar_v3.1_ENS",
                                             "Sheep_Oar_v3.1_ENS_id",
                                             "Horse_equCab3.0_UCSC",
+                                            "Horse_equCab2.0_UCSC",
                                             "Dog_UMICH_Zoey_3.1_UCSC",
                                             "Dog_UMICH_Zoey_3.1_ENS",
                                             "Dog_UMICH_Zoey_3.1_ENS_id"),
@@ -98,6 +99,7 @@ get_refgene <- function(gene_version = NULL){
                                         "https://hgdownload.soe.ucsc.edu/goldenPath/oviAri3/database/ensGene.txt.gz",
                                         "https://hgdownload.soe.ucsc.edu/goldenPath/oviAri3/database/ensemblToGeneName.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/equCab3/database/refGene.txt.gz",
+                                        "https://hgdownload.soe.ucsc.edu/goldenPath/equCab2/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/ensGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/ensemblToGeneName.txt.gz"
