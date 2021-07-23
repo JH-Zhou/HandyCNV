@@ -1,2 +1,2 @@
 Interval_Has_Gene	Interval_Without_Gene	Total_Number_of_Genes
-692	286	2906
+691	287	2901

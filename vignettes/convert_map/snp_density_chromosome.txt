@@ -31,6 +31,6 @@ Chr	SNP_Freq_tar	SNP_Freq_def	Difference	Length_tar	Length_def	tar_Density	def_D
 29	2641	2327	314	51.072873	51.492483	52	45
 30	5000	5055	55	133.140229	148.816634	38	34
 31	60	18	42				
-32	613	8	605				
-33	8	0	8				
+32	613	0	613				
+33	8	8	0				
 99	6	2038	2032				

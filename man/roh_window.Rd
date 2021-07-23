@@ -6,7 +6,7 @@
 \usage{
 roh_window(
   roh,
-  window_size = 5,
+  window_size = 1,
   max_chr = 29,
   length_autosomal = 2489.386,
   threshold = 0.3,

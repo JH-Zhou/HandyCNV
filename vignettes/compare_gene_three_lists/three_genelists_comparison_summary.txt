@@ -1,4 +1,4 @@
 Common_Gene	Number_Gene
 Common_High	2
-Common_Low	3788
+Common_Low	3783
 High_and_Low	115

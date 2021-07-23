@@ -8,7 +8,7 @@ call_gene(
   refgene = "ARS_ens",
   interval = NULL,
   clean_cnv = NULL,
-  folder = "ARS"
+  folder = "call_gene"
 )
 }
 \arguments{
