@@ -40,7 +40,11 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
   #                   "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
   #                   "score", "name2", "cdsStartStat", "cdsEndStat", "exonFrames")
   #}else{
-  gene <- fread(file = refgene, header = TRUE)
+  if(typeof(refgene) == "character"){
+    gene <- fread(file = refgene, header = TRUE, sep = "\t")
+  } else {
+    gene <- refgene
+  }
    #gene <- refgene
    # names(gene) <- c("bin", "name", "Chr", "strand", "Start", "End",
     #                 "cdsStart", "cdsEnd", "exonCount", "exonStarts", "exonEnds",
@@ -92,7 +96,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
         filter(Start > coord_name[1] & End < coord_name[2] | Start > coord_name[3] & End < coord_name[4] | Start > coord_name[5] & End < coord_name[6])
     }
 
-    #check if plot for roh or CNV, the diferrence is when gene figure combine to interval reduce the distance between the middle (from top to bottom) are reduced when set 'cnv'
+    #check if plot for roh or CNV, the difference is when gene figure combine to interval reduce the distance between the middle (from top to bottom) are reduced when set 'cnv'
     if(is.null(cnv)){
       if(missing(height_1)){
         ggplot() +
@@ -182,14 +186,18 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
   }
 
   #prepare for population data
-  roh <- fread(file = clean_roh)
+  if(typeof(clean_roh) == "character"){
+    roh <- fread(file = clean_roh, header = TRUE)
+  } else {
+    roh <- clean_roh
+  }
 
   #check if the input is a Plink results
   #convert to the standards format if it is
   plink_roh_names <- c("FID", "IID", "PHE", "CHR", "SNP1", "SNP2", "POS1", "POS2",
                        "KB", "NSNP", "DENSITY", "PHOM", "PHET")
   if(length(colnames(roh)) == length(plink_roh_names)){
-    print("ROH with input file in PLINK format was detected, coverting to HandyCNV standard formats")
+    cat("ROH with input file in PLINK format was detected, coverting to HandyCNV standard formats\n")
     colnames(roh) <- c("FID", "Sample_ID", "PHE", "Chr", "Start_SNP", "End_SNP",
                        "Start", "End", "Length", "Num_SNP", "DENSITY", "PHOM", "PHET")
     handycnv_name <- c("Sample_ID",	"Chr", "Start", "End", "Num_SNP",	"Length", "Start_SNP",	"End_SNP")
@@ -197,7 +205,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     roh$Chr <- as.numeric(roh$Chr)
     roh <- dplyr::filter(roh, roh$Chr %in% c(1:max(roh$Chr)))
   } else{
-    print("Preparing plot data...")
+    cat("Preparing plot data...\n")
     }
 
   # id_coord <- data.frame("Sample_ID" = sort(unique(roh$Sample_ID))) #extract unique ID prepare coordinate
@@ -243,7 +251,8 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       labs(title = "ROH Distribution on Population Level", fill = "Length")
     print(popu_plot)
     dev.off()
-    print("Task done, plot was stored in working directory.")
+    cat("Task done, plot was stored in working directory.")
+    return(popu_plot)
   }
 
   else if(is.null(chr_id) == "FALSE" & is.null(start_position) & is.null(refgene)){
@@ -274,7 +283,8 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       labs(x = "Physical Position (Mb)", y ="Individual ID", title = chr_title, fill = "Length")
     print(chr_plot)
     dev.off()
-    print("Task done, plot was stored in working directory.")
+    cat("Task done, plot was stored in working directory.\n")
+    return(chr_plot)
   }
 
   #else if(is.null(start_position & end_position) == "FALSE")
@@ -310,7 +320,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     print("Task done, plot was stored in working directory.")
     if(!is.null(report_id)) {
       indiv_id <- unique(cnv_chr_zoom$Sample_ID)
-      print("Individual ID in this CNVRs as following: ")
+      cat("Individual ID in this CNVRs as following: \n")
       print(indiv_id)
       return(indiv_id)
       #assign("indiv_id", value = cnv_chr_zoom, envir = .GlobalEnv)
@@ -320,7 +330,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
         pedb <- fread(pedigree)
 
         if (exists("pedb")) {
-          print("Pedigree was read in.")
+          cat("Pedigree was read in.")
         }
         indiv_id_ped <- merge(indiv, pedb, by.x = "Sample_ID", by.y = "Chip_ID", all.x = TRUE)
         #print(colnames(indiv_id_ped))
@@ -405,14 +415,15 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       scale_x_continuous(limits = c(start_position, end_position)) +
       #labs(x = "Physical Position (Mb)", y ="Individual ID", title = zoom_title, fill = "Length")
       labs(x = "Physical Position (Mb)", y ="Individual ID")
-    print("plotting gene....")
+    cat("plotting gene....\n")
     gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, gene_font_size = gene_font_size)
     #png(res = 300, filename = zoom_name, width = 3500, height = 2000)
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
     ggsave(filename = zoom_name, width = width_1, height = height_1, units = "cm", dpi = 350)
     #dev.off()
-    print("Task done, plot was stored in working directory.")
+    cat("Task done, plot was stored in working directory.\n")
+    return(roh_gene)
   }
 
   else if (is.null(individual_id) == "FALSE")
@@ -440,8 +451,9 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       labs(x = "Physical Position (Mb)", y ="Autosome", title = indiv_title,  fill= "Length")
     print(indiv_plot)
     dev.off()
-    print("Task done, plot was stored in working directory.")
-    #return(cnv_coord)
+    cat("Task done, plot was stored in working directory.\n")
+
+    return(indiv_plot)
   } else if (is.null(target_region) == "FALSE"){
     #get input data
     target_region <- as.vector(target_region)
@@ -485,16 +497,18 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
       roh_gene <- plot_grid(gene_plot, target_plot, ncol = 1, rel_heights = c(1, 3))
       print(roh_gene)
       ggsave(filename = target_name, plot = roh_gene, width = width_1, height = height_1, units = "cm", dpi = 350)
-      print("Task done, plot was stored in working directory.")
+      cat("Task done, plot was stored in working directory.\n")
+      return(roh_gene)
     } else {
       ggsave(filename = target_name, plot = target_plot, width = width_1, height = height_1, units = "cm", dpi = 350)
-      print("Task done, plot was stored in working directory.")
+      cat("Task done, plot was stored in working directory.\n")
+      return(target_plot)
     }
 
   }
 
   else{
-    print("Warning: Lack of input parameters!!!
-          Warning: Please check input parameters carefully!!!")
+    cat("Warning: Lack of input parameters!!!\n
+          Warning: Please check input parameters carefully!!!\n")
   }
   }
