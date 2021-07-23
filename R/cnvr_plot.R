@@ -207,13 +207,13 @@ cnvr_plot <- function(cnvr, assembly = "ARS", overlap_cnvr = NULL, label_prop = 
 
   else {
     if(typeof(cnvr) == "character"){
-      cnvr_plot_part <- fread(file = cnvr, header = TRUE, sep = "\t")
+      cnvr <- fread(file = cnvr, header = TRUE, sep = "\t")
     } else {
-      cnvr_plot_part <- cnvr
+      cnvr <- cnvr
     }
 
     # high_freq <- cnvr[which(cnvr[, cnvr$Frequent >= sample_size * 0.05]), ] #call common CNVRs
-    high_freq <- filter(cnvr, n_Sample >= sample_size * common_cnv_threshold)
+    high_freq <- cnvr %>% filter(n_Sample >= sample_size * common_cnv_threshold)
     cat(paste0("There ", nrow(high_freq), " high frequency CNVR passed the customized threshold.\n"))
     for (i in 1:nrow(high_freq)) {
       print(paste0("Ploting CNVR ", i, "..." ))
