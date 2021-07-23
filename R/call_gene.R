@@ -107,7 +107,8 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
     left_join(unique(cnvr_gene[,c("ID", "Chr", "i.Start", "i.End")]), by = "ID") %>% #matching the rest information to window_id
     arrange(Chr, i.Start) %>% #descending order by number_roh
     mutate(num_gene = lengths(strsplit(gene_name, split = ","))) %>%#count the number of genes in window
-    select(ID, Chr, i.Start, i.End, num_gene, gene_name)
+    mutate(num_gene_2 = if_else(gene_name == "NA", true = gene_name, false = as.character(num_gene))) %>%
+    select(ID, Chr, Start = i.Start, End = i.End, n_gene = num_gene_2, gene_name)
 
   fwrite(window_gene, file = paste0(folder, "/interval_gene_summarise_table.txt"), sep = "\t", quote = F)
 
