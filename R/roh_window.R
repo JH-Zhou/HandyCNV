@@ -30,10 +30,11 @@
 #' @importFrom data.table fread fwrite setkey foverlaps setDT
 #' @importFrom scales unit_format
 #' @importFrom stats sd
+#' @importFrom utils read.table write.table
 #'
 #' @return
 #' Summary results of ROH by sliding windows across all chromosomes.
-#' @export roh_plot
+#' @export roh_window
 #'
 roh_window <- function(roh, window_size = 1, max_chr = 29, length_autosomal = 2489.386, threshold = 0.3, length_group = c(1, 2, 4, 8, 16), folder = "roh_window", col_higher = "red", col_lower = "black", height_1 = 18, width_1 = 21, legend_x = 0.9, legend_y = 0.1, ncol_1 = 6, x_label = "Physical Position (Mb)", y_label = "Number of Samples") {
   if(!(dir.exists(folder))){
