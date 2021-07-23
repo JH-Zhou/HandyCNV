@@ -36,10 +36,21 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
 
   if (is.null(gene_freq_3) & is.null(gene_freq_4)){
     #Comparison of gene frequency between two CNV annotation results
-    list_1 <- fread(gene_freq_1)
+
+    if(typeof(gene_freq_1) == "character"){
+      list_1 <- fread(file = gene_freq_1, sep = "\t", header = TRUE)
+    } else {
+      list_1 = gene_freq_1
+    }
+
     colnames(list_1) <- paste(colnames(list_1), "1", sep = "_")
 
-    list_2 <- fread(gene_freq_2)
+    if(typeof(gene_freq_2) == "character"){
+      list_2 <- fread(file = gene_freq_2, sep = "\t", header = TRUE)
+    } else {
+      list_2 = gene_freq_2
+    }
+
     colnames(list_2) <- paste(colnames(list_2), "2", sep = "_")
 
     two_list <- merge(list_1, list_2, by.x = "name2_1", by.y = "name2_2", all = TRUE) #combine all gene together between two version of results
@@ -79,18 +90,32 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
     } else{
       print("Checking outputs files was faild, please check the input files and resetting a working directory!")
     }
+    return(compare_plot)
   }
 
   else if(is.null(gene_freq_4)){
 
     #read all gene lists
-    list_1 <- fread(gene_freq_1)
+    if(typeof(gene_freq_1) == "character"){
+      list_1 <- fread(file = gene_freq_1, sep = "\t", header = TRUE)
+    } else {
+      list_1 = gene_freq_1
+    }
     colnames(list_1) <- paste(colnames(list_1), "1", sep = "_")
 
-    list_2 <- fread(gene_freq_2)
+    if(typeof(gene_freq_2) == "character"){
+      list_2 <- fread(file = gene_freq_2, sep = "\t", header = TRUE)
+    } else {
+      list_2 = gene_freq_2
+    }
     colnames(list_2) <- paste(colnames(list_2), "2", sep = "_")
 
-    list_3 <- fread(gene_freq_3)
+    if(typeof(gene_freq_3) == "character"){
+      list_3 <- fread(file = gene_freq_3, sep = "\t", header = TRUE)
+    } else {
+      list_3 = gene_freq_3
+    }
+
     colnames(list_3) <- paste(colnames(list_3), "3", sep = "_")
 
     #merge gene lists
@@ -137,16 +162,33 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
   }
   else{
     #read all gene lists
-    list_1 <- fread(gene_freq_1)
+    if(typeof(gene_freq_1) == "character"){
+      list_1 <- fread(file = gene_freq_1, sep = "\t", header = TRUE)
+    } else {
+      list_1 = gene_freq_1
+    }
     colnames(list_1) <- paste(colnames(list_1), "1", sep = "_")
 
-    list_2 <- fread(gene_freq_2)
+    if(typeof(gene_freq_2) == "character"){
+      list_2 <- fread(file = gene_freq_2, sep = "\t", header = TRUE)
+    } else {
+      list_2 = gene_freq_2
+    }
     colnames(list_2) <- paste(colnames(list_2), "2", sep = "_")
 
-    list_3 <- fread(gene_freq_3)
+    if(typeof(gene_freq_3) == "character"){
+      list_3 <- fread(file = gene_freq_3, sep = "\t", header = TRUE)
+    } else {
+      list_3 = gene_freq_3
+    }
+
     colnames(list_3) <- paste(colnames(list_3), "3", sep = "_")
 
-    list_4 <- fread(gene_freq_4)
+    if(typeof(gene_freq_4) == "character"){
+      list_4 <- fread(file = gene_freq_4, sep = "\t", header = TRUE)
+    } else {
+      list_4 = gene_freq_4
+    }
     colnames(list_4) <- paste(colnames(list_4), "4", sep = "_")
 
 
@@ -194,7 +236,7 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
       color_group <- ifelse(plot_data_desc$name2_1  %in% common_high_name$name2_1, yes = "red", no = "black")
     }
 
-    ggplot(plot_data, aes(x = variable , y = name2_1, fill = value)) +
+    compare_plot <- ggplot(plot_data, aes(x = variable , y = name2_1, fill = value)) +
       geom_tile() +
       #scale_fill_gradientn(colours = c("yellow", "red"), na.value = "black") +
       scale_fill_gradientn(colours = c(col_2, col_1), na.value = "black") +
@@ -202,7 +244,7 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
       scale_x_discrete(labels = c(title_1, title_2, title_3, title_4)) +
       {if(color_label == "TRUE")theme(axis.text.y = element_text(color = rev(color_group)))} +
       labs(x = NULL, y = "Gene", fill = "Quantity")
-    ggsave(filename = paste0(folder, "/four_gene_heatmap.png"), dpi = 300, height = height_1, width = width_1, units = "cm")
+    ggsave(plot = compare_plot, filename = paste0(folder, "/four_gene_heatmap.png"), dpi = 300, height = height_1, width = width_1, units = "cm")
 
     fwrite(four_gene, file = paste0(folder, "/four_gene_comparison.txt"), sep = "\t", quote = FALSE)
     fwrite(four_gene_summary, file = paste0(folder, "/four_gene_comparison_summary.txt"), sep = "\t", quote = FALSE)
@@ -211,6 +253,7 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
     } else{
       warning("Checking outputs files was faild, please check the input files and resetting a working directory!")
     }
+    return(compare_plot)
   }
 
 }
