@@ -33,9 +33,9 @@
 #'
 #' @return
 #' Summary results of ROH by sliding windows across all chromosomes.
-#' @export roh_window
+#' @export roh_plot
 #'
-roh_window <- function(roh, window_size = 5, max_chr = 29, length_autosomal = 2489.386, threshold = 0.3, length_group = c(1, 2, 4, 8, 16), folder = "roh_window", col_higher = "red", col_lower = "black", height_1 = 18, width_1 = 21, legend_x = 0.9, legend_y = 0.1, ncol_1 = 6, x_label = "Physical Position (Mb)", y_label = "Number of Samples") {
+roh_window <- function(roh, window_size = 1, max_chr = 29, length_autosomal = 2489.386, threshold = 0.3, length_group = c(1, 2, 4, 8, 16), folder = "roh_window", col_higher = "red", col_lower = "black", height_1 = 18, width_1 = 21, legend_x = 0.9, legend_y = 0.1, ncol_1 = 6, x_label = "Physical Position (Mb)", y_label = "Number of Samples") {
   if(!(dir.exists(folder))){
     dir.create(folder)
     print(paste0("New foler ", folder, " was create in working directory."))
@@ -172,8 +172,11 @@ roh_window <- function(roh, window_size = 5, max_chr = 29, length_autosomal = 24
   }
   ####################################################################################
 
-
-  roh <- fread(roh)
+  if(typeof(roh) == "character"){
+    roh <- fread(file = roh)
+  } else {
+    roh = roh
+  }
 
   #check if the input is a Plink results
   #convert to the standard format if it is
