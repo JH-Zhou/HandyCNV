@@ -22,7 +22,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
 
   #if(missing(refgene)){
   if(typeof(refgene) == "character"){
-    gene <- fread(file = interval, sep = "\t", header = TRUE)
+    gene <- fread(file = refgene, sep = "\t", header = TRUE)
   } else {
     gene = refgene
   }
@@ -65,6 +65,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
     interval <- fread(file = interval, sep = "\t", header = TRUE)
   } else {
     interval = interval
+    interval$Chr <- as.integer(interval$Chr)
   }
 
   if(ncol(interval) < 4){
@@ -123,6 +124,7 @@ call_gene <- function(refgene = "ARS_ens", interval = NULL, clean_cnv = NULL, fo
       cnv <- fread(file = clean_cnv, sep = "\t", header = TRUE)
     } else {
       cnv = clean_cnv
+      cnv$Chr <- as.integer(cnv$Chr)
     }
 
     setkey(gene, Chr, Start, End)
