@@ -399,11 +399,15 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
   #plot on individual level
     #cnv_indiv <- cnv_p[which(cnv_p$Sample_ID == "204806050057_R01C01")]
   cnv_indiv <- cnv[which(cnv$Sample_ID == individual_id),]
-  chr_coord <- data.frame("Chr" = seq(1,max(cnv_indiv$Chr),1))
+  chr_coord <- data.frame("Chr" = seq(1,max(as.integer(cnv_indiv$Chr)),1))
   chr_coord$x <- max(cnv$End) #adjust x for geom_text
 
   chr_coord$y <- (chr_coord$Chr-1)*5 + 1 #adjust y for geom_text
-  cnv_indiv_coord <- merge(cnv_indiv, chr_coord, all.x = TRUE, sort = FALSE)
+
+  cnv_indiv$Chr <- as.character(cnv_indiv$Chr)
+  chr_coord$Chr <- as.character(chr_coord$Chr)
+  cnv_indiv_coord <- merge(cnv_indiv, chr_coord, by = "Chr", all.x = TRUE, sort = FALSE)
+  cnv_indiv_coord$Chr <- as.integer(cnv_indiv_coord$Chr)
 
   #4.
   indiv_name <- paste0("CNV_of_", individual_id,".png")
