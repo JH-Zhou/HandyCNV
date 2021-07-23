@@ -139,12 +139,12 @@ call_cnvr <- function(clean_cnv, roh = NULL, chr_set = 29, folder = "cnvr") {
     #The overall summary
     cnvr_summary <- cnvr_f_type %>%
       group_by(Type) %>%
-      summarise(N = n(), "Average Length" = mean(Length), "Min Length" = min(Length), "Max Length" = max(Length), "Total Length" = sum(Length))
+      summarise(N = n(), "Average Length" = round(mean(Length), digits = 0), "Min Length" = min(Length), "Max Length" = max(Length), "Total Length" = sum(Length, na.rm = T))
 
     #Partial summary
     cnvr_chr_summary <- cnvr_f_type %>%
       group_by(Chr) %>%
-      summarise("Total Length" = sum(Length), "Number of CNVR" = n())
+      summarise("Total Length" = sum(Length, na.rm = T), "Number of CNVR" = n())
 
     cat("Overall summary of CNVRs:\n")
     print(cnvr_summary)
