@@ -63,7 +63,12 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
   }
 
     else if (!(is.null(penncnv))){
-    penn <- fread(file = penncnv, sep = " ", header = FALSE)
+      if(typeof(penncnv) == "character"){
+        penn <- fread(file = penncnv, sep = " ", header = FALSE)
+      } else {
+        penn <- penncnv
+      }
+
     penn <- separate(penn, V1, into = c("V1", "Start"), sep =":")
     penn <- separate(penn, Start, into = c("Start", "End"), sep = "-")
     penn <- separate(penn, V2, into = c("V2", "Num_SNP"), sep = "=")
@@ -75,10 +80,12 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
     penn <- separate(penn, V6, into = c("V6", "Start_SNP"), sep = "=")
     penn <- separate(penn, V7, into = c("V7", "End_SNP"), sep = "=")
     penn <- separate(penn, V1, into = c("V1", "Chr"), sep = "chr")
-    penn <- separate(penn, V8, into = c("V8", "Confidence_Score"), sep = "=") #If you didn't use -confidence function while running penn detect.pl, don't need this step
+    if(ncol(penn) == 8){
+      penn <- separate(penn, V8, into = c("V8", "Confidence_Score"), sep = "=") #If you didn't use -confidence function while running penn detect.pl, don't need this step
+      penn$Confedence_Score <- as.numeric(penn$Confedence_Score)
+    }
     penn$Start <- as.numeric(penn$Start)
     penn$End <- as.numeric(penn$End)
-    penn$Confedence_Score <- as.numeric(penn$Confedence_Score)
     penn$Length <- penn$End - penn$Start + 1
     penn <- penn[, c("Sample_ID", "Chr", "Start", "End", "Num_SNP", "Length", "CNV_Value", "Start_SNP", "End_SNP")] #"Confidence_Score")]
     #penn <- penn[penn$Confidence_Score >= 10] #delete the cnv which confidence lesser than 10
