@@ -208,7 +208,7 @@ roh_window <- function(roh, window_size = 1, max_chr = 29, length_autosomal = 24
 
   length_summary <- roh_length %>%
                     group_by(Length_group) %>%
-                    summarise(number_sample = n(),
+                    summarise(number_ROH = n(),
                               Mean = round(mean(Length, na.rm = T), digits = 0),
                               SD = round(sd(Length, na.rm = T), digits = 0),
                               Min = min(Length, na.rm = T),
