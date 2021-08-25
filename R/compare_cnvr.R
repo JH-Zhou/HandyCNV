@@ -43,16 +43,15 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     cnv <- cnv_checkover
     title_f = title_fig
     drop_name = "Overlap_length"
-    cnvr_cal = unique(subset(cnv, select = !(colnames(cnv) %in% drop_name))) %>%
-               group_by(Type, Check_overlap) %>%
-               summarise(origi_length = sum(Length, na.rm = T),
-                         num_CNVR = n_distinct(CNVR_ID, na.rm = T))
+    cnvr_cal <- unique(subset(cnv, select = !(colnames(cnv) %in% drop_name))) %>%
+                group_by(Type, Check_overlap) %>%
+                summarise(origi_length = sum(Length, na.rm = T),
+                          num_CNVR = n_distinct(CNVR_ID, na.rm = T))
 
 
-
-    if(!(cnvr_cal$Type[1] == "Gain" & cnvr_cal$Check_overlap[1] == "Overlap")) {
+    if(!(cnvr_cal$Type[1] == "Gain" & cnvr_cal$Check_overlap[1] == "Non-Overlap")) {
       gain_nonover <- data.frame(Type = 'Gain', Check_overlap = 'Non-Overlap', origi_length = 0, num_CNVR = 0)
-      cnvr_cal <- rbind(cnvr_cal, gain_nonover)
+      cnvr_cal <- rbind(gain_nonover, cnvr_cal)
     }
 
     cnvr_over <- cnv %>%
@@ -93,7 +92,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     summary_title <- paste0(overlap_sum$num_CNVR[2]," CNVRs ",
                             round(overlap_sum$overlap_len[2]/sum(cnvr_cal$origi_length, na.rm = T), 4) * 100, "% Overlap Length")
 
-    #add manual color to btar
+    #add manual color to bar
     color_bar <- c("Non-Overlap" = col_1,
                    "Overlap" = col_2)
     png(res = 300, filename = paste0(folder, "/", title_f, ".png"), width = width_1, height = height_1, bg = "transparent", units = "cm")
@@ -123,6 +122,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
       cnv_tar <- fread(file = cnvr_tar, sep = "\t", header = TRUE)
     } else {
       cnv_tar = cnvr_tar
+      cnv_tar$Length <- as.integer(cnv_tar$Length)
     }
 
     cnv_tar$version <- "Verision_TAR" # add version in dataframe
@@ -133,6 +133,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
       cnv_def <- fread(file = cnvr_def, sep = "\t", header = TRUE)
     } else {
       cnv_def = cnvr_def
+      cnv_def$Length <- as.integer(cnvr_def$Length)
     }
 
     cnv_def$version <- "Version_DEF"
