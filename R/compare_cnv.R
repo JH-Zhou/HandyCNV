@@ -90,6 +90,7 @@ compare_cnv <- function(cnv_def, cnv_tar, def_tar_map = NULL, width_1 = 14, heig
       cnv_tar <- fread(file = cnv_tar, sep = "\t", header = TRUE)
     } else {
       cnv_tar = cnv_tar
+      cnv_tar$CNV_Value <- as.integer(cnv_tar$CNV_Value)
     }
 
     cnv_tar$version <- "Verision_TAR" # add version in dataframe
@@ -101,6 +102,7 @@ compare_cnv <- function(cnv_def, cnv_tar, def_tar_map = NULL, width_1 = 14, heig
       cnv_def <- fread(file = cnv_def, sep = "\t", header = TRUE)
     } else {
       cnv_def = cnv_def
+      cnv_def$CNV_Value <- as.integer(cnv_def$CNV_Value)
     }
 
     cnv_def$version <- "Version_DEF"
