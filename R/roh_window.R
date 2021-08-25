@@ -213,8 +213,8 @@ roh_window <- function(roh, window_size = 1, max_chr = 29, length_autosomal = 24
                               SD = round(sd(Length, na.rm = T), digits = 0),
                               Min = min(Length, na.rm = T),
                               Max = max(Length, na.rm = T)) %>%
-                    mutate(Proportion = round(number_sample / sum(number_sample), digits = 3),
-                           N_per_animal = round(number_sample / length(unique(roh$Sample_ID)), digits = 1))
+                    mutate(Proportion = round(number_ROH / sum(number_ROH), digits = 3),
+                           N_per_animal = round(number_ROH / length(unique(roh$Sample_ID)), digits = 1))
   cat("The summary of length groups as following: \n")
   print(length_summary)
 
