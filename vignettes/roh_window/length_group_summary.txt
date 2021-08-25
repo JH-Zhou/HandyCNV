@@ -1,4 +1,4 @@
-Length_group	number_sample	Mean	SD	Min	Max	Proportion	N_per_animal
+Length_group	number_ROH	Mean	SD	Min	Max	Proportion	N_per_animal
 >=16Mb	635	22160949	6454382	16000093	55063044	0.036	1.6
 1-2Mb	4193	1580354	255957	1000086	1999922	0.239	10.6
 2-4Mb	6239	2859967	574522	2000072	3999736	0.356	15.7
