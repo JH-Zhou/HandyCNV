@@ -43,21 +43,22 @@ cnvr_plot <- function(cnvr, assembly = "ARS", overlap_cnvr = NULL, label_prop = 
       cnvr_plot_part <- fread(file = cnvr, header = TRUE, sep = "\t")
     } else {
       cnvr_plot_part <- cnvr
+      cnvr_plot_part$Chr <- as.integer(cnvr_plot_part$Chr)
     }
 
     chr <- data.frame("Chr" = seq(1,max(as.integer(cnvr_plot_part$Chr))))  #generate a chr order
     chr <- chr %>%
            mutate(chr_top = (as.integer(max(cnvr_plot_part$Chr)) + 1 - Chr)*3,
-                  chr_bottom = chr_top - 1.5)   #our plot depend on x and y coordinate axix, the toppest is chr 1 and bottom is chr29, interval of y axis is 3
-                                                #bar plot depth is 1.5, this will using for polt rectangle for cnvr
+                  chr_bottom = chr_top - 1.5)   #our plot depend on x and y coordinate axis, the top one is chr 1 and bottom is chr29, interval of y axis is 3
+                                                #bar plot depth is 1.5, this will using for plot rectangle for cnvr
 
-    #chr$chr_top <- (max(cnvr_plot_part$Chr) + 1 -chr$Chr)*3 #our plot depend on x and y coordinate axix, the toppest is chr 1 and bottom is chr29, interval of y axis is 3
-    #chr$chr_bottom <- chr$chr_top - 1.5 #bar plot deepth is 1.5, this will using for polt rectangle for cnvr
+    #chr$chr_top <- (max(cnvr_plot_part$Chr) + 1 -chr$Chr)*3 #our plot depend on x and y coordinate axis, the top one is chr 1 and bottom is chr29, interval of y axis is 3
+    #chr$chr_bottom <- chr$chr_top - 1.5 #bar plot depth is 1.5, this will using for plot rectangle for cnvr
     #class(chr$Chr) #check the type
-    chr$Chr = as.character(chr$Chr)#convert interger to charactor
+    chr$Chr = as.character(chr$Chr)#convert integer to character
 
     if (assembly == "UMD") {
-      #UMD3.1 Chromsome Length
+      #UMD3.1 Chromosome Length
       chr_length <- c(51.505224, 46.312546, 45.407902, 51.681464, 42.90417, 62.71493, 52.530062,
                       61.435874, 71.599096, 72.042655, 64.057457,
                       66.004023,75.158596, 81.724687, 85.296676, 84.64839, 84.24035, 91.163125,
