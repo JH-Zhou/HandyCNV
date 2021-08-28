@@ -65,10 +65,11 @@ clean_ucsc <- function(refgene){
 get_refgene <- function(gene_version = NULL){
   support_ver <- c("Cow_ARS_UCSC", "Cow_ARS_ENS", "Cow_UMD_UCSC",
                    "Pig_susScr11_UCSC", "Pig_susScr11_ENS",
-                   "Human_hg38",
+                   "Human_hg38", "Human_hg19",
                    "Sheep_Oar_v4.0_UCSC", "Sheep_Oar_v3.1_UCSC", "Sheep_Oar_v3.1_ENS",
                    "Horse_equCab3.0_UCSC", "Horse_equCab2.0_UCSC",
-                   "Dog_UMICH_Zoey_3.1_UCSC", "Dog_UMICH_Zoey_3.1_ENS")
+                   "Dog_UMICH_Zoey_3.1_UCSC", "Dog_UMICH_Zoey_3.1_ENS",
+                   "Chicken_galGal6_UCSC", "Chicken_galGal5_UCSC")
   support_version <- data.frame(version = c("Cow_ARS_UCSC",
                                             "Cow_ARS_ENS",
                                             "Cow_ARS_ENS_id",
@@ -77,6 +78,7 @@ get_refgene <- function(gene_version = NULL){
                                             "Pig_susScr11_ENS",
                                             "Pig_susScr11_ENS_id",
                                             "Human_hg38",
+                                            "Human_hg19",
                                             "Sheep_Oar_v4.0_UCSC",
                                             "Sheep_Oar_v3.1_UCSC",
                                             "Sheep_Oar_v3.1_ENS",
@@ -85,7 +87,9 @@ get_refgene <- function(gene_version = NULL){
                                             "Horse_equCab2.0_UCSC",
                                             "Dog_UMICH_Zoey_3.1_UCSC",
                                             "Dog_UMICH_Zoey_3.1_ENS",
-                                            "Dog_UMICH_Zoey_3.1_ENS_id"),
+                                            "Dog_UMICH_Zoey_3.1_ENS_id",
+                                            "Chicken_galGal6_UCSC",
+                                            "Chicken_galGal5_UCSC"),
                                 URL = c("http://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/database/ensGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/bosTau9/database/ensemblToGeneName.txt.gz",
@@ -94,6 +98,7 @@ get_refgene <- function(gene_version = NULL){
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/susScr11/database/ensGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/susScr11/database/ensemblToGeneName.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/refGene.txt.gz",
+                                        "https://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/oviAri4/database/refGene.txt.gz",
                                         "https://hgdownload.soe.ucsc.edu/goldenPath/oviAri3/database/refGene.txt.gz",
                                         "https://hgdownload.soe.ucsc.edu/goldenPath/oviAri3/database/ensGene.txt.gz",
@@ -102,7 +107,9 @@ get_refgene <- function(gene_version = NULL){
                                         "https://hgdownload.soe.ucsc.edu/goldenPath/equCab2/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/refGene.txt.gz",
                                         "http://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/ensGene.txt.gz",
-                                        "http://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/ensemblToGeneName.txt.gz"
+                                        "http://hgdownload.soe.ucsc.edu/goldenPath/canFam5/database/ensemblToGeneName.txt.gz",
+                                        "https://hgdownload.soe.ucsc.edu/goldenPath/galGal6/database/refGene.txt.gz",
+                                        "https://hgdownload.soe.ucsc.edu/goldenPath/galGal5/database/refGene.txt.gz"
                                         ))
 
   #remind what's version we support to automatic download and formatting
