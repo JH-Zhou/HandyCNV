@@ -6,12 +6,18 @@
 #' @param Frequent_threshold Integer, indicate the frequency of CNVR
 #' @param height_1 set the height of plot
 #' @param width_1 set the width of plot
+#' @param col_0 set color for 0 copy of CNV
+#' @param col_1 set color for 1 copy of CNV
+#' @param col_2 set color for 2 copy of CNV (which might be ROH)
+#' @param col_3 set color for 3 copy of CNV
+#' @param col_4 set color for 4 copy of CNV
+#' @param report_id report the sample ID while plotting
 #' @param folder set the folder to save results
 #'
 #' @return CNVR source plot
 #' @export plot_cnvr_source
 #'
-plot_cnvr_source <- function(cnvr, clean_cnv, pedigree, Frequent_threshold, height_1 = 30, width_1 = 15, folder = "plot_cnvr_source") {
+plot_cnvr_source <- function(cnvr, clean_cnv, pedigree, Frequent_threshold, height_1 = 30, width_1 = 15, col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", report_id = TRUE, folder = "plot_cnvr_source") {
   cnvr <- fread(cnvr)
   high_freq <- filter(cnvr, n_Sample >= Frequent_threshold)
   print(paste0(nrow(high_freq), " CNVRs passed Frequent_threhold..."))
@@ -21,10 +27,11 @@ plot_cnvr_source <- function(cnvr, clean_cnv, pedigree, Frequent_threshold, heig
                chr_id = high_freq$Chr[i],
                start_position = high_freq$Start[i]/1000000,
                end_position = high_freq$End[i]/1000000,
-               report_id = "yes",
+               report_id = report_id,
                pedigree = pedigree,
                height_1 = height_1,
                width_1 = width_1,
+               col_0 = col_0,  col_1 = col_1, col_2 = col_2, col_3 = col_3, col_4= col_4,
                folder = folder)
     print(paste0("Plotting the ", i, " th CNVRs"))
   }
