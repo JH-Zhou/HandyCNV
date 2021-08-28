@@ -15,6 +15,7 @@
 #' @param col_4 set color for line of Target_map in density plot
 #' @param col_5 set color for point of Default_Map in SNP density plot
 #' @param col_6 set color for line of Default_map in SNP density plot
+#' @param legend_position default value = c(0.9, 0.9), used to adjust the legend in map comparison plot
 #' @param height_c set height for Comparison plot
 #' @param width_c set width for comparison plot
 #' @param height_d set height for SNP density plot
@@ -25,24 +26,36 @@
 #' @return Details of comparison results between given map, and standard input map files used in PennCNV and Plink
 #' @export convert_map
 #'
-convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "UMD 3.1", tarMap_title = "ARS 1.2", species = "Bovine", col_1 = "green4", col_2 = "red1", col_3 = "deeppink2", col_4 = "deeppink2", col_5 ="turquoise3", col_6 = "turquoise3", height_c = 16, width_c  = 22, height_d = 15, width_d = 25){
+convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "Default", tarMap_title = "Target", species = "Bovine", col_1 = "green4", col_2 = "red1", col_3 = "deeppink2", col_4 = "deeppink2", col_5 ="turquoise3", col_6 = "turquoise3", legend_position = c(0.9, 0.9), height_c = 16, width_c  = 22, height_d = 15, width_d = 25){
   if(!dir.exists(paths = "convert_map")){
     dir.create(path = "convert_map")
     print("New folder convert_map was created.")
   }
-  def_map <- fread(default_map)
-  tar_map <- fread(target_map)
+
+  if(typeof(default_map) == "character"){
+    def_map <- fread(default_map)
+  } else {
+    def_map = default_map
+  }
+
+
+  if(typeof(target_map) == "character"){
+    tar_map <- fread(target_map)
+  } else {
+    tar_map = target_map
+  }
+
 
   if(species == "Bovine"){
     names(def_map) <- c("Chr_def", "Name","Morgan_def", "Position_def")
-    #repalce X, Y, MT to 30, 31, and 32
+    #replace X, Y, MT to 30, 31, and 32
     def_map$Chr_def <- sub("X", "30", def_map$Chr_def)
     def_map$Chr_def <- sub("Y", "31", def_map$Chr_def)
     def_map$Chr_def <- sub("MT", "33", def_map$Chr_def)
     def_map$Chr_def <- as.integer(def_map$Chr_def)
 
     names(tar_map) <- c("Chr_tar","Name", "Mb_tar", "Position_tar")
-    #repalce X, Y, MT to 30, 31, and 32
+    #replace X, Y, MT to 30, 31, and 32
     tar_map$Chr_tar <- sub("X", "30", tar_map$Chr_tar)
     tar_map$Chr_tar <- sub("Y", "31", tar_map$Chr_tar)
     tar_map$Chr_tar <- sub("MT", "33", tar_map$Chr_tar)
@@ -50,7 +63,7 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
 
   } else if(!(species == "Bovine")) {
     names(def_map) <- c("Chr_def", "Name","Morgan_def", "Position_def")
-    #repalce X, Y, MT to 30, 31, and 32
+    #replace X, Y, MT to 30, 31, and 32
     def_map$Chr_def <- sub("X", "87", def_map$Chr_def)
     def_map$Chr_def <- sub("Y", "88", def_map$Chr_def)
     def_map$Chr_def <- sub("MT", "89", def_map$Chr_def)
@@ -58,7 +71,7 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
 
 
     names(tar_map) <- c("Chr_tar","Name", "Mb_tar", "Position_tar")
-    #repalce X, Y, MT to 30, 31, and 32
+    #replace X, Y, MT to 30, 31, and 32
     tar_map$Chr_tar <- sub("X", "87", tar_map$Chr_tar)
     tar_map$Chr_tar <- sub("Y", "88", tar_map$Chr_tar)
     tar_map$Chr_tar <- sub("MT", "89", tar_map$Chr_tar)
@@ -250,7 +263,7 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "U
     scale_y_continuous(name = "Number of SNP", sec.axis = sec_axis(~./ second_y_value, name = "SNP Density")) +
     theme_classic() +
     labs(x = "Chromosome", y = "Number of SNP", shape = NULL, fill = NULL, caption = "**Red number indicates the number of different SNPS between two maps") +
-    theme(legend.position = c(0.9, 0.9),
+    theme(legend.position = legend_position,
           legend.margin=margin(0,0,0,0),
           legend.box.margin=margin(0,0,0,0)) # legend position - 0 is left/bottom, 1 is top/right
 
