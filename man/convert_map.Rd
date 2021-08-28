@@ -8,8 +8,8 @@ convert_map(
   default_map,
   target_map,
   chr_set = 29,
-  defMap_title = "UMD 3.1",
-  tarMap_title = "ARS 1.2",
+  defMap_title = "Default",
+  tarMap_title = "Target",
   species = "Bovine",
   col_1 = "green4",
   col_2 = "red1",
@@ -17,6 +17,7 @@ convert_map(
   col_4 = "deeppink2",
   col_5 = "turquoise3",
   col_6 = "turquoise3",
+  legend_position = c(0.9, 0.9),
   height_c = 16,
   width_c = 22,
   height_d = 15,
@@ -47,6 +48,8 @@ convert_map(
 \item{col_5}{set color for point of Default_Map in SNP density plot}
 
 \item{col_6}{set color for line of Default_map in SNP density plot}
+
+\item{legend_position}{default value = c(0.9, 0.9), used to adjust the legend in map comparison plot}
 
 \item{height_c}{set height for Comparison plot}
 

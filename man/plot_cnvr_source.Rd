@@ -11,6 +11,12 @@ plot_cnvr_source(
   Frequent_threshold,
   height_1 = 30,
   width_1 = 15,
+  col_0 = "hotpink",
+  col_1 = "turquoise",
+  col_2 = "gray",
+  col_3 = "tomato",
+  col_4 = "deepskyblue",
+  report_id = TRUE,
   folder = "plot_cnvr_source"
 )
 }
@@ -26,6 +32,18 @@ plot_cnvr_source(
 \item{height_1}{set the height of plot}
 
 \item{width_1}{set the width of plot}
+
+\item{col_0}{set color for 0 copy of CNV}
+
+\item{col_1}{set color for 1 copy of CNV}
+
+\item{col_2}{set color for 2 copy of CNV (which might be ROH)}
+
+\item{col_3}{set color for 3 copy of CNV}
+
+\item{col_4}{set color for 4 copy of CNV}
+
+\item{report_id}{report the sample ID while plotting}
 
 \item{folder}{set the folder to save results}
 }
