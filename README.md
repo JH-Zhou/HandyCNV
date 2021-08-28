@@ -4,7 +4,9 @@
 
 An R package for Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH
 
-![Fig.1 Working Flow](https://github.com/JH-Zhou/HandyCNV/blob/master/man/figures/High_resolution_pipeline_HandyCNV.png)
+| ![Fig.1 Working Flow](https://github.com/JH-Zhou/HandyCNV/blob/master/man/figures/High_resolution_pipeline_HandyCNV.jpg) |
+|:--:|
+| <b>Figure 1. Example plots illustrating the main functions and output from the HandyCNV.|
 
 # Introduction
 This package was originally designed for the Post-analysis of CNV results inferred from PennCNV and CNVPartition (GenomeStudio). However, it has now been expanded to accept input files in standard formats for a wider range of applications. Our motivation is to provide a standard, reproducible and time-saving pipeline for the post-analysis of CNVs and ROHs detected from SNP genotyping data for the majority of diploid Species. The functions provided in this package can be categorised into five sections: Conversion, Summary, Annotation, Comparison and Visualization. The most useful features provided are: integrating summarized results, generating lists of CNVR, annotating the results with known gene positions, plotting CNVR distribution maps, and producing customised visualisations of CNVs and ROHs with gene and other related information on one plot. This package also supports a range of customisations, including the colour, size of high resolution figures, and output folder, avoiding conflict between the results of different runs. Running through all functions detailed in the vignette could help us to identify and explore the most interesting genomic regions more easily.
