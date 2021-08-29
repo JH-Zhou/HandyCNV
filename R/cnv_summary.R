@@ -37,6 +37,7 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
     cnv_input <- fread(file = clean_cnv, sep = "\t", header = TRUE)
   } else {
     cnv_input = clean_cnv
+    cnv_input$Chr <- as.integer(cnv_input$Chr)
   }
 
   standard_input <- c("Sample_ID", "Chr", "Start", "End", "CNV_Value")
