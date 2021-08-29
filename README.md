@@ -22,17 +22,17 @@ First, to run this package, we need to make sure that R (Version >= 3.5.2) is in
 ## 1. Method one, install from Github Repo directly
 ```{r}
 install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
-remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.4")
+remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.5")
 ```
 
 ## 2. Method two, install manually 
 
-If the first method cannnot work well for some reasons, we can manually download the 'Source code (Zip)' from the newly released tag at here: [Download Source Code](https://github.com/JH-Zhou/HandyCNV/releases/tag/v1.1.4)
+If the first method cannnot work well for some reasons, we can manually download the 'Source code (Zip)' from the newly released tag at here: [Download Source Code](https://github.com/JH-Zhou/HandyCNV/releases/tag/v1.1.5)
 
 Then install the Source Code from the local path by following code:
 ```{r}
 install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
-remotes::install_local(path = "C:/Users/HandyCNV-1.1.4.zip") # Repalce 'C:/Users/' to your local path where you downloaded the Source Code
+remotes::install_local(path = "C:/Users/HandyCNV-1.1.5.zip") # Repalce 'C:/Users/' to your local path where you downloaded the Source Code
 ```
 Then, we need to load the 'HandyCNV' package in order to run the following examples. This can be done using the `library` function as shown below.
 ```{r setup}
@@ -89,7 +89,12 @@ If this tool is useful for your academic research, please cite our publication: 
 
 J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH,” doi: 10.1101/2021.04.05.438403.
 
-# Current release: HandyCNV v1.1.4 Release Date: 2021/07/23
+# Current release: HandyCNV v1.1.5 Release Date: 2021/08/29
+
+# What's new
+Minor mofinifications, such as unified input file formats and correct spelling errors.
+
+# Previous release: HandyCNV v1.1.4 Release Date: 2021/07/23
 
 # What's new
 
