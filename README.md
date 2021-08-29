@@ -92,7 +92,7 @@ J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standard
 # Current release: HandyCNV v1.1.5 Release Date: 2021/08/29
 
 # What's new
-Minor mofinifications, such as unified input file formats and correct spelling errors.
+Minor modifications, such as unifying input file formats and correcting spelling errors.
 
 # Previous release: HandyCNV v1.1.4 Release Date: 2021/07/23
 
