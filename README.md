@@ -91,12 +91,12 @@ J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standard
 
 # Current release: HandyCNV v1.1.5 Release Date: 2021/08/29
 
-# What's new
+# What's news
 Minor modifications, such as unifying input file formats and correcting spelling errors.
 
 # Previous release: HandyCNV v1.1.4 Release Date: 2021/07/23
 
-# What's new
+# What's news
 
 ## Major improvements:
 1. Most functions now support reading variable object as input files;
@@ -110,7 +110,7 @@ Minor modifications, such as unifying input file formats and correcting spelling
 
 # Previous release: HandyCNV v1.1.3 Release Date: 2021/05/26
 
-# What's new
+# What's news
 
 1. New function to plot SNP density from SNP genotyping map.
 ```{r, warning=FALSE}
@@ -135,13 +135,13 @@ plot_snp_density(map = "convert_map/target_plink.map",
 
 # Previous release: HandyCNV v1.1.2 Release Date: 2021/04/18
 
-# What's new
+# What's news
 
 Corrected the version number.
 
 # Released Version: HandyCNV v1.1.1 Release Date: 2021/04/14
 
-# What's new
+# What's news
 
 ## 1. Update call_cnvr.R …
 1. The CNV list could only be loaded from the local directory through a 'Path' before, now supports to read data from working environment by checking the type of input file;
