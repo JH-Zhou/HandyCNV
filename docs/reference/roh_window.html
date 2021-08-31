@@ -76,7 +76,7 @@ Third is to summary results, count the roh frequency in each sliding window" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HandyCNV</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -125,9 +125,11 @@ Third is to summary results, count the roh frequency in each sliding window</p>
 
     <pre class="usage"><span class='fu'>roh_window</span><span class='op'>(</span>
   <span class='va'>roh</span>,
-  window_size <span class='op'>=</span> <span class='fl'>5</span>,
+  window_size <span class='op'>=</span> <span class='fl'>1</span>,
+  max_chr <span class='op'>=</span> <span class='fl'>29</span>,
   length_autosomal <span class='op'>=</span> <span class='fl'>2489.386</span>,
   threshold <span class='op'>=</span> <span class='fl'>0.3</span>,
+  length_group <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>4</span>, <span class='fl'>8</span>, <span class='fl'>16</span><span class='op'>)</span>,
   folder <span class='op'>=</span> <span class='st'>"roh_window"</span>,
   col_higher <span class='op'>=</span> <span class='st'>"red"</span>,
   col_lower <span class='op'>=</span> <span class='st'>"black"</span>,
@@ -135,7 +137,9 @@ Third is to summary results, count the roh frequency in each sliding window</p>
   width_1 <span class='op'>=</span> <span class='fl'>21</span>,
   legend_x <span class='op'>=</span> <span class='fl'>0.9</span>,
   legend_y <span class='op'>=</span> <span class='fl'>0.1</span>,
-  ncol_1 <span class='op'>=</span> <span class='fl'>6</span>
+  ncol_1 <span class='op'>=</span> <span class='fl'>6</span>,
+  x_label <span class='op'>=</span> <span class='st'>"Physical Position (Mb)"</span>,
+  y_label <span class='op'>=</span> <span class='st'>"Number of Samples"</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -150,6 +154,10 @@ Third is to summary results, count the roh frequency in each sliding window</p>
       <td><p>the length of sliding windows for dividing the chromosome, the unit is Mb</p></td>
     </tr>
     <tr>
+      <th>max_chr</th>
+      <td><p>The maximum number of chromosome</p></td>
+    </tr>
+    <tr>
       <th>length_autosomal</th>
       <td><p>Important, total autosomal length of the corresponding species, used in calculated the F_ROH</p></td>
     </tr>
@@ -157,6 +165,10 @@ Third is to summary results, count the roh frequency in each sliding window</p>
       <th>threshold</th>
       <td><p>the proportion used in the roh windows distribution plot. For example 1000 samples, if threshold set as 0.5,
 and 1000*0.5 = 500, the value of histogram above 500 will be color as red and the group below 500 will filling with other color</p></td>
+    </tr>
+    <tr>
+      <th>length_group</th>
+      <td><p>Vector, must be 5 integer unit in 'Mb'. The default value are 1, 2, 4, 8 and 16 Mb, used for category the length group of ROH</p></td>
     </tr>
     <tr>
       <th>folder</th>
@@ -189,6 +201,14 @@ and 1000*0.5 = 500, the value of histogram above 500 will be color as red and th
     <tr>
       <th>ncol_1</th>
       <td><p>set how many columns to present in facet plot</p></td>
+    </tr>
+    <tr>
+      <th>x_label</th>
+      <td><p>customize the label of x axis in ROH plot, default text is "Physical Position (Mb)"</p></td>
+    </tr>
+    <tr>
+      <th>y_label</th>
+      <td><p>customize the label of y axis in ROH plot, default text is "Number of Samples"</p></td>
     </tr>
     </table>
 

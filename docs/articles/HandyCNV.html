@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HandyCNV</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -64,9 +64,9 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>HandyCNV Vignette</h1>
-                        <h4 class="author">Jinghang ZHOU, Thomas Lopdell, Liyuan Liu</h4>
+                        <h4 class="author">Jinghang ZHOU, Thomas Lopdell, Liyuan Liu, Dorian Garrick, Yuangang Shi</h4>
             
-            <h4 class="date">February 14, 2021</h4>
+            <h4 class="date">July 23, 2021</h4>
       
       
       <div class="hidden name"><code>HandyCNV.Rmd</code></div>
@@ -126,63 +126,105 @@
 <li>Default PennCNV results in Sample ID columns usually have the file path ahead the Sample ID. For example with the file “/home/zjhang027/C/final_403_penncnv/201094560082_R03C01.txt”, the pattern ‘cnv/’ before the sample ID is unique, so we can take it as the separator using the argument <code>penn_id_sep = "cnv/"</code> to extract the wanted sample ID.</li>
 </ol>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_clean.html">cnv_clean</a></span><span class="op">(</span>penncnv <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#when running your own data, set this argument to 'penncnv = "localpath/file"'</span>
-          penn_id_sep <span class="op">=</span> <span class="st">"cnv/"</span>, <span class="co">#take the unique pattern as a separator to extract the sample ID </span>
-          drop_length <span class="op">=</span> <span class="fl">5</span>, <span class="co"># the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted</span>
-          folder <span class="op">=</span> <span class="st">"cnv_clean"</span><span class="op">)</span> <span class="co">#create a new folder to save results </span>
+<code class="sourceCode R"><span class="va">cnv_penn_ars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cnv_clean.html">cnv_clean</a></span><span class="op">(</span>penncnv <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#replace input file when running your own data</span>
+                 penn_id_sep <span class="op">=</span> <span class="st">"cnv/"</span>, <span class="co">#take the unique pattern as a separator to extract the sample ID </span>
+                 drop_length <span class="op">=</span> <span class="fl">5</span>, <span class="co"># the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted</span>
+                 folder <span class="op">=</span> <span class="st">"cnv_clean"</span><span class="op">)</span> <span class="co">#create a new folder to save results </span>
 <span class="co">#&gt; There are 382 individuals with 5215 CNVs in total.</span>
 <span class="co">#&gt; The average number of CNVs present per individual is 13.65</span>
 <span class="co">#&gt; Basic summary stats by CNV type:</span>
 <span class="co">#&gt; # A tibble: 4 x 5</span>
 <span class="co">#&gt;   CNV_Value     N `Average Length` `Min Length` `Max Length`</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;int&gt;            &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 0           146           65930.         9932       343728</span>
-<span class="co">#&gt; 2 1          2446          129081.         1181      2822505</span>
-<span class="co">#&gt; 3 3          2450          257261.         6735      3651356</span>
-<span class="co">#&gt; 4 4           173          687524.        17406      4917181</span>
-<span class="co">#&gt; Task finished. Please check clean CNV results in the 'cnv_clean' directory.</span></code></pre></div>
+<span class="co">#&gt; 1 0           146            65930         9932       343728</span>
+<span class="co">#&gt; 2 1          2446           129081         1181      2822505</span>
+<span class="co">#&gt; 3 3          2450           257261         6735      3651356</span>
+<span class="co">#&gt; 4 4           173           687524        17406      4917181</span></code></pre></div>
 <p>Next, let’s format a second set of CNV results, this time produced using CNVPartition. Note: The corresponding input argument is <code>cnvpartition</code> for CNV result from CNVPartition.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_clean.html">cnv_clean</a></span><span class="op">(</span>cnvpartition <span class="op">=</span> <span class="va">cnv_part_umd</span>, <span class="co">#when running your own data, set this argument by 'cnvpartition = "localpath/file"' </span>
-          drop_length <span class="op">=</span> <span class="fl">5</span>, <span class="co">#the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted</span>
-          folder <span class="op">=</span> <span class="st">"cnv_clean"</span><span class="op">)</span> 
+<code class="sourceCode R"><span class="va">cnv_part_umd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cnv_clean.html">cnv_clean</a></span><span class="op">(</span>cnvpartition <span class="op">=</span> <span class="va">cnv_part_umd</span>, <span class="co">#when running your own data, set this argument by 'cnvpartition = "localpath/file"' </span>
+                 drop_length <span class="op">=</span> <span class="fl">5</span>, <span class="co">#the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted</span>
+                 folder <span class="op">=</span> <span class="st">"cnv_clean"</span><span class="op">)</span> 
 <span class="co">#&gt; There are 365 individuals with 1239 CNVs in total.</span>
 <span class="co">#&gt; The average number of CNV on each Individual is 3.39</span>
 <span class="co">#&gt; Basic summary stats by CNV type:</span>
 <span class="co">#&gt; # A tibble: 4 x 5</span>
 <span class="co">#&gt;   CNV_Value     N `Average Length` `Min Length` `Max Length`</span>
 <span class="co">#&gt;       &lt;int&gt; &lt;int&gt;            &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
-<span class="co">#&gt; 1         0   754          148699.         4510      1204452</span>
-<span class="co">#&gt; 2         1    59          375120.        14229      3440849</span>
-<span class="co">#&gt; 3         3   409          840778.         4908      4867751</span>
-<span class="co">#&gt; 4         4    17          634036.        58524      2336934</span>
-<span class="co">#&gt; Task finished. Clean CNV, ROH, and CNV summary results have been saved in the 'cnv_clean' directory.</span></code></pre></div>
+<span class="co">#&gt; 1         0   754           148699         4510      1204452</span>
+<span class="co">#&gt; 2         1    59           375120        14229      3440849</span>
+<span class="co">#&gt; 3         3   409           840778         4908      4867751</span>
+<span class="co">#&gt; 4         4    17           634036        58524      2336934</span></code></pre></div>
 <p>If the CNV results were not produced by PennCNV or CNVPartition, we need to arrange the CNV results into the standard format, then use the <code>standard_cnv</code> argument instead. The standard CNV input list should include the following columns (in order): <code>Sample_ID</code>, <code>Chr</code>, <code>Start</code>, <code>End</code> and <code>CNV_Value</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tabl</span> <span class="op">&lt;-</span> <span class="st">"
-|Sample_ID           |Chr |Start   |End     |CNV_Value |
-|--------------------|----|--------|--------|----------|
-|201977910077_R05C01 |6   |9087392 |9250902 |1         |
-|201094560084_R06C02 |7   |28583247|28621254|3         |
-|201094560084_R06C02 |7   |37214745|37238472|1         |
-|201094560067_R08C02 |4   |6248795 |6425277 |3         |
-|201094560067_R08C02 |4   |66567442|66830563|3         |"</span> </code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/">knitr</a></span><span class="op">)</span>
+<span class="co">#&gt; Warning: package 'knitr' was built under R version 3.5.3</span>
+<span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>Sample_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"201977910077_R05C01"</span>, <span class="st">"201094560084_R06C02"</span>, <span class="st">"201094560084_R06C02"</span>, <span class="st">"201094560067_R08C02"</span>, <span class="st">"201094560067_R08C02"</span><span class="op">)</span>,
+           Chr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">7</span>, <span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span>,
+           Start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">9087392</span>, <span class="fl">28583247</span>, <span class="fl">37214745</span>, <span class="fl">6248795</span>, <span class="fl">66567441</span><span class="op">)</span>,
+           End <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">9250902</span>, <span class="fl">28621254</span>, <span class="fl">37238472</span>, <span class="fl">6425277</span>, <span class="fl">66830563</span><span class="op">)</span>,
+           CNV_Value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">Sample_ID</th>
+<th align="right">Chr</th>
+<th align="right">Start</th>
+<th align="right">End</th>
+<th align="right">CNV_Value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">201977910077_R05C01</td>
+<td align="right">6</td>
+<td align="right">9087392</td>
+<td align="right">9250902</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">201094560084_R06C02</td>
+<td align="right">7</td>
+<td align="right">28583247</td>
+<td align="right">28621254</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">201094560084_R06C02</td>
+<td align="right">7</td>
+<td align="right">37214745</td>
+<td align="right">37238472</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">201094560067_R08C02</td>
+<td align="right">4</td>
+<td align="right">6248795</td>
+<td align="right">6425277</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">201094560067_R08C02</td>
+<td align="right">4</td>
+<td align="right">66567441</td>
+<td align="right">66830563</td>
+<td align="right">3</td>
+</tr>
+</tbody>
+</table>
 <p>Let’s now run <code>cnv_clean</code> on the third Standard CNV input file. Note that we are using the argument <code>standard_cnv</code> for the third CNV result.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_clean.html">cnv_clean</a></span><span class="op">(</span>standard_cnv <span class="op">=</span> <span class="va">cnv_other_umd</span>, <span class="co">#when running your own data, set this argument by 'standard_cnv = "localpath/file"'</span>
-          drop_length <span class="op">=</span> <span class="fl">5</span>, <span class="co">#the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted</span>
-          folder <span class="op">=</span> <span class="st">"cnv_clean"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">cnv_standard</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cnv_clean.html">cnv_clean</a></span><span class="op">(</span>standard_cnv <span class="op">=</span> <span class="va">cnv_other_umd</span>, <span class="co">#when running your own data, set this argument by 'standard_cnv = "localpath/file"'</span>
+                 drop_length <span class="op">=</span> <span class="fl">5</span>, <span class="co">#the maximum CNV length threshold (in Mb); CNVs larger than this value will be deleted</span>
+                 folder <span class="op">=</span> <span class="st">"cnv_clean"</span><span class="op">)</span>
 <span class="co">#&gt; There are 382 individuals with 4534 CNVs in total.</span>
 <span class="co">#&gt; The average number of CNV per individual is 11.87</span>
 <span class="co">#&gt; Basic summary stats by CNV type:</span>
 <span class="co">#&gt; # A tibble: 4 x 5</span>
 <span class="co">#&gt;   CNV_Value     N `Average Length` `Min Length` `Max Length`</span>
 <span class="co">#&gt;       &lt;int&gt; &lt;int&gt;            &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;</span>
-<span class="co">#&gt; 1         0    77           60964.         9932       343900</span>
-<span class="co">#&gt; 2         1  2187          138295.            1      2843668</span>
-<span class="co">#&gt; 3         3  2115          258623.            1      3933681</span>
-<span class="co">#&gt; 4         4   155          779553.        17392      4869255</span>
-<span class="co">#&gt; Task finished. Please check clean CNV results in the 'cnv_clean' directory.</span></code></pre></div>
+<span class="co">#&gt; 1         0    77            60964         9932       343900</span>
+<span class="co">#&gt; 2         1  2187           138295            1      2843668</span>
+<span class="co">#&gt; 3         3  2115           258623            1      3933681</span>
+<span class="co">#&gt; 4         4   155           779553        17392      4869255</span></code></pre></div>
 </div>
 <div id="how-do-we-visualise-cnvs" class="section level2">
 <h2 class="hasAnchor">
@@ -194,12 +236,12 @@
 <p>Once we got the standard <code>clean_cnv</code> result, we can use the <code>cnv_visual</code> function to plot all CNVs, to have a quick look if there are any notable patterns in CNV results.</p>
 <p>First, let’s visualise the whole PennCNV dataset across all chromosomes:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/penncnv_clean.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
            max_chr <span class="op">=</span> <span class="fl">29</span>, <span class="co">#select how many chromosomes to plot </span>
            width_1 <span class="op">=</span> <span class="fl">20</span>, <span class="co">#optional,adjust the width of final plot</span>
            height_1 <span class="op">=</span><span class="fl">12</span>, <span class="co">#optional,adjust the height of final plot</span>
            folder <span class="op">=</span> <span class="st">"cnv_visual_all_penn"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Input data passed requirment check..."</span>
+<span class="co">#&gt; Input data passed requirment check...</span>
 <span class="co">#&gt; [1] "Plotting the CNVs on Chromosome 1"</span>
 <span class="co">#&gt; [1] "Plotting the CNVs on Chromosome 2"</span>
 <span class="co">#&gt; [1] "Plotting the CNVs on Chromosome 3"</span>
@@ -229,13 +271,13 @@
 <span class="co">#&gt; [1] "Plotting the CNVs on Chromosome 27"</span>
 <span class="co">#&gt; [1] "Plotting the CNVs on Chromosome 28"</span>
 <span class="co">#&gt; [1] "Plotting the CNVs on Chromosome 29"</span>
-<span class="co">#&gt; [1] "Task done"</span></code></pre></div>
+<span class="co">#&gt; Task done.</span></code></pre></div>
 <div class="figure">
 <img src="cnv_visual_all_penn/Chr15.png" width="320" alt=""><p class="caption">Figure.1 CNVs on Chromosome 15 (ARS reference) from PennCNV</p>
 </div>
 <p>Let’s now visualise CNVs from the CNVPartition results by chromosome. We can adjust the size of final figure by setting ‘width_1’ and ‘height_1’.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/cnvpart_clean.cnv"</span>, <span class="co">#generated by 'cnv_clean' function in section 1</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="va">cnv_part_umd</span>, <span class="co">#generated by 'cnv_clean' function in section 1</span>
            max_chr <span class="op">=</span> <span class="fl">29</span>, <span class="co">#select how many Chromosomes to plot</span>
            width_1 <span class="op">=</span> <span class="fl">20</span>, <span class="co">#optional,adjust the width of final plot</span>
            height_1 <span class="op">=</span> <span class="fl">12</span>, <span class="co">#optional,adjust the height of final plot</span>
@@ -249,7 +291,7 @@
 <a href="#how-do-we-plot-cnvs-in-a-region-of-interest" class="anchor"></a>2.2 How do we plot CNVs in a region of interest?</h3>
 <p>After plotting all CNVs on each chromosome, we might find that some regions are particularly interesting. To plot these, we can add the options <code>chr_id</code>, <code>start_position</code> and <code>end_position</code> to the <code>cnv_visual</code> function call. Here, we are taking the region of Chr15:77-80.1221 Mb from the PennCNV results as an example.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/penncnv_clean.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
            chr_id <span class="op">=</span> <span class="fl">15</span>, <span class="co">#set Chromosome</span>
            start_position <span class="op">=</span> <span class="fl">77</span>, <span class="co">#set start position, unit is 'Mb'</span>
            end_position <span class="op">=</span> <span class="fl">80.1221</span>, <span class="co">#set end position, unit is 'Mb'</span>
@@ -260,8 +302,8 @@
            width_1 <span class="op">=</span> <span class="fl">13</span>, <span class="co">#optional, adjust the width of final plot</span>
            height_1 <span class="op">=</span> <span class="fl">10</span>, <span class="co">#optional, adjust the height of final plot</span>
            folder <span class="op">=</span> <span class="st">"cnv_visual"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Input data passed requirment check..."</span>
-<span class="co">#&gt; [1] "Task done, plot was stored in working directory."</span></code></pre></div>
+<span class="co">#&gt; Input data passed requirment check...</span>
+<span class="co">#&gt; Task done, plot was stored in working directory.</span></code></pre></div>
 <div class="figure">
 <img src="cnv_visual/Chr15_77-80.1221Mb.png" width="320" alt=""><p class="caption">Figure.3 CNVs on Chr15:77-80.1221 Mb</p>
 </div>
@@ -271,13 +313,13 @@
 <a href="#how-do-we-plot-cnvs-in-a-sample-of-interest" class="anchor"></a>2.3 How do we plot CNVs in a sample of interest?</h3>
 <p>Here we need to assign both the Sample ID (to <code>individual_id</code>) and the clean CNV list (to <code>clean_cnv</code>) in the <code>cnv_visual</code> function. The individual CNV plot will saved in the current working directory. For example, the sample “201094560076_R03C02” has the most CNVs in the PennCNV results, so let’s plot it and have a look. Note: we can use the <code>individual_cnv_count.txt</code> file (to be generated in section 3) to identify samples that exhibit large numbers of CNVs.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/penncnv_clean.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
            individual_id <span class="op">=</span> <span class="st">"201094560076_R03C02"</span>, <span class="co">#set the sample ID  </span>
            width_1 <span class="op">=</span> <span class="fl">20</span>, <span class="co">#optional, adjust the width of final plot</span>
            height_1 <span class="op">=</span> <span class="fl">13</span>, <span class="co">#optional. adjust the height of final plot</span>
            folder <span class="op">=</span> <span class="st">"cnv_visual"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Input data passed requirment check..."</span>
-<span class="co">#&gt; [1] "Task done, plot was stored in working directory."</span></code></pre></div>
+<span class="co">#&gt; Input data passed requirment check...</span>
+<span class="co">#&gt; Task done, plot was stored in working directory.</span></code></pre></div>
 <div class="figure">
 <img src="cnv_visual/CNV_of_201094560076_R03C02.png" width="320" alt=""><p class="caption">Figure.4 CNVs in a specific sample</p>
 </div>
@@ -297,8 +339,8 @@
            width_1 <span class="op">=</span> <span class="fl">13</span>, <span class="co">#adjust the width of final plot</span>
            height_1 <span class="op">=</span> <span class="fl">10</span>, <span class="co">#adjust the width of final plot</span>
            folder <span class="op">=</span> <span class="st">"cnv_visual"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Renamed 'CNV_Start' and 'CNV_End' as 'Start' and 'End', input data passed requirment check..."</span>
-<span class="co">#&gt; [1] "Task done, plot was stored in working directory."</span></code></pre></div>
+<span class="co">#&gt; Renamed 'CNV_Start' and 'CNV_End' as 'Start' and 'End', input data passed requirment check...</span>
+<span class="co">#&gt; Task done, plot was stored in working directory.</span></code></pre></div>
 <div class="figure">
 <img src="cnv_visual/BLA-DQB.png" width="320" alt=""><p class="caption">Figure.5 CNVs on a specific gene (<em>BLA-DQB</em>)</p>
 </div>
@@ -308,8 +350,8 @@
 <a href="#how-can-we-present-annotated-genes-above-the-cnv-plot" class="anchor"></a>2.5 How can we present annotated genes above the CNV plot?</h3>
 <p>To do this, we need to provide two input files to the <code>cnv_visual</code> function: the CNV list in <code>clean_cnv</code> and gene annotations in <code>refgene</code>. We should also set the genomic region we are interested in. The reference gene list will be generated by the <code>get_refgene</code> function in section 5.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/penncnv_clean.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
-           refgene <span class="op">=</span> <span class="st">"refgene/cow_ARS_UCSC.txt"</span>, <span class="co">#standard input file will generated by the function 'get_refgene' in Section 5</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_visual.html">cnv_visual</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+           refgene <span class="op">=</span> <span class="st">"refgene/Cow_ARS_UCSC.txt"</span>, <span class="co">#standard input file will generated by the function 'get_refgene' in Section 5</span>
            chr_id <span class="op">=</span> <span class="fl">23</span>, <span class="co">#set Chromosome</span>
            start_position <span class="op">=</span> <span class="fl">25.56</span>, <span class="co">#set start position, unit is 'Mb'</span>
            end_position <span class="op">=</span> <span class="fl">25.74</span>, <span class="co">#set end position, unit is 'Mb'</span>
@@ -323,10 +365,10 @@
            width_1 <span class="op">=</span> <span class="fl">14</span>, <span class="co">#optional, adjust the width of final plot</span>
            height_1 <span class="op">=</span> <span class="fl">10</span>, <span class="co">#optional, adjust the height of final plot</span>
            folder <span class="op">=</span> <span class="st">"cnv_visual"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Input data passed requirment check..."</span>
+<span class="co">#&gt; Input data passed requirment check...</span>
 <span class="co">#&gt; [1] "CNV on Chromosome 23: 25.56 - 25.74 Mb with 68 Individual - "</span>
-<span class="co">#&gt; [1] "Plotting gene..."</span>
-<span class="co">#&gt; [1] "Task done, plot was stored in working directory."</span></code></pre></div>
+<span class="co">#&gt; Plotting gene...</span>
+<span class="co">#&gt; Task done, plot was stored in working directory.</span></code></pre></div>
 <div class="figure">
 <img src="cnv_visual/Chr23_25.56-25.74Mb.png" width="320" alt=""><p class="caption">Figure.6 CNVs with annotated genes</p>
 </div>
@@ -337,7 +379,7 @@
 <a href="#what-types-of-summary-plots-are-available" class="anchor"></a>3. What types of summary plots are available?</h2>
 <p>Using the clean CNV results, we can run the <code>cnv_summary_plot</code> function to generate a range of summary plots. These plots can aggregate CNV results by length group, CNV type, chromosome, and individual. It is also possible to make two different types of plots combining these figures.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_summary_plot.html">cnv_summary_plot</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/cnvpart_clean.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/cnv_summary_plot.html">cnv_summary_plot</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
                  length_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.05</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>, <span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span>, <span class="co"># optional, set group of vectors to divide CNV length, unit is Mb. such as vector of ‘c(0.05, 0.3, 1)’, means divide the CNV length into four group: '&lt;0.05Mb', '0.05 - 0.3Mb', '0.3-1Mb' and '&gt;1Mb', maximum can accept 11 values</span>es
                  col_0 <span class="op">=</span> <span class="st">"red"</span>, <span class="co">#optional, customize color for o copy CNV </span>
                  col_1 <span class="op">=</span> <span class="st">"black"</span>, <span class="co">#optional, customize color for o copy CNV </span>
@@ -350,14 +392,16 @@
                  height_sum2 <span class="op">=</span> <span class="fl">20</span>, <span class="co">#optional, adjust the size of sum plot 2</span>
                  width_sum2 <span class="op">=</span> <span class="fl">27</span>, <span class="co">#optional, adjust the size of sum plot 2</span>
                  folder <span class="op">=</span> <span class="st">"cnv_summary_plot_penn"</span><span class="op">)</span>
+<span class="co">#&gt; Deviding the length group...</span>
+<span class="co">#&gt; Plotting...</span>
 <span class="co">#&gt; The CNV distribution plot has been saved in the 'cnv_summary_plot_penn' directory.</span>
 <span class="co">#&gt; The CNV length group plot was saved in the 'cnv_summary_plot_penn' directory.</span>
 <span class="co">#&gt; The box plot of CNV lengths was saved in the 'cnv_summary_plot_penn' directory.</span>
-<span class="co">#&gt; [1] "Distribution of CNV type on chromosome plot was saved in working directory."</span>
-<span class="co">#&gt; [1] "The number of CNV in Individual plot was saved in working directory."</span>
-<span class="co">#&gt; [1] "cnv_summary_plot_1 was saved in working directory."</span>
-<span class="co">#&gt; [1] "cnv_summaray_polt_2 was saved in working directory."</span>
-<span class="co">#&gt; [1] "Task done."</span></code></pre></div>
+<span class="co">#&gt; Distribution of CNV type on chromosome plot was saved in working directory.</span>
+<span class="co">#&gt; The number of CNV in Individual plot was saved in working directory.</span>
+<span class="co">#&gt; cnv_summary_plot_1 was saved in working directory.</span>
+<span class="co">#&gt; cnv_summaray_polt_2 was saved in working directory.</span>
+<span class="co">#&gt; Task done.</span></code></pre></div>
 <div class="figure">
 <img src="cnv_summary_plot_Penn/cnv_summary_plot_1.png" width="320" alt=""><p class="caption">Figure.7 CNV Summary Plot Combination 1</p>
 </div>
@@ -376,69 +420,68 @@
 </ol>
 <p>The resulting CNVRs are sorted by chromosome, start position, and end position, then assigned the CNVR ID to each unique interval by order. One of the output files, <code>individual_cnv_cnvr.txt</code> contain both CNVR and CNV information for every sample: this file might suitable for CNV-GWAS analyses.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/call_cnvr.html">call_cnvr</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/penncnv_clean.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
-          chr_set <span class="op">=</span> <span class="fl">29</span>, <span class="co">#Set the maximum number of chromosomes (29 autosomes for cattle)</span>
-          folder <span class="op">=</span> <span class="st">"call_cnvr_penn"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Chromosome 1 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 2 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 3 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 4 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 5 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 6 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 7 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 8 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 9 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 10 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 11 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 12 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 13 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 14 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 15 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 16 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 17 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 18 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 19 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 20 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 21 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 22 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 23 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 24 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 25 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 26 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 27 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 28 has been processed."</span>
-<span class="co">#&gt; [1] "Chromosome 29 has been processed."</span>
+<code class="sourceCode R"><span class="va">cnvr_penn_ars</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/call_cnvr.html">call_cnvr</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+                  chr_set <span class="op">=</span> <span class="fl">29</span>, <span class="co">#Set the maximum number of chromosomes (29 autosomes for cattle)</span>
+                  folder <span class="op">=</span> <span class="st">"call_cnvr_penn"</span><span class="op">)</span>
+<span class="co">#&gt; Chromosome 1 has been processed.</span>
+<span class="co">#&gt; Chromosome 2 has been processed.</span>
+<span class="co">#&gt; Chromosome 3 has been processed.</span>
+<span class="co">#&gt; Chromosome 4 has been processed.</span>
+<span class="co">#&gt; Chromosome 5 has been processed.</span>
+<span class="co">#&gt; Chromosome 6 has been processed.</span>
+<span class="co">#&gt; Chromosome 7 has been processed.</span>
+<span class="co">#&gt; Chromosome 8 has been processed.</span>
+<span class="co">#&gt; Chromosome 9 has been processed.</span>
+<span class="co">#&gt; Chromosome 10 has been processed.</span>
+<span class="co">#&gt; Chromosome 11 has been processed.</span>
+<span class="co">#&gt; Chromosome 12 has been processed.</span>
+<span class="co">#&gt; Chromosome 13 has been processed.</span>
+<span class="co">#&gt; Chromosome 14 has been processed.</span>
+<span class="co">#&gt; Chromosome 15 has been processed.</span>
+<span class="co">#&gt; Chromosome 16 has been processed.</span>
+<span class="co">#&gt; Chromosome 17 has been processed.</span>
+<span class="co">#&gt; Chromosome 18 has been processed.</span>
+<span class="co">#&gt; Chromosome 19 has been processed.</span>
+<span class="co">#&gt; Chromosome 20 has been processed.</span>
+<span class="co">#&gt; Chromosome 21 has been processed.</span>
+<span class="co">#&gt; Chromosome 22 has been processed.</span>
+<span class="co">#&gt; Chromosome 23 has been processed.</span>
+<span class="co">#&gt; Chromosome 24 has been processed.</span>
+<span class="co">#&gt; Chromosome 25 has been processed.</span>
+<span class="co">#&gt; Chromosome 26 has been processed.</span>
+<span class="co">#&gt; Chromosome 27 has been processed.</span>
+<span class="co">#&gt; Chromosome 28 has been processed.</span>
+<span class="co">#&gt; Chromosome 29 has been processed.</span>
 <span class="co">#&gt; 978 CNVRs generated in total.</span>
 <span class="co">#&gt; Overall summary of CNVRs:</span>
 <span class="co">#&gt; # A tibble: 3 x 6</span>
 <span class="co">#&gt;   Type      N `Average Length` `Min Length` `Max Length` `Total Length`</span>
 <span class="co">#&gt;   &lt;chr&gt; &lt;int&gt;            &lt;dbl&gt;        &lt;dbl&gt;        &lt;dbl&gt;          &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 Gain    347          150153.         7947      2639041       52103038</span>
-<span class="co">#&gt; 2 Loss    399          100664.         3703       737404       40164889</span>
-<span class="co">#&gt; 3 Mixed   232          898204.         6735      8282577      208383407</span>
+<span class="co">#&gt; 1 Gain    347           150153         7947      2639041       52103038</span>
+<span class="co">#&gt; 2 Loss    399           100664         3703       737404       40164889</span>
+<span class="co">#&gt; 3 Mixed   232           898204         6735      8282577      208383407</span>
 <span class="co">#&gt; Summary of CNVRs on each Chromosome:</span>
 <span class="co">#&gt; # A tibble: 29 x 3</span>
-<span class="co">#&gt;      Chr `Total Length` `Number of CNVR`</span>
-<span class="co">#&gt;    &lt;int&gt;          &lt;dbl&gt;            &lt;int&gt;</span>
-<span class="co">#&gt;  1     1       26386484               62</span>
-<span class="co">#&gt;  2     2       18333125               51</span>
-<span class="co">#&gt;  3     3       11339395               39</span>
-<span class="co">#&gt;  4     4       15529397               56</span>
-<span class="co">#&gt;  5     5       12595686               53</span>
-<span class="co">#&gt;  6     6       28976727               44</span>
-<span class="co">#&gt;  7     7       14807963               52</span>
-<span class="co">#&gt;  8     8       10681061               24</span>
-<span class="co">#&gt;  9     9       14508332               37</span>
-<span class="co">#&gt; 10    10        6784489               35</span>
-<span class="co">#&gt; # ... with 19 more rows</span>
-<span class="co">#&gt; Task done, CNVR results were saved in the 'call_cnvr_penn' directory.</span></code></pre></div>
+<span class="co">#&gt;    Chr   `Total Length` `Number of CNVR`</span>
+<span class="co">#&gt;    &lt;chr&gt;          &lt;dbl&gt;            &lt;int&gt;</span>
+<span class="co">#&gt;  1 1           26386484               62</span>
+<span class="co">#&gt;  2 10           6784489               35</span>
+<span class="co">#&gt;  3 11          12434667               33</span>
+<span class="co">#&gt;  4 12          23045567               34</span>
+<span class="co">#&gt;  5 13           4035800               35</span>
+<span class="co">#&gt;  6 14          11313259               31</span>
+<span class="co">#&gt;  7 15          10540774               32</span>
+<span class="co">#&gt;  8 16           9051167               31</span>
+<span class="co">#&gt;  9 17          12211360               32</span>
+<span class="co">#&gt; 10 18           3455220               35</span>
+<span class="co">#&gt; # ... with 19 more rows</span></code></pre></div>
 <p>Next, let’s generate CNVRs for CNVPartition and standard CNV lists. In order to avoid mixing the results among different files, we can set the <code>folder</code> argument to assign a distinguishing name to the newly generated folder.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/call_cnvr.html">call_cnvr</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/cnvpart_clean.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
-          chr_set <span class="op">=</span> <span class="st">'29'</span>, 
-          folder <span class="op">=</span> <span class="st">"call_cnvr_part"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/call_cnvr.html">call_cnvr</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="va">cnv_part_umd</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+                    chr_set <span class="op">=</span> <span class="st">'29'</span>, 
+                    folder <span class="op">=</span> <span class="st">"call_cnvr_part"</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/call_cnvr.html">call_cnvr</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/cleancnv.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+<span class="fu"><a href="../reference/call_cnvr.html">call_cnvr</a></span><span class="op">(</span>clean_cnv <span class="op">=</span> <span class="va">cnv_standard</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
           chr_set <span class="op">=</span> <span class="fl">29</span>,
           folder <span class="op">=</span> <span class="st">"call_cnvr_standard"</span><span class="op">)</span></code></pre></div>
 </div>
@@ -456,24 +499,27 @@
 <span class="co">#&gt;  [1] "Cow_ARS_UCSC"            "Cow_ARS_ENS"            </span>
 <span class="co">#&gt;  [3] "Cow_UMD_UCSC"            "Pig_susScr11_UCSC"      </span>
 <span class="co">#&gt;  [5] "Pig_susScr11_ENS"        "Human_hg38"             </span>
-<span class="co">#&gt;  [7] "Sheep_Oar_v4.0_UCSC"     "Horse_equCab3.0_UCSC"   </span>
-<span class="co">#&gt;  [9] "Dog_UMICH_Zoey_3.1_UCSC" "Dog_UMICH_Zoey_3.1_ENS"</span></code></pre></div>
+<span class="co">#&gt;  [7] "Human_hg19"              "Sheep_Oar_v4.0_UCSC"    </span>
+<span class="co">#&gt;  [9] "Sheep_Oar_v3.1_UCSC"     "Sheep_Oar_v3.1_ENS"     </span>
+<span class="co">#&gt; [11] "Horse_equCab3.0_UCSC"    "Horse_equCab2.0_UCSC"   </span>
+<span class="co">#&gt; [13] "Dog_UMICH_Zoey_3.1_UCSC" "Dog_UMICH_Zoey_3.1_ENS" </span>
+<span class="co">#&gt; [15] "Chicken_galGal6_UCSC"    "Chicken_galGal5_UCSC"</span></code></pre></div>
 <p>Now, let’s get the reference gene list for the PennCNV results. This dataset was generated using ARS-UCD 1.2 as reference genome. Two gene lists are available for this reference: <code>cow_ARS_UCSC</code> and <code>cow_ARS_ENS</code>. The suffix <code>ENS</code> indicates the Ensembl reference gene list. The gene list will be saved in the folder <code>refgene</code>, which will be created first if necessary.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/get_refgene.html">get_refgene</a></span><span class="op">(</span>gene_version <span class="op">=</span> <span class="st">"Cow_ARS_UCSC"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Link to the website..."</span>
-<span class="co">#&gt; [1] "Converting format..."</span>
-<span class="co">#&gt; [1] "Task done."</span>
-<span class="fu"><a href="../reference/get_refgene.html">get_refgene</a></span><span class="op">(</span>gene_version <span class="op">=</span> <span class="st">"Cow_ARS_ENS"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Link to the website..."</span>
-<span class="co">#&gt; [1] "Converting format..."</span>
-<span class="co">#&gt; [1] "Task done."</span></code></pre></div>
+<code class="sourceCode R"><span class="va">Cow_ARS_UCSC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_refgene.html">get_refgene</a></span><span class="op">(</span>gene_version <span class="op">=</span> <span class="st">"Cow_ARS_UCSC"</span><span class="op">)</span>
+<span class="co">#&gt; Link to the website...</span>
+<span class="co">#&gt; Converting format...</span>
+<span class="co">#&gt; Task done.</span>
+<span class="va">Cow_ARS_ENS</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_refgene.html">get_refgene</a></span><span class="op">(</span>gene_version <span class="op">=</span> <span class="st">"Cow_ARS_ENS"</span><span class="op">)</span>
+<span class="co">#&gt; Link to the website...</span>
+<span class="co">#&gt; Converting format...</span>
+<span class="co">#&gt; Task done.</span></code></pre></div>
 <p>Next let’s get reference gene list for the CNVPartition and Standard result sets, both of which were generated on the UMD 3.1 reference genome; in this case, <code>Cow_UMD_UCSC</code> is the correct option to select.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/get_refgene.html">get_refgene</a></span><span class="op">(</span>gene_version <span class="op">=</span> <span class="st">"Cow_UMD_UCSC"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Link to the website..."</span>
-<span class="co">#&gt; [1] "Converting format..."</span>
-<span class="co">#&gt; [1] "Task done."</span></code></pre></div>
+<code class="sourceCode R"><span class="va">COW_UMD_UCSC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_refgene.html">get_refgene</a></span><span class="op">(</span>gene_version <span class="op">=</span> <span class="st">"Cow_UMD_UCSC"</span><span class="op">)</span>
+<span class="co">#&gt; Link to the website...</span>
+<span class="co">#&gt; Converting format...</span>
+<span class="co">#&gt; Task done.</span></code></pre></div>
 <p>Now we have well-prepared reference gene lists, let’s return to the <code>call_gene</code> function.</p>
 </div>
 <div id="the-call_gene-function" class="section level3">
@@ -491,97 +537,18 @@
 <p>We suggest that both ‘interval’ and ‘clean_cnv’ should be set simultaneously: this will enable reporting of the frequency of all annotated genes by counting how many CNVs overlapped to each gene within a CNVR. In section 10, we will show how to use the output file <code>gene_freq_cnv.txt</code> to make comparisons between different CNV results to find sets of consensus genes.</p>
 <p>As an example, we will first call genes for the PennCNV results, ensuring that the gene list for the correct reference has been set (ARS 1.2). In this case, we are using the Ensembl-provided gene list.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/call_gene.html">call_gene</a></span><span class="op">(</span>refgene <span class="op">=</span> <span class="st">"refgene/cow_ARS_ENS.txt"</span>, <span class="co">#standard file was generated by 'get_refgene' function in section 5.1</span>
-          interval <span class="op">=</span> <span class="st">"call_cnvr_Penn/cnvr.txt"</span>, <span class="co">#optional, standard file was generated by 'call_cnvr' function in section 4</span>
-          clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/penncnv_clean.cnv"</span>, <span class="co">#optional, standard file was generated by 'cnv_clean' function in section 1</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/call_gene.html">call_gene</a></span><span class="op">(</span>refgene <span class="op">=</span> <span class="st">"refgene/Cow_ARS_ENS.txt"</span>, <span class="co">#standard file was generated by 'get_refgene' function in section 5.1</span>
+          interval <span class="op">=</span> <span class="va">cnvr_penn_ars</span>, <span class="co">#optional, standard file was generated by 'call_cnvr' function in section 4</span>
+          clean_cnv <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#optional, standard file was generated by 'cnv_clean' function in section 1</span>
           folder <span class="op">=</span> <span class="st">"call_gene_Penn_Ens"</span><span class="op">)</span>
-<span class="co">#&gt; Checking gene annotation status in the interval file...</span>
-<span class="co">#&gt; Summary of annotation results:</span>
-<span class="co">#&gt;   Interval_Has_Gene Interval_Without_Gene Total_Number_of_Genes</span>
-<span class="co">#&gt; 1               692                   286                  2906</span>
-<span class="co">#&gt; Checking gene annotation status in CNV file...</span>
-<span class="co">#&gt; 2906 genes were matched in the CNV and CNVR results. The 10 most frequent genes:</span>
-<span class="co">#&gt; # A tibble: 10 x 2</span>
-<span class="co">#&gt; # Groups:   name2 [10]</span>
-<span class="co">#&gt;    name2   Frequency</span>
-<span class="co">#&gt;    &lt;chr&gt;       &lt;int&gt;</span>
-<span class="co">#&gt;  1 53092.3        72</span>
-<span class="co">#&gt;  2 19939.4        67</span>
-<span class="co">#&gt;  3 49535.4        67</span>
-<span class="co">#&gt;  4 77856.1        63</span>
-<span class="co">#&gt;  5 08346.6        60</span>
-<span class="co">#&gt;  6 31707.5        59</span>
-<span class="co">#&gt;  7 BLA-DQB        59</span>
-<span class="co">#&gt;  8 75223.1        51</span>
-<span class="co">#&gt;  9 33864.5        48</span>
-<span class="co">#&gt; 10 53751.3        48</span>
-<span class="co">#&gt; Warning in call_gene(refgene = "refgene/cow_ARS_ENS.txt", interval =</span>
-<span class="co">#&gt; "call_cnvr_Penn/cnvr.txt", : The following genes are duplicated in multiple</span>
-<span class="co">#&gt; CNVRs, and will only be annotated on the first CNVR_ID in the final gene</span>
-<span class="co">#&gt; frequency list report!</span>
-<span class="co">#&gt;            name2       ID Chr   i.Start     i.End</span>
-<span class="co">#&gt; 49            U7  CNVR_35   1  47249572  49067075</span>
-<span class="co">#&gt; 233       ZNF644 CNVR_128   3  52257274  52264697</span>
-<span class="co">#&gt; 234       ZNF644 CNVR_129   3  52321114  52363402</span>
-<span class="co">#&gt; 315         DGKB CNVR_166   4  22417069  22677610</span>
-<span class="co">#&gt; 316         DGKB CNVR_167   4  23108150  23239528</span>
-<span class="co">#&gt; 361        KCND2 CNVR_195   4  84792163  84829041</span>
-<span class="co">#&gt; 362        KCND2 CNVR_196   4  84948868  85008727</span>
-<span class="co">#&gt; 494      84617.1 CNVR_258   5 118326410 118372340</span>
-<span class="co">#&gt; 495        TAFA5 CNVR_258   5 118326410 118372340</span>
-<span class="co">#&gt; 496      84617.1 CNVR_259   5 118421130 118474468</span>
-<span class="co">#&gt; 497        TAFA5 CNVR_259   5 118421130 118474468</span>
-<span class="co">#&gt; 520           U6 CNVR_272   6  30915027  33530543</span>
-<span class="co">#&gt; 521       CCSER1 CNVR_272   6  30915027  33530543</span>
-<span class="co">#&gt; 522       CCSER1 CNVR_273   6  33709997  33774948</span>
-<span class="co">#&gt; 523       CCSER1 CNVR_274   6  33873388  34610791</span>
-<span class="co">#&gt; 859           U2 CNVR_349   7  84759907  86193204</span>
-<span class="co">#&gt; 863          7SK CNVR_352   7  91189501  92330502</span>
-<span class="co">#&gt; 915  Metazoa_SRP CNVR_384   9   1492214   5583983</span>
-<span class="co">#&gt; 931        GRIK2 CNVR_396   9  45904339  47944789</span>
-<span class="co">#&gt; 932        GRIK2 CNVR_397   9  48307662  48796022</span>
-<span class="co">#&gt; 967      5S_rRNA CNVR_424  10   9143166   9354675</span>
-<span class="co">#&gt; 1059 Metazoa_SRP CNVR_439  10  42661079  42860796</span>
-<span class="co">#&gt; 1064      UNC13C CNVR_442  10  55628092  55693450</span>
-<span class="co">#&gt; 1065      UNC13C CNVR_443  10  55907151  55929569</span>
-<span class="co">#&gt; 1074         7SK CNVR_449  10  94536813  96569247</span>
-<span class="co">#&gt; 1104          U7 CNVR_461  11  17249565  18200634</span>
-<span class="co">#&gt; 1119 Metazoa_SRP CNVR_471  11  51936197  54294891</span>
-<span class="co">#&gt; 1300     5S_rRNA CNVR_498  12  18874232  18999163</span>
-<span class="co">#&gt; 1660     5S_rRNA CNVR_611  15  69398047  70655610</span>
-<span class="co">#&gt; 1735     5S_rRNA CNVR_628  16  16011331  16812729</span>
-<span class="co">#&gt; 1824        LRBA CNVR_651  17   6794956   6825613</span>
-<span class="co">#&gt; 1825        LRBA CNVR_652  17   6963919   7013884</span>
-<span class="co">#&gt; 1972        WWOX CNVR_682  18   5512831   5529148</span>
-<span class="co">#&gt; 1973        WWOX CNVR_683  18   5549190   5640099</span>
-<span class="co">#&gt; 2005       ITFG1 CNVR_692  18  15578052  15614150</span>
-<span class="co">#&gt; 2006       ITFG1 CNVR_693  18  15714407  15821257</span>
-<span class="co">#&gt; 2160       ACACA CNVR_728  19  13518465  13564941</span>
-<span class="co">#&gt; 2161       ACACA CNVR_729  19  13678370  13749514</span>
-<span class="co">#&gt; 2797        BPHL CNVR_859  23  50437086  50536890</span>
-<span class="co">#&gt; 2798        BPHL CNVR_860  23  50546856  50644819</span>
-<span class="co">#&gt; 2809          U2 CNVR_867  24  10709058  10979040</span>
-<span class="co">#&gt; 3022     5S_rRNA CNVR_900  25  41532834  41632501</span>
-<span class="co">#&gt; 3055      ATRNL1 CNVR_912  26  35555953  35700362</span>
-<span class="co">#&gt; 3056      ATRNL1 CNVR_913  26  35829748  35904911</span>
-<span class="co">#&gt; 3104      JMJD1C CNVR_938  28  18916753  19430612</span>
-<span class="co">#&gt; 3105      JMJD1C CNVR_939  28  19507984  19563947</span>
-<span class="co">#&gt; 3108      CTNNA3 CNVR_941  28  20997159  22372439</span>
-<span class="co">#&gt; 3109      CTNNA3 CNVR_942  28  22771955  22933760</span>
-<span class="co">#&gt; 3110      CTNNA3 CNVR_943  28  23532241  23555163</span>
-<span class="co">#&gt; 3112      CTNNA3 CNVR_944  28  24001450  24095133</span>
-<span class="co">#&gt; 3196          U6 CNVR_975  29  48495358  48602322</span>
-<span class="co">#&gt; Task done. Files containing the CNVs, CNVR annotations, summary tables, and the frequency of genes in CNV regions have been saved in the 'call_gene_Penn_Ens'.</span></code></pre></div>
+<span class="co">#&gt; Warning in call_gene(refgene = "refgene/Cow_ARS_ENS.txt", interval = cnvr_penn_ars, : The following genes are duplicated in multiple CNVRs, and will only be annotated on the first CNVR_ID in the final gene frequency list report!</span></code></pre></div>
 <p>We can also use the UCSC gene list:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/call_gene.html">call_gene</a></span><span class="op">(</span>refgene <span class="op">=</span> <span class="st">"refgene/cow_ARS_UCSC.txt"</span>, <span class="co">#standard file was generated by 'get_refgene' function in section 5.1</span>
           interval <span class="op">=</span> <span class="st">"call_cnvr_Penn/cnvr.txt"</span>, <span class="co">#standard file was generated by 'call_cnvr' function in section 4</span>
           clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/penncnv_clean.cnv"</span>, <span class="co">#optional, standard file was generated by 'cnv_clean' function in section 1</span>
           folder <span class="op">=</span> <span class="st">"call_gene_Penn_UCSC"</span><span class="op">)</span>
-<span class="co">#&gt; Warning in call_gene(refgene = "refgene/cow_ARS_UCSC.txt", interval =</span>
-<span class="co">#&gt; "call_cnvr_Penn/cnvr.txt", : The following genes are duplicated in multiple</span>
-<span class="co">#&gt; CNVRs, and will only be annotated on the first CNVR_ID in the final gene</span>
-<span class="co">#&gt; frequency list report!</span></code></pre></div>
+<span class="co">#&gt; Warning in call_gene(refgene = "refgene/cow_ARS_UCSC.txt", interval = "call_cnvr_Penn/cnvr.txt", : The following genes are duplicated in multiple CNVRs, and will only be annotated on the first CNVR_ID in the final gene frequency list report!</span></code></pre></div>
 <p>Comparing the results, we observe that the results from two reference gene lists are slightly different, likely because the maintainers of each database have different methodologies (and possibly data sources) for producing their gene annotations. As a result of this, the position and quantity of genes might slightly differ between gene builds even for the same reference genome. Therefore, it may be important to validate genes of interest in more than one database.</p>
 <p>Now, let’s call genes for the CNVPartition results. As before, we provide both CNVR and CNV lists, and set the new folder name by arguments. Note that we need to use the UMD 3.1 reference build for this data set. We also run the standard CNV set (using the ARS1.2 reference).</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
@@ -589,19 +556,13 @@
           interval <span class="op">=</span> <span class="st">"call_cnvr_Part/cnvr.txt"</span>, <span class="co">#standard file was generated by 'call_cnvr' function in section 4</span>
           clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/cnvpart_clean.cnv"</span>, <span class="co">#optional, standard file was generated by 'cnv_clean' function in section 1</span>
           folder <span class="op">=</span> <span class="st">"call_gene_Part"</span><span class="op">)</span>
-<span class="co">#&gt; Warning in call_gene(refgene = "refgene/cow_UMD_UCSC.txt", interval =</span>
-<span class="co">#&gt; "call_cnvr_Part/cnvr.txt", : The following genes are duplicated in multiple</span>
-<span class="co">#&gt; CNVRs, and will only be annotated on the first CNVR_ID in the final gene</span>
-<span class="co">#&gt; frequency list report!</span>
+<span class="co">#&gt; Warning in call_gene(refgene = "refgene/cow_UMD_UCSC.txt", interval = "call_cnvr_Part/cnvr.txt", : The following genes are duplicated in multiple CNVRs, and will only be annotated on the first CNVR_ID in the final gene frequency list report!</span>
 
 <span class="fu"><a href="../reference/call_gene.html">call_gene</a></span><span class="op">(</span>refgene <span class="op">=</span> <span class="st">"refgene/cow_ARS_UCSC.txt"</span>, <span class="co">#standard file was generated by 'get_refgene' function in section 5.1</span>
           interval <span class="op">=</span> <span class="st">"call_cnvr_standard/cnvr.txt"</span>, <span class="co">#standard file was generated by 'call_cnvr' function in section 4</span>
           clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/cleancnv.cnv"</span>, <span class="co">#optional, standard file was generated by 'cnv_clean' function in section 1</span>
           folder <span class="op">=</span> <span class="st">"call_gene_standard_ARS_UCSC"</span><span class="op">)</span>
-<span class="co">#&gt; Warning in call_gene(refgene = "refgene/cow_ARS_UCSC.txt", interval =</span>
-<span class="co">#&gt; "call_cnvr_standard/cnvr.txt", : The following genes are duplicated in multiple</span>
-<span class="co">#&gt; CNVRs, and will only be annotated on the first CNVR_ID in the final gene</span>
-<span class="co">#&gt; frequency list report!</span></code></pre></div>
+<span class="co">#&gt; Warning in call_gene(refgene = "refgene/cow_ARS_UCSC.txt", interval = "call_cnvr_standard/cnvr.txt", : The following genes are duplicated in multiple CNVRs, and will only be annotated on the first CNVR_ID in the final gene frequency list report!</span></code></pre></div>
 </div>
 </div>
 <div id="how-to-plot-cnvr-distribution-map" class="section level2">
@@ -617,10 +578,10 @@
           mixed_col <span class="op">=</span> <span class="st">"black"</span>,  <span class="co">#optional, adjust the color of Mixed type of CNVR</span>
           legend_x <span class="op">=</span> <span class="fl">127</span>, <span class="co">#optional, adjust the horizontal position of legend</span>
           legend_y <span class="op">=</span> <span class="fl">30</span>,  <span class="co">#optional, adjust the vertical position of legend</span>
-          height_1 <span class="op">=</span> <span class="fl">14</span>, <span class="co">#optional, adjust the height of CNVR plot</span>
-          width_1 <span class="op">=</span> <span class="fl">10</span>, <span class="co">#optional, adjust the width of CNVR plot</span>
+          <span class="co">#height_1 = 14, #optional, adjust the height of CNVR plot</span>
+          <span class="co">#width_1 = 10, #optional, adjust the width of CNVR plot</span>
           folder <span class="op">=</span> <span class="st">"cnvr_plot_penn"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Task done, CNVR Distribution Plot saved in working directory."</span></code></pre></div>
+<span class="co">#&gt; Task done, CNVR Distribution Plot saved in working directory.</span></code></pre></div>
 <div class="figure">
 <img src="cnvr_plot_penn/cnvr_plot.png" width="320" alt=""><p class="caption">Figure.9 CNVR distribution map for PennCRV data</p>
 </div>
@@ -634,9 +595,9 @@
           legend_x <span class="op">=</span> <span class="fl">127</span>, <span class="co">#optional, adjust the horizontal position of legend</span>
           legend_y <span class="op">=</span> <span class="fl">30</span>,  <span class="co">#optional, adjust the vertical position of legend</span>
           height_1 <span class="op">=</span> <span class="fl">14</span>, <span class="co">#optional, adjust the height of CNVR plot</span>
-          width_1 <span class="op">=</span> <span class="fl">10</span>, <span class="co">#optional, adjust the width of CNVR plot</span>
+          width_1 <span class="op">=</span> <span class="fl">17</span>, <span class="co">#optional, adjust the width of CNVR plot</span>
           folder <span class="op">=</span> <span class="st">"cnvr_plot_part"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Task done, CNVR Distribution Plot saved in working directory."</span></code></pre></div>
+<span class="co">#&gt; Task done, CNVR Distribution Plot saved in working directory.</span></code></pre></div>
 <div class="figure">
 <img src="cnvr_plot_part/cnvr_plot.png" width="320" alt=""><p class="caption">Figure.10 Part CNVR Distribution Map</p>
 </div>
@@ -667,8 +628,8 @@
 <p>Typically, we will use multiple models and software packages when predicting and analysing CNVs, especially when using data based on SNP chip genotypes. As a result, it is very common that we will need to compare two or more sets of predicted CNVs. To tackle this problem, we have implemented the <code>compare_cnv</code> function to make comparisons on both the individual and population levels. At the individual level, the function checks how many CNVs overlap in the same individual between two CNV result sets, thereby verifying the level of similarity between the two sets of results. On the population level, the comparison will check the level of overlap through the whole sample population, without checking whether or not the CNVs are present in the same individual; this can better indiciate the degree of repeatability of CNV detection between the two result sets.</p>
 <p>As an example let’s compare the CNV prediction results for PennCNV and CNVPartition. Note that these results were generated using different reference builds, so the results of the comparison are currently rather meaningless (the physical coordinates of the CNVs will not line up across reference builds): this problem will be fixed in section 11 below.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/compare_cnv.html">compare_cnv</a></span><span class="op">(</span>cnv_def <span class="op">=</span> <span class="st">"cnv_clean/cleancnv.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
-            cnv_tar <span class="op">=</span> <span class="st">"cnv_clean/penncnv_clean.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+<code class="sourceCode R"><span class="fu"><a href="../reference/compare_cnv.html">compare_cnv</a></span><span class="op">(</span>cnv_def <span class="op">=</span> <span class="va">cnv_part_umd</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
+            cnv_tar <span class="op">=</span> <span class="va">cnv_penn_ars</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
             width_1 <span class="op">=</span> <span class="fl">12</span>, <span class="co">#optional, adjust the width of final plot</span>
             height_1 <span class="op">=</span> <span class="fl">11</span>, <span class="co">#optional, adjust the height of final plot</span>
             legend_x <span class="op">=</span> <span class="fl">0.9</span>, <span class="co">#optional, adjust the horizontal position of final plot</span>
@@ -677,27 +638,27 @@
             col_2 <span class="op">=</span> <span class="st">"lightblue"</span>, <span class="co">#optional, adjust the colour of Overlapped part</span>
             plot_caption <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co">#optional, show the Note information in plot or not</span>
             folder <span class="op">=</span> <span class="st">"compare_cnv_PartUMD_Vs_PennUMD"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Comparison Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total 4534"</span>
-<span class="co">#&gt; [1] "The number of overlaped CNVs on individual level is 951, which is around 21 percent in the first file"</span>
-<span class="co">#&gt; [1] "The number of Non-overlaped CNVs on individual level is 3583, which is around 79 percent in the first file"</span>
-<span class="co">#&gt; [1] "Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total of 4534"</span>
-<span class="co">#&gt; [1] "The number of overlaped CNVs on population level is 2352, which is around 51.9 percent in first file."</span>
-<span class="co">#&gt; [1] "The number of Non-overlaped CNVs on population level is 2182, which is around 48.1 percent in first file"</span>
+<span class="co">#&gt; [1] "Comparison Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total 1239"</span>
+<span class="co">#&gt; [1] "The number of overlaped CNVs on individual level is 169, which is around 13.6 percent in the first file"</span>
+<span class="co">#&gt; [1] "The number of Non-overlaped CNVs on individual level is 1070, which is around 86.4 percent in the first file"</span>
+<span class="co">#&gt; [1] "Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total of 1239"</span>
+<span class="co">#&gt; [1] "The number of overlaped CNVs on population level is 541, which is around 43.7 percent in first file."</span>
+<span class="co">#&gt; [1] "The number of Non-overlaped CNVs on population level is 698, which is around 56.3 percent in first file"</span>
 <span class="co">#&gt; [1] "The final comparison results of the first file as follows: "</span>
 <span class="co">#&gt;                  Item Individual.Level Population.Level</span>
-<span class="co">#&gt; 1     Overlapped CNVs               21             51.9</span>
-<span class="co">#&gt; 2 Non-overlapped CNVs               79             48.1</span>
+<span class="co">#&gt; 1     Overlapped CNVs             13.6             43.7</span>
+<span class="co">#&gt; 2 Non-overlapped CNVs             86.4             56.3</span>
 <span class="co">#&gt; [1] "Comparison to the first file was finished."</span>
 <span class="co">#&gt; [1] "Comparison to second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total 5215"</span>
-<span class="co">#&gt; [1] "The number of overlaped CNVs on individual level is 966, which is around 18.5 percent in second file."</span>
-<span class="co">#&gt; [1] "The number of Non-overlaped CNVs on individual level is 4249, which is around 81.5 percent in second file."</span>
+<span class="co">#&gt; [1] "The number of overlaped CNVs on individual level is 175, which is around 3.4 percent in second file."</span>
+<span class="co">#&gt; [1] "The number of Non-overlaped CNVs on individual level is 5040, which is around 96.6 percent in second file."</span>
 <span class="co">#&gt; [1] "Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVs which are in total of 5215"</span>
-<span class="co">#&gt; [1] "The number of overlaped CNVs in seceond file on population level are 2575, which is around 49.4 percent"</span>
-<span class="co">#&gt; [1] "The number of Non-overlaped CNVs in second file on population level are 2640, which is around 50.6 percent"</span>
+<span class="co">#&gt; [1] "The number of overlaped CNVs in seceond file on population level are 1379, which is around 26.4 percent"</span>
+<span class="co">#&gt; [1] "The number of Non-overlaped CNVs in second file on population level are 3836, which is around 73.6 percent"</span>
 <span class="co">#&gt; [1] "The final comparison results of the second file as follows: "</span>
 <span class="co">#&gt;                  Item Individual.Level Population.Level</span>
-<span class="co">#&gt; 1     Overlapped CNVs             18.5             49.4</span>
-<span class="co">#&gt; 2 Non-overlapped CNVs             81.5             50.6</span>
+<span class="co">#&gt; 1     Overlapped CNVs              3.4             26.4</span>
+<span class="co">#&gt; 2 Non-overlapped CNVs             96.6             73.6</span>
 <span class="co">#&gt; [1] "Task done. Comparison results were saved in your working directory"</span></code></pre></div>
 <div class="figure">
 <img src="compare_cnv_PartUMD_Vs_PennUMD/combine.png" width="330" alt=""><p class="caption">Figure.12 Comparison of PennCNV and CNVPartition results</p>
@@ -717,23 +678,23 @@
              col_1 <span class="op">=</span> <span class="st">"grey15"</span>, <span class="co">#optional, adjust the colour of non-overlapped part</span>
              col_2 <span class="op">=</span> <span class="st">"forestgreen"</span>, <span class="co">#optional, adjust the colour of overlapped part</span>
              folder <span class="op">=</span> <span class="st">"compare_cnvr_PartUMD_Penn_UMD"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of 246"</span>
-<span class="co">#&gt; [1] "CNVR comparison summary results in checkover_pop_1 as following:"</span>
+<span class="co">#&gt; Comparison to the first file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of 246 </span>
+<span class="co">#&gt; CNVR comparison summary results in checkover_pop_1 as following:</span>
 <span class="co">#&gt; # A tibble: 6 x 8</span>
 <span class="co">#&gt; # Groups:   Type [3]</span>
 <span class="co">#&gt;   Type  Check_overlap origi_length num_CNVR overlap_len num_overlap_opp~</span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                &lt;int&gt;    &lt;int&gt;       &lt;dbl&gt;            &lt;int&gt;</span>
+<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;                &lt;int&gt;    &lt;int&gt;       &lt;dbl&gt;            &lt;int&gt;</span>
 <span class="co">#&gt; 1 Gain  Non-Overlap        1824550        7    53469808                0</span>
 <span class="co">#&gt; 2 Gain  Overlap          105638930       76    53993672              100</span>
-<span class="co">#&gt; 3 Loss  Non-Overlap        6194700       64     9566899                0</span>
+<span class="co">#&gt; 3 Loss  Non-Overlap        6194700       64     6194700                0</span>
 <span class="co">#&gt; 4 Loss  Overlap           11580677       64     8208478               64</span>
-<span class="co">#&gt; 5 Mixed Non-Overlap        3317779        4    36001939                0</span>
+<span class="co">#&gt; 5 Mixed Non-Overlap        3317779        4     3317779                0</span>
 <span class="co">#&gt; 6 Mixed Overlap           70606375       31    37922215               60</span>
 <span class="co">#&gt; # ... with 2 more variables: prop_overlap_len &lt;dbl&gt;, prop_num &lt;dbl&gt;</span>
-<span class="co">#&gt; [1] "The number of overlaped CNVRs on population level is 171, which is around 69.5 percent in first file."</span>
-<span class="co">#&gt; [1] "The number of Non-overlaped CNVRs on population level is 75, which is around 30.5 percent in first file"</span>
-<span class="co">#&gt; [1] "The overlapping length is 100124365 bp, which is around 50.3 percent in first file"</span>
-<span class="co">#&gt; [1] "The final comparison results of the first file as follows: "</span>
+<span class="co">#&gt; The number of overlaped CNVRs on population level is 171, which is around 69.5 percent in first file.</span>
+<span class="co">#&gt; The number of Non-overlaped CNVRs on population level is 75, which is around 30.5 percent in first file</span>
+<span class="co">#&gt; The overlapping length is 100124365 bp, which is around 50.3 percent in first file</span>
+<span class="co">#&gt; The final comparison results of the first file as follows: </span>
 <span class="co">#&gt;                   Item Number.of.CNVR Proportion.of.Number.... Length.bp.</span>
 <span class="co">#&gt; 1     Overlapped CNVRs            171                     69.5  100124365</span>
 <span class="co">#&gt; 2 Non-overlapped CNVRs             75                     30.5   99038646</span>
@@ -742,24 +703,24 @@
 <span class="co">#&gt; 1                     50.3</span>
 <span class="co">#&gt; 2                     49.7</span>
 <span class="co">#&gt; 3                    100.0</span>
-<span class="co">#&gt; [1] "Comparison to the first file was finished."</span>
-<span class="co">#&gt; [1] "Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of 878"</span>
-<span class="co">#&gt; [1] "CNVR comparison summary results in checkover_pop_2 as following:"</span>
+<span class="co">#&gt; Comparison to the first file was finished.</span>
+<span class="co">#&gt; Comparison to the second file was Passed Validation, the number of Overlap and Non-overlap CNV equal to the original number of CNVRs which are in total of 878</span>
+<span class="co">#&gt; CNVR comparison summary results in checkover_pop_2 as following:</span>
 <span class="co">#&gt; # A tibble: 6 x 8</span>
 <span class="co">#&gt; # Groups:   Type [3]</span>
 <span class="co">#&gt;   Type  Check_overlap origi_length num_CNVR overlap_len num_overlap_opp~</span>
-<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;                &lt;int&gt;    &lt;int&gt;       &lt;dbl&gt;            &lt;int&gt;</span>
+<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;                &lt;int&gt;    &lt;int&gt;       &lt;dbl&gt;            &lt;int&gt;</span>
 <span class="co">#&gt; 1 Gain  Non-Overlap       35340763      238    36131115                0</span>
 <span class="co">#&gt; 2 Gain  Overlap           13315879       68    12525527               68</span>
-<span class="co">#&gt; 3 Loss  Non-Overlap       31958106      311    32810816                0</span>
+<span class="co">#&gt; 3 Loss  Non-Overlap       31958106      311    31958106                0</span>
 <span class="co">#&gt; 4 Loss  Overlap            6279030       51     5426320               51</span>
-<span class="co">#&gt; 5 Mixed Non-Overlap       70399922      107   117876424                0</span>
+<span class="co">#&gt; 5 Mixed Non-Overlap       70399922      107    70399922                0</span>
 <span class="co">#&gt; 6 Mixed Overlap          129649020      103    82172518              106</span>
 <span class="co">#&gt; # ... with 2 more variables: prop_overlap_len &lt;dbl&gt;, prop_num &lt;dbl&gt;</span>
-<span class="co">#&gt; [1] "The number of overlaped CNVRs in seceond file on population level are 222, which is around 25.3 percent"</span>
-<span class="co">#&gt; [1] "The number of Non-overlaped CNVRs in second file on population level are 656, which is around 74.7 percent"</span>
-<span class="co">#&gt; [1] "The overlapping length is 100124365 bp, which is around 34.9 percent in second file"</span>
-<span class="co">#&gt; [1] "The final comparison results of the second file as follows: "</span>
+<span class="co">#&gt; The number of overlaped CNVRs in seceond file on population level are 222, which is around 25.3 percent</span>
+<span class="co">#&gt; The number of Non-overlaped CNVRs in second file on population level are 656, which is around 74.7 percent</span>
+<span class="co">#&gt; The overlapping length is 100124365 bp, which is around 34.9 percent in second file</span>
+<span class="co">#&gt; The final comparison results of the second file as follows: </span>
 <span class="co">#&gt;                   Item Number.of.CNVR Proportion.of.Number.... Length.bp.</span>
 <span class="co">#&gt; 1     Overlapped CNVRs            222                     25.3  100124365</span>
 <span class="co">#&gt; 2 Non-overlapped CNVRs            656                     74.7  186818355</span>
@@ -768,7 +729,38 @@
 <span class="co">#&gt; 1                     34.9</span>
 <span class="co">#&gt; 2                     65.1</span>
 <span class="co">#&gt; 3                    100.0</span>
-<span class="co">#&gt; [1] "Task done. Comparison results were saved in the working directory"</span></code></pre></div>
+<span class="co">#&gt; Processing the unique common CNVRs list by uniting overlepped CNVRs between two results </span>
+<span class="co">#&gt; Chromosome 1 has been processed.</span>
+<span class="co">#&gt; Chromosome 2 has been processed.</span>
+<span class="co">#&gt; Chromosome 3 has been processed.</span>
+<span class="co">#&gt; Chromosome 4 has been processed.</span>
+<span class="co">#&gt; Chromosome 5 has been processed.</span>
+<span class="co">#&gt; Chromosome 6 has been processed.</span>
+<span class="co">#&gt; Chromosome 7 has been processed.</span>
+<span class="co">#&gt; Chromosome 8 has been processed.</span>
+<span class="co">#&gt; Chromosome 9 has been processed.</span>
+<span class="co">#&gt; Chromosome 10 has been processed.</span>
+<span class="co">#&gt; Chromosome 11 has been processed.</span>
+<span class="co">#&gt; Chromosome 12 has been processed.</span>
+<span class="co">#&gt; Chromosome 13 has been processed.</span>
+<span class="co">#&gt; Chromosome 14 has been processed.</span>
+<span class="co">#&gt; Chromosome 15 has been processed.</span>
+<span class="co">#&gt; Chromosome 16 has been processed.</span>
+<span class="co">#&gt; Chromosome 17 has been processed.</span>
+<span class="co">#&gt; Chromosome 18 has been processed.</span>
+<span class="co">#&gt; Chromosome 19 has been processed.</span>
+<span class="co">#&gt; Chromosome 20 has been processed.</span>
+<span class="co">#&gt; Chromosome 21 has been processed.</span>
+<span class="co">#&gt; Chromosome 22 has been processed.</span>
+<span class="co">#&gt; Chromosome 23 has been processed.</span>
+<span class="co">#&gt; Chromosome 24 has been processed.</span>
+<span class="co">#&gt; Chromosome 25 has been processed.</span>
+<span class="co">#&gt; Chromosome 26 has been processed.</span>
+<span class="co">#&gt; Chromosome 27 has been processed.</span>
+<span class="co">#&gt; Chromosome 28 has been processed.</span>
+<span class="co">#&gt; Chromosome 29 has been processed.</span>
+<span class="co">#&gt; There are 168 unique and mutual CNVRs after uniting the overlapped CNVRs between two results </span>
+<span class="co">#&gt; Task done. Comparison results were saved in the working directory</span></code></pre></div>
 <div class="figure">
 <img src="compare_cnvr_PartUMD_Penn_UMD/combine_cnvr.png" width="320" alt=""><p class="caption">Figure.13 Comparison of CNVR</p>
 </div>
@@ -798,7 +790,7 @@
 <span class="co">#&gt;   Common_Gene          n</span>
 <span class="co">#&gt;   &lt;chr&gt;            &lt;int&gt;</span>
 <span class="co">#&gt; 1 Common_High          5</span>
-<span class="co">#&gt; 2 Common_Low        3035</span>
+<span class="co">#&gt; 2 Common_Low        3029</span>
 <span class="co">#&gt; 3 High_Freq_list_1     6</span>
 <span class="co">#&gt; 4 High_Freq_list_2    54</span>
 <span class="co">#&gt; [1] "Gene comparison list, brife summary and comparison plot was saved in working directory."</span></code></pre></div>
@@ -821,15 +813,15 @@
 <span class="co">#&gt; [1] "Clustering common gene among three gene lists..."</span>
 <span class="co">#&gt; [1] "2 genes with higher frequency in all three gene lists, they are: "</span>
 <span class="co">#&gt;      name2_1 Frequency_1 Frequency_2 Frequency_3 Common_Gene</span>
-<span class="co">#&gt; 1329   CERS6          21          24          23 Common_High</span>
-<span class="co">#&gt; 3361   STK39          21          17          19 Common_High</span>
+<span class="co">#&gt; 1211   CERS6          21          24          23 Common_High</span>
+<span class="co">#&gt; 3354   STK39          21          17          19 Common_High</span>
 <span class="co">#&gt; [1] "Brief summary:"</span>
 <span class="co">#&gt; # A tibble: 3 x 2</span>
 <span class="co">#&gt; # Groups:   Common_Gene [3]</span>
 <span class="co">#&gt;   Common_Gene  Number_Gene</span>
 <span class="co">#&gt;   &lt;chr&gt;              &lt;int&gt;</span>
 <span class="co">#&gt; 1 Common_High            2</span>
-<span class="co">#&gt; 2 Common_Low          3788</span>
+<span class="co">#&gt; 2 Common_Low          3783</span>
 <span class="co">#&gt; 3 High_and_Low         115</span>
 <span class="co">#&gt; [1] "Gene comparison list, brife summary and comparison plot was saved in working directory."</span></code></pre></div>
 <div class="figure">
@@ -851,12 +843,12 @@
              height_1 <span class="op">=</span> <span class="fl">9</span>, <span class="co">#optional, adjust the height of final plot</span>
              width_1 <span class="op">=</span> <span class="fl">11</span>, <span class="co">#optional, adjust the width of final plot</span>
              folder <span class="op">=</span> <span class="st">"compare_gene_four_lists"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Starting merging gene lists..."</span>
-<span class="co">#&gt; [1] "Clustering common gene among four gene lists..."</span>
-<span class="co">#&gt; [1] "1 genes with higher frequency in all three gene lists, they are: "</span>
+<span class="co">#&gt; Starting merging gene lists...</span>
+<span class="co">#&gt; Clustering common gene among four gene lists...</span>
+<span class="co">#&gt; 1 genes with higher frequency in all gene lists, they are: </span>
 <span class="co">#&gt;     name2_1 Frequency_1 Frequency_2 Frequency_3 Frequency_4 Common_check</span>
 <span class="co">#&gt; 329   CERS6          21          24          21          23  Common_high</span>
-<span class="co">#&gt; [1] "Brief summary:"</span>
+<span class="co">#&gt; Brief summary:</span>
 <span class="co">#&gt; # A tibble: 3 x 2</span>
 <span class="co">#&gt; # Groups:   Common_check [3]</span>
 <span class="co">#&gt;   Common_check Number_Gene</span>
@@ -864,7 +856,8 @@
 <span class="co">#&gt; 1 Common_high            1</span>
 <span class="co">#&gt; 2 Common_low          2401</span>
 <span class="co">#&gt; 3 High_and_Low          34</span>
-<span class="co">#&gt; [1] "Gene comparison list, brife summary and comparison plot was saved in working directory."</span></code></pre></div>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Gene comparison list, brife summary and comparison plot was saved in working directory.</span></code></pre></div>
 <div class="figure">
 <img src="compare_gene_four_lists/four_gene_heatmap.png" width="300" alt=""><p class="caption">Figure.16 Heatmap comparing gene lists across four data sets</p>
 </div>
@@ -920,12 +913,12 @@ Chr   SNP           MorganPos PhysicalPos
 <span class="co">#&gt; [1] "The matching results of SNP chromosome ID in the two versions are as follows:"</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;    Match Mismatch </span>
-<span class="co">#&gt;   122764    17219 </span>
+<span class="co">#&gt;   122772    17211 </span>
 <span class="co">#&gt; [1] "The details of comparison as follows: "</span>
 <span class="co">#&gt;                           Type.Var1 Type.Freq</span>
 <span class="co">#&gt; 1           Both unknown Chromosome       344</span>
-<span class="co">#&gt; 2              Different Chromosome       859</span>
-<span class="co">#&gt; 3                   Same Chromosome    122420</span>
+<span class="co">#&gt; 2              Different Chromosome       851</span>
+<span class="co">#&gt; 3                   Same Chromosome    122428</span>
 <span class="co">#&gt; 4            Unfound in Default map      2038</span>
 <span class="co">#&gt; 5             Unfound in Target map         6</span>
 <span class="co">#&gt; 6 Unknown Chromosome in Default map     13771</span>
@@ -1004,10 +997,12 @@ Chr   SNP           MorganPos PhysicalPos
                 clean_cnv <span class="op">=</span> <span class="st">"cnv_clean/penncnv_clean.cnv"</span>, <span class="co">#standard file was generated by 'cnv_clean' function in section 1</span>
                 pedigree <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"Demo_data/Pedigree/Pedigree.csv"</span>, package <span class="op">=</span> <span class="st">"HandyCNV"</span><span class="op">)</span>, 
                 Frequent_threshold <span class="op">=</span> <span class="fl">80</span>,
+                col_0 <span class="op">=</span> <span class="st">"springgreen"</span>, col_1 <span class="op">=</span> <span class="st">"pink"</span>, col_3 <span class="op">=</span> <span class="st">"lightblue"</span>, col_4 <span class="op">=</span> <span class="st">"red"</span>,
+                report_id <span class="op">=</span> <span class="cn">T</span>,
                 height_1 <span class="op">=</span> <span class="fl">20</span>, 
                 width_1 <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></code></pre></div>
 <div class="figure">
-<img src="plot_cnvr_source/Chr14_50.591566-54.441985Mb_Source.png" width="150" alt=""><p class="caption">Figure.21 Plot Source of CNVR</p>
+<img src="plot_cnvr_source/Chr12_56.513728-64.796304Mb_Source.png" width="150" alt=""><p class="caption">Figure.21 Plot Source of CNVR</p>
 </div>
 </div>
 <div id="how-can-we-plot-just-the-genes-in-a-specific-region-to-save-as-a-seperate-figure" class="section level2">
@@ -1045,22 +1040,37 @@ Chr   SNP           MorganPos PhysicalPos
            legend_x <span class="op">=</span> <span class="fl">0.92</span>, 
            legend_y <span class="op">=</span> <span class="fl">0.06</span>,
            ncol_1 <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Individual situations are shown below:"</span>
-<span class="co">#&gt; # A tibble: 397 x 7</span>
-<span class="co">#&gt;    Sample_ID               n total_length min_length max_length means  F_roh</span>
-<span class="co">#&gt;    &lt;chr&gt;               &lt;int&gt;        &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 201094560008_R01C01    56        285.        1.19      21.8   5.08 0.114 </span>
-<span class="co">#&gt;  2 201094560008_R01C02    37        176.        1.24      17.4   4.77 0.0708</span>
-<span class="co">#&gt;  3 201094560008_R02C01    59        258.        1.11      14.4   4.37 0.104 </span>
-<span class="co">#&gt;  4 201094560008_R02C02    35        170.        1.06      15.5   4.86 0.0683</span>
-<span class="co">#&gt;  5 201094560008_R03C01    71        324.        1.11      22.2   4.56 0.130 </span>
-<span class="co">#&gt;  6 201094560008_R03C02    61        279.        1.03      16.0   4.58 0.112 </span>
-<span class="co">#&gt;  7 201094560008_R04C01    91        573.        1.06      26.1   6.29 0.230 </span>
-<span class="co">#&gt;  8 201094560008_R04C02    54        376.        1.09      32.1   6.96 0.151 </span>
-<span class="co">#&gt;  9 201094560008_R05C01    19         51.1       1.36       9.67  2.69 0.0205</span>
-<span class="co">#&gt; 10 201094560008_R05C02    61        336.        1.19      30.7   5.50 0.135 </span>
-<span class="co">#&gt; # ... with 387 more rows</span>
-<span class="co">#&gt; [1] "The top 10 ROHs by frequency are as follows:"</span>
+<span class="co">#&gt; To group by length...</span>
+<span class="co">#&gt; The summary of length groups as following: </span>
+<span class="co">#&gt; # A tibble: 5 x 8</span>
+<span class="co">#&gt;   Length_group number_ROH    Mean      SD     Min    Max Proportion N_per_animal</span>
+<span class="co">#&gt;   &lt;chr&gt;             &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;int&gt;  &lt;int&gt;      &lt;dbl&gt;        &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 &gt;=16Mb              635  2.22e7 6454382  1.60e7 5.51e7      0.036          1.6</span>
+<span class="co">#&gt; 2 1-2Mb              4193  1.58e6  255957  1.00e6 2.00e6      0.239         10.6</span>
+<span class="co">#&gt; 3 2-4Mb              6239  2.86e6  574522  2.00e6 4.00e6      0.356         15.7</span>
+<span class="co">#&gt; 4 4-8Mb              4297  5.62e6 1139048  4.00e6 8.00e6      0.245         10.8</span>
+<span class="co">#&gt; 5 8-16Mb             2151  1.09e7 2202856  8.00e6 1.60e7      0.123          5.4</span>
+<span class="co">#&gt; Calculating inbreeding coefficient...</span>
+<span class="co">#&gt; by length group...</span>
+<span class="co">#&gt; Inbreeding coefficient of Individual as following:</span>
+<span class="co">#&gt; # A tibble: 397 x 12</span>
+<span class="co">#&gt;    Sample_ID     n total_length  Mean    SD min_length max_length Froh_1Mb</span>
+<span class="co">#&gt;    &lt;chr&gt;     &lt;int&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;    &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 20109456~    56        285.   5.08  4.2        1.19      21.8     0.114</span>
+<span class="co">#&gt;  2 20109456~    37        176.   4.77  3.63       1.24      17.4     0.071</span>
+<span class="co">#&gt;  3 20109456~    59        258.   4.37  3.46       1.11      14.4     0.104</span>
+<span class="co">#&gt;  4 20109456~    35        170.   4.86  3.78       1.06      15.5     0.068</span>
+<span class="co">#&gt;  5 20109456~    71        324.   4.56  3.99       1.11      22.2     0.13 </span>
+<span class="co">#&gt;  6 20109456~    61        279.   4.58  3.38       1.03      16.0     0.112</span>
+<span class="co">#&gt;  7 20109456~    91        573.   6.29  5.44       1.06      26.1     0.23 </span>
+<span class="co">#&gt;  8 20109456~    54        376.   6.96  5.83       1.09      32.1     0.151</span>
+<span class="co">#&gt;  9 20109456~    19         51.1  2.69  1.88       1.36       9.67    0.021</span>
+<span class="co">#&gt; 10 20109456~    61        336.   5.5   5.68       1.19      30.7     0.135</span>
+<span class="co">#&gt; # ... with 387 more rows, and 4 more variables: Froh_2Mb &lt;dbl&gt;, Froh_4Mb &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   Froh_8Mb &lt;dbl&gt;, Froh_16Mb &lt;dbl&gt;</span>
+<span class="co">#&gt; Setting the sliding window in 2 Mb interval...</span>
+<span class="co">#&gt; Counting the frequency of ROHs that overlapped to sliding windows...</span>
+<span class="co">#&gt; The top 10 ROHs by frequency are as follows:</span>
 <span class="co">#&gt;    window_id number_roh Chr Start_win End_win prop_roh</span>
 <span class="co">#&gt; 1    Win_355        220   6   3.8e+07 4.0e+07    0.554</span>
 <span class="co">#&gt; 2    Win_649        170  11   6.6e+07 6.8e+07    0.428</span>
@@ -1072,8 +1082,97 @@ Chr   SNP           MorganPos PhysicalPos
 <span class="co">#&gt; 8    Win_650        132  11   6.8e+07 7.0e+07    0.332</span>
 <span class="co">#&gt; 9    Win_648        131  11   6.4e+07 6.6e+07    0.330</span>
 <span class="co">#&gt; 10   Win_859        123  16   2.8e+07 3.0e+07    0.310</span>
-<span class="co">#&gt; [1] "Plotting frequncy of ROH by windows..."</span>
-<span class="co">#&gt; [1] "Task done."</span></code></pre></div>
+<span class="co">#&gt; Uniting the adjacent sliding windows that with ROH frequency greater than  15 % of the sample size...</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 1 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 2 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 3 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 4 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 5 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 6 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 7 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 8 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 9 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 11 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 12 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 13 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 14 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 15 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 16 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 17 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 18 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 19 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 20 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 21 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 22 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 23 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 24 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 25 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 27 has been processed.</span>
+<span class="co">#&gt; High frequency ROH regions on Chromosome 29 has been processed.</span>
+<span class="co">#&gt;    Interval_ID Chr    Start      End   Length</span>
+<span class="co">#&gt; 1        ROH_1   1 6.40e+07 6.60e+07  2000001</span>
+<span class="co">#&gt; 2        ROH_2   1 7.60e+07 8.00e+07  4000001</span>
+<span class="co">#&gt; 3        ROH_3   1 1.54e+08 1.56e+08  2000001</span>
+<span class="co">#&gt; 4        ROH_4   2 8.00e+07 8.20e+07  2000001</span>
+<span class="co">#&gt; 5        ROH_5   3 8.40e+07 9.00e+07  6000001</span>
+<span class="co">#&gt; 6        ROH_6   4 2.00e+06 1.20e+07 10000001</span>
+<span class="co">#&gt; 7        ROH_7   4 1.40e+07 1.60e+07  2000001</span>
+<span class="co">#&gt; 8        ROH_8   4 1.80e+07 2.00e+07  2000001</span>
+<span class="co">#&gt; 9        ROH_9   4 3.00e+07 3.80e+07  8000001</span>
+<span class="co">#&gt; 10      ROH_10   4 9.60e+07 1.00e+08  4000001</span>
+<span class="co">#&gt; 11      ROH_11   5 1.00e+07 2.60e+07 16000001</span>
+<span class="co">#&gt; 12      ROH_12   5 3.20e+07 3.40e+07  2000001</span>
+<span class="co">#&gt; 13      ROH_13   5 3.60e+07 4.00e+07  4000001</span>
+<span class="co">#&gt; 14      ROH_14   5 4.20e+07 5.00e+07  8000001</span>
+<span class="co">#&gt; 15      ROH_15   5 6.00e+07 8.80e+07 28000001</span>
+<span class="co">#&gt; 16      ROH_16   5 9.60e+07 1.00e+08  4000001</span>
+<span class="co">#&gt; 17      ROH_17   6 3.20e+07 1.06e+08 74000001</span>
+<span class="co">#&gt; 18      ROH_18   6 1.12e+08 1.16e+08  4000001</span>
+<span class="co">#&gt; 19      ROH_19   7 4.00e+07 4.40e+07  4000001</span>
+<span class="co">#&gt; 20      ROH_20   8 1.06e+08 1.08e+08  2000001</span>
+<span class="co">#&gt; 21      ROH_21   9 0.00e+00 2.00e+06  2000001</span>
+<span class="co">#&gt; 22      ROH_22   9 2.00e+07 2.40e+07  4000001</span>
+<span class="co">#&gt; 23      ROH_23  11 0.00e+00 4.00e+06  4000001</span>
+<span class="co">#&gt; 24      ROH_24  11 1.00e+07 2.60e+07 16000001</span>
+<span class="co">#&gt; 25      ROH_25  11 2.80e+07 4.20e+07 14000001</span>
+<span class="co">#&gt; 26      ROH_26  11 5.40e+07 6.00e+07  6000001</span>
+<span class="co">#&gt; 27      ROH_27  11 6.20e+07 7.20e+07 10000001</span>
+<span class="co">#&gt; 28      ROH_28  11 8.60e+07 9.20e+07  6000001</span>
+<span class="co">#&gt; 29      ROH_29  11 1.02e+08 1.04e+08  2000001</span>
+<span class="co">#&gt; 30      ROH_30  12 2.00e+06 4.00e+06  2000001</span>
+<span class="co">#&gt; 31      ROH_31  12 8.80e+07 9.00e+07  2000001</span>
+<span class="co">#&gt; 32      ROH_32  13 3.40e+07 4.00e+07  6000001</span>
+<span class="co">#&gt; 33      ROH_33  13 4.20e+07 6.00e+07 18000001</span>
+<span class="co">#&gt; 34      ROH_34  14 5.00e+07 5.80e+07  8000001</span>
+<span class="co">#&gt; 35      ROH_35  14 6.40e+07 6.60e+07  2000001</span>
+<span class="co">#&gt; 36      ROH_36  14 7.80e+07 8.20e+07  4000001</span>
+<span class="co">#&gt; 37      ROH_37  15 3.00e+07 3.20e+07  2000001</span>
+<span class="co">#&gt; 38      ROH_38  15 3.40e+07 3.60e+07  2000001</span>
+<span class="co">#&gt; 39      ROH_39  16 1.60e+07 3.80e+07 22000001</span>
+<span class="co">#&gt; 40      ROH_40  16 4.00e+07 4.60e+07  6000001</span>
+<span class="co">#&gt; 41      ROH_41  16 4.80e+07 5.00e+07  2000001</span>
+<span class="co">#&gt; 42      ROH_42  17 4.00e+07 4.80e+07  8000001</span>
+<span class="co">#&gt; 43      ROH_43  17 6.00e+07 6.20e+07  2000001</span>
+<span class="co">#&gt; 44      ROH_44  18 3.60e+07 4.20e+07  6000001</span>
+<span class="co">#&gt; 45      ROH_45  19 2.80e+07 4.00e+07 12000001</span>
+<span class="co">#&gt; 46      ROH_46  19 4.40e+07 5.60e+07 12000001</span>
+<span class="co">#&gt; 47      ROH_47  20 2.20e+07 2.80e+07  6000001</span>
+<span class="co">#&gt; 48      ROH_48  21 8.00e+06 1.00e+07  2000001</span>
+<span class="co">#&gt; 49      ROH_49  21 2.60e+07 2.80e+07  2000001</span>
+<span class="co">#&gt; 50      ROH_50  21 3.20e+07 3.60e+07  4000001</span>
+<span class="co">#&gt; 51      ROH_51  21 4.40e+07 5.00e+07  6000001</span>
+<span class="co">#&gt; 52      ROH_52  21 6.80e+07 7.00e+07  2000001</span>
+<span class="co">#&gt; 53      ROH_53  22 4.00e+06 1.00e+07  6000001</span>
+<span class="co">#&gt; 54      ROH_54  23 0.00e+00 2.00e+06  2000001</span>
+<span class="co">#&gt; 55      ROH_55  24 3.40e+07 3.60e+07  2000001</span>
+<span class="co">#&gt; 56      ROH_56  24 6.00e+07 6.20e+07  2000001</span>
+<span class="co">#&gt; 57      ROH_57  25 0.00e+00 4.00e+06  4000001</span>
+<span class="co">#&gt; 58      ROH_58  27 2.00e+06 4.00e+06  2000001</span>
+<span class="co">#&gt; 59      ROH_59  29 2.60e+07 3.00e+07  4000001</span>
+<span class="co">#&gt; 60      ROH_60  29 3.20e+07 3.40e+07  2000001</span>
+<span class="co">#&gt; The total length of high frequency ROH regions about 414000060 bp.</span>
+<span class="co">#&gt; Plotting frequncy of ROH by windows...</span>
+<span class="co">#&gt; Task done.</span></code></pre></div>
 <div class="figure">
 <img src="roh_window/roh_freq_windows.png" width="300" alt=""><p class="caption">Figure.23 ROH Frequency Distribution</p>
 </div>
@@ -1095,8 +1194,8 @@ Chr   SNP           MorganPos PhysicalPos
            col_short <span class="op">=</span> <span class="st">"red"</span>, 
            col_mid <span class="op">=</span> <span class="st">"blue"</span>, 
            col_long <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Preparing plot data..."</span>
-<span class="co">#&gt; [1] "Task done, plot was stored in working directory."</span></code></pre></div>
+<span class="co">#&gt; Preparing plot data...</span>
+<span class="co">#&gt; Task done, plot was stored in working directory.</span></code></pre></div>
 <div class="figure">
 <img src="roh_visual/Chr11_roh.png" width="300" alt=""><p class="caption">Figure.24 ROH on Chromosome 6</p>
 </div>
@@ -1111,7 +1210,7 @@ Chr   SNP           MorganPos PhysicalPos
            start_position <span class="op">=</span> <span class="fl">36.5</span>, 
            end_position <span class="op">=</span> <span class="fl">40.6</span>, 
            width_1 <span class="op">=</span> <span class="fl">16</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Preparing plot data..."</span>
+<span class="co">#&gt; Preparing plot data...</span>
 <span class="co">#&gt; [1] "Task done, plot was stored in working directory."</span></code></pre></div>
 <div class="figure">
 <img src="roh_visual/Chr6_36.5-40.6Mb_roh.png" width="300" alt=""><p class="caption">Figure.25 ROH on Chr6:35.0-42.5 Mb</p>
@@ -1155,8 +1254,8 @@ Chr   SNP           MorganPos PhysicalPos
            col_long <span class="op">=</span> <span class="st">"blue"</span>, <span class="co">#optional</span>
            height_1 <span class="op">=</span> <span class="fl">12</span>, <span class="co">#optional</span>
            width_1 <span class="op">=</span> <span class="fl">14</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Preparing plot data..."</span>
-<span class="co">#&gt; [1] "Task done, plot was stored in working directory."</span></code></pre></div>
+<span class="co">#&gt; Preparing plot data...</span>
+<span class="co">#&gt; Task done, plot was stored in working directory.</span></code></pre></div>
 <div class="figure">
 <img src="roh_visual/Chr6_38.25_39.52_roh.png" width="300" alt=""><p class="caption">Figure.28 ROHs with full length on target region Chr6:38.25-39.52 Mb</p>
 </div>
@@ -1173,11 +1272,9 @@ Chr   SNP           MorganPos PhysicalPos
            col_short <span class="op">=</span> <span class="st">"green"</span>, <span class="co">#optional</span>
            col_mid <span class="op">=</span> <span class="st">"yellow"</span>, <span class="co">#optional</span>
            col_long <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Preparing plot data..."</span>
-<span class="co">#&gt; [1] "Task done, plot was stored in working directory."</span></code></pre></div>
-<div class="figure">
-<img src="roh_visual/ROH_of_201094560008_R04C01.png" width="300" alt=""><p class="caption">Figure 29. ROHs on interested Sample</p>
-</div>
+<span class="co">#&gt; Preparing plot data...</span>
+<span class="co">#&gt; Task done, plot was stored in working directory.</span></code></pre></div>
+<p><img src="HandyCNV_files/figure-html/unnamed-chunk-41-1.png" width="700"><img src="roh_visual/ROH_of_201094560008_R04C01.png" width="300" alt="Figure 29. ROHs on interested Sample"></p>
 </div>
 </div>
 <div id="how-do-we-get-haplotype-for-roh-region" class="section level2">
@@ -1185,41 +1282,57 @@ Chr   SNP           MorganPos PhysicalPos
 <a href="#how-do-we-get-haplotype-for-roh-region" class="anchor"></a>17. How do we get haplotype for ROH region?</h2>
 <p>ROH results will return us some long regions, but we may interested on some specific genes in the ROH region that experienced strong selection. Get the haplotypes of these genes in our experimental population may help us to find out some interesting patterns. we known that the ROH region generated by SNPs may be discontinuous due to insufficient marker density, beside, when infer ROH we considered the influence of genotyping quality by setting the minimal window size, accepting some missing value or maximum heterozygosity SNPs in the window, these conditions will exclude the short ROH regions in the final results. For instance, when we get the haplotype for a short region (such as a Gene), the frequency of homozygosity haplotypes may differing to the original ROH region it located.</p>
 <p>The ‘get_haplotype’ function can help us to get the haplotype for all samples by given region. But now the application is limited, it only accept the phased genotype by Beagle (Version 5.1) with physical position, we may expend the compatibility later if necessary. The standard format of phased genotype and demo data used at here can be download from our github repository (<a href="https://github.com/JH-Zhou/HandyCNV/tree/master/vignettes/OARS_chr6" class="uri">https://github.com/JH-Zhou/HandyCNV/tree/master/vignettes/OARS_chr6</a>). Now, let’s go ahead and make haplotypes.</p>
-<p>Extracting the haplotype will take three steps and combine three functions. The first step is to prepare the standard format for ‘HandyCNV’. We can use ‘prepare_geno’ function to prepare the phased genotype. After running, it will return three list files contain the map, genotype and the columns index file.</p>
+<p>Extracting the haplotype will take three steps and combine three functions. The first step is to prepare the standard format for ‘HandyCNV’. We can use ‘prepare_geno’ function to prepare the phased genotype. We can also assign the ‘convert_letter = TRUE’ in ‘pre_phased’ function to convert the format of haploids from 0,1 to letters. See code as following. After running, it will return three list files contain the map, genotype and the columns index file.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">genotype</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prep_phased.html">prep_phased</a></span><span class="op">(</span>phased_geno <span class="op">=</span> <span class="st">"OARS_chr6.vcf"</span><span class="op">)</span> <span class="co">#'OARS_chr6.vcf' is the demo data, need to download and save it in your working directory </span>
-<span class="co">#&gt; [1] "Reading input file..."</span>
-<span class="co">#&gt; [1] "Spliting Sample columns..."</span>
-<span class="co">#&gt; [1] "Tansposing genotype..."</span></code></pre></div>
+<code class="sourceCode R"><span class="va">genotype_by_number</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prep_phased.html">prep_phased</a></span><span class="op">(</span>phased_geno <span class="op">=</span> <span class="st">"OARS_chr6.vcf"</span><span class="op">)</span> <span class="co">#'OARS_chr6.vcf' is the demo data, need to download and save it in your working directory </span>
+<span class="co">#&gt; Reading input file...</span>
+<span class="co">#&gt; Spliting Sample columns...</span>
+<span class="co">#&gt; Tansposing genotype...</span>
+
+<span class="va">genotype_by_letter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/prep_phased.html">prep_phased</a></span><span class="op">(</span>phased_geno <span class="op">=</span> <span class="st">"OARS_chr6.vcf"</span>, convert_letter <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="co">#'OARS_chr6.vcf' is the demo data, need to download and save it in your working</span>
+<span class="co">#&gt; Reading input file...</span>
+<span class="co">#&gt; Coverting haplotype from 0, 1 to Ref and ALT...</span>
+<span class="co">#&gt; Spliting Sample columns...</span>
+<span class="co">#&gt; Tansposing genotype...</span></code></pre></div>
 <p>Second step, we need to assign the interested region. Here we take the <em>NCAPG</em> gene as example, it located on BTA6:37,332,024-37,378,129 bp. The idea in this step is to find out the closest SNPs in this SNP chip.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">region</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/closer_snp.html">closer_snp</a></span><span class="op">(</span>phased_input <span class="op">=</span> <span class="va">genotype</span><span class="op">$</span><span class="va">map</span>, <span class="co">#the map file in the list generated in 'pre_phased' function above</span>
+<code class="sourceCode R"><span class="va">region</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/closer_snp.html">closer_snp</a></span><span class="op">(</span>phased_input <span class="op">=</span> <span class="va">genotype_by_letter</span><span class="op">$</span><span class="va">map</span>, <span class="co">#the map file in the list generated in 'pre_phased' function above</span>
                      chr <span class="op">=</span> <span class="fl">6</span>, start <span class="op">=</span> <span class="fl">37.332024</span>, end <span class="op">=</span> <span class="fl">37.378129</span><span class="op">)</span> <span class="co">#physical position unit in 'megabases'</span>
+<span class="co">#&gt; # A tibble: 1 x 2</span>
 <span class="co">#&gt;        min      max</span>
+<span class="co">#&gt;      &lt;int&gt;    &lt;int&gt;</span>
 <span class="co">#&gt; 1 37340937 37377606</span></code></pre></div>
 <p>Third step to get haplotype. It will return two lists contains the reocding haplotype and the index of recode type and the original haploid.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">haplotype</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_haplotype.html">get_haplotype</a></span><span class="op">(</span>geno <span class="op">=</span> <span class="va">genotype</span>, pos <span class="op">=</span> <span class="va">region</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">haplotype_number</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_haplotype.html">get_haplotype</a></span><span class="op">(</span>geno <span class="op">=</span> <span class="va">genotype_by_number</span>, pos <span class="op">=</span> <span class="va">region</span><span class="op">)</span>
 <span class="co">#&gt; [1] 2481</span>
 <span class="co">#&gt; [1] 2490</span>
-<span class="co">#&gt; [1] "Recoding Haploid..."</span>
-<span class="co">#&gt; [1] "Generating Haplotype"</span></code></pre></div>
+<span class="co">#&gt; There are 10 SNPs in this region...</span>
+<span class="co">#&gt; Recoding Haploid...</span>
+<span class="co">#&gt; Generating Haplotype...</span>
+
+<span class="va">haplotype_letter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_haplotype.html">get_haplotype</a></span><span class="op">(</span>geno <span class="op">=</span> <span class="va">genotype_by_letter</span>, pos <span class="op">=</span> <span class="va">region</span><span class="op">)</span>
+<span class="co">#&gt; [1] 2481</span>
+<span class="co">#&gt; [1] 2490</span>
+<span class="co">#&gt; There are 10 SNPs in this region...</span>
+<span class="co">#&gt; Recoding Haploid...</span>
+<span class="co">#&gt; Generating Haplotype...</span></code></pre></div>
 <p>Now, we can count the frequency of each haplotype in our population and to check what the haploids are in these haplotypes.</p>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">haplotype</span><span class="op">$</span><span class="va">hap_type</span><span class="op">$</span><span class="va">Recode_Type</span>, dnn <span class="op">=</span> <span class="st">"Haplotype"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">haplotype_number</span><span class="op">$</span><span class="va">hap_type</span><span class="op">$</span><span class="va">Recode_Type</span>, dnn <span class="op">=</span> <span class="st">"Haplotype"</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;    Haplotype Freq</span>
-<span class="co">#&gt; 1       1011    1</span>
-<span class="co">#&gt; 2         11  353</span>
-<span class="co">#&gt; 3         12   26</span>
-<span class="co">#&gt; 4         14    5</span>
-<span class="co">#&gt; 5         19    1</span>
-<span class="co">#&gt; 6         22    1</span>
-<span class="co">#&gt; 7         33    6</span>
-<span class="co">#&gt; 8         55    1</span>
-<span class="co">#&gt; 9         66    1</span>
-<span class="co">#&gt; 10        77    1</span>
-<span class="co">#&gt; 11        88    1</span>
-<span class="va">haplotype</span><span class="op">$</span><span class="va">hap_index</span>
+<span class="co">#&gt; 1        1-1  353</span>
+<span class="co">#&gt; 2        1-2   26</span>
+<span class="co">#&gt; 3        1-4    5</span>
+<span class="co">#&gt; 4        1-9    1</span>
+<span class="co">#&gt; 5      10-11    1</span>
+<span class="co">#&gt; 6        2-2    1</span>
+<span class="co">#&gt; 7        3-3    6</span>
+<span class="co">#&gt; 8        5-5    1</span>
+<span class="co">#&gt; 9        6-6    1</span>
+<span class="co">#&gt; 10       7-7    1</span>
+<span class="co">#&gt; 11       8-8    1</span>
+<span class="va">haplotype_number</span><span class="op">$</span><span class="va">hap_index</span>
 <span class="co">#&gt; # A tibble: 11 x 3</span>
 <span class="co">#&gt;    Haploid     Freq Re_code</span>
 <span class="co">#&gt;    &lt;chr&gt;      &lt;int&gt;   &lt;dbl&gt;</span>
@@ -1233,7 +1346,37 @@ Chr   SNP           MorganPos PhysicalPos
 <span class="co">#&gt;  8 N000000000     2       8</span>
 <span class="co">#&gt;  9 0000001000     1       9</span>
 <span class="co">#&gt; 10 0N0000000N     1      10</span>
-<span class="co">#&gt; 11 0N0000100N     1      11</span></code></pre></div>
+<span class="co">#&gt; 11 0N0000100N     1      11</span>
+
+
+<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">haplotype_letter</span><span class="op">$</span><span class="va">hap_type</span><span class="op">$</span><span class="va">Recode_Type</span>, dnn <span class="op">=</span> <span class="st">"Haplotype"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;    Haplotype Freq</span>
+<span class="co">#&gt; 1        1-1  353</span>
+<span class="co">#&gt; 2        1-2   26</span>
+<span class="co">#&gt; 3        1-4    5</span>
+<span class="co">#&gt; 4        1-9    1</span>
+<span class="co">#&gt; 5      10-11    1</span>
+<span class="co">#&gt; 6        2-2    1</span>
+<span class="co">#&gt; 7        3-3    6</span>
+<span class="co">#&gt; 8        5-5    1</span>
+<span class="co">#&gt; 9        6-6    1</span>
+<span class="co">#&gt; 10       7-7    1</span>
+<span class="co">#&gt; 11       8-8    1</span>
+<span class="va">haplotype_letter</span><span class="op">$</span><span class="va">hap_index</span>
+<span class="co">#&gt; # A tibble: 11 x 3</span>
+<span class="co">#&gt;    Haploid     Freq Re_code</span>
+<span class="co">#&gt;    &lt;chr&gt;      &lt;int&gt;   &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 ACAAGAGGAA   738       1</span>
+<span class="co">#&gt;  2 GACGAGAAGG    28       2</span>
+<span class="co">#&gt;  3 ACAAGANGAA    12       3</span>
+<span class="co">#&gt;  4 GACGAAAAAA     5       4</span>
+<span class="co">#&gt;  5 ACAAGNGGAA     2       5</span>
+<span class="co">#&gt;  6 ANAAGAGGAA     2       6</span>
+<span class="co">#&gt;  7 ANAAGANGAA     2       7</span>
+<span class="co">#&gt;  8 NCAAGAGGAA     2       8</span>
+<span class="co">#&gt;  9 ACAAGAAGAA     1       9</span>
+<span class="co">#&gt; 10 ANAAGAAGAN     1      10</span>
+<span class="co">#&gt; 11 ANAAGAGGAN     1      11</span></code></pre></div>
 </div>
 <div id="how-do-we-convert-coordinates-for-cnv-cnvr-roh-or-any-other-intervals" class="section level2">
 <h2 class="hasAnchor">
@@ -1293,6 +1436,34 @@ Chr   SNP           MorganPos PhysicalPos
 <span class="co">#&gt; 3                  Succeed Convertion 271977583      -</span>
 <span class="co">#&gt; 4                   Failed convertion  14965140     46</span>
 <span class="co">#&gt; 5 Difference Converted minus Original  -1873674      -</span></code></pre></div>
+</div>
+<div id="how-do-we-make-a-fast-snp-density-plot-from-plink-map-file" class="section level2">
+<h2 class="hasAnchor">
+<a href="#how-do-we-make-a-fast-snp-density-plot-from-plink-map-file" class="anchor"></a>19. How do we make a fast SNP density plot from Plink map file?</h2>
+<p>Plotting SNP density may help us learn about the SNP distribution on chromosomes. The parameter of SNP density may affect ROH detection in some tools. ‘plot_snp_density’ only working with map file that has four columns in the order as follows: Chromosome, SNP ID, Position in Morgans, Physical Position. No header required.</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_snp_density.html">plot_snp_density</a></span><span class="op">(</span>map <span class="op">=</span> <span class="st">"convert_map/target_plink.map"</span>, 
+                 max_chr <span class="op">=</span> <span class="fl">24</span>, <span class="co">#optional</span>
+                 top_density <span class="op">=</span> <span class="fl">60</span>, <span class="co">#optional </span>
+                 low_density <span class="op">=</span> <span class="fl">20</span>, <span class="co">#optional</span>
+                 color_top <span class="op">=</span> <span class="st">"red"</span>, <span class="co">#optional</span>
+                 color_low <span class="op">=</span> <span class="st">"blue"</span>, <span class="co">#optional</span>
+                 color_mid <span class="op">=</span> <span class="st">"black"</span>, <span class="co">#optional</span>
+                 legend_position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="fl">0.1</span><span class="op">)</span>, <span class="co">#optional </span>
+                 x_label <span class="op">=</span> <span class="st">"Physical position\n&lt;U+7269&gt;&lt;U+7406&gt;&lt;U+4F4D&gt;&lt;U+7F6E&gt;"</span>NA<span class="co">#optional</span>NA<span class="op">=</span> <span class="st">"SNPs/Mb\n&lt;U+6BCF&gt;1Mb&lt;U+533A&gt;&lt;U+95F4&gt;&lt;U+7684&gt;SNP&lt;U+6570&gt;"</span>NA<span class="co">#optional</span>NA<span class="op">=</span> <span class="fl">5</span><span class="op">)</span> 
+<span class="co">#&gt; The total number of SNPs on selected chromosomes are 119249</span>
+<span class="co">#&gt; The number of regions on different SNP density groups as following:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  &lt;=20  &gt;=60 20-60 </span>
+<span class="co">#&gt;    39   397  1849 </span>
+<span class="co">#&gt; The Mean of SNPs density is  52  SNPs/Mb</span>
+<span class="co">#&gt; The Mean + SD of SNP density is  73  SNPs/Mb</span>
+<span class="co">#&gt; The Mean - SD of one SD is  31  SNPs/Mb</span>
+<span class="co">#save the plot by 'ggsave'</span>
+<span class="co">#ggsave(filename = "snp_density.png", width = 26, height = 18, units = "cm", dpi = 350)</span></code></pre></div>
+<div class="figure">
+<img src="SNP_density.png" width="300" alt=""><p class="caption">Figure 30. SNP density distribution</p>
+</div>
 </div>
 </div>
   </div>

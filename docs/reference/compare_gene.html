@@ -73,7 +73,7 @@ If the users customize the genelists, it requires at least two columns in each g
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HandyCNV</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -133,7 +133,8 @@ If the users customize the genelists, it requires at least two columns in each g
   col_1 <span class='op'>=</span> <span class='st'>"red"</span>,
   col_2 <span class='op'>=</span> <span class='st'>"yellow"</span>,
   col_3 <span class='op'>=</span> <span class='st'>"dodgerblue"</span>,
-  col_4 <span class='op'>=</span> <span class='st'>"pink2"</span>
+  col_4 <span class='op'>=</span> <span class='st'>"pink2"</span>,
+  color_label <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -202,6 +203,10 @@ If the users customize the genelists, it requires at least two columns in each g
     <tr>
       <th>col_4</th>
       <td><p>set color for High_Freq_list_2 in two gene lists comparison plot</p></td>
+    </tr>
+    <tr>
+      <th>color_label</th>
+      <td><p>if TRUE, the color of gene labels will marked in heatmap, the red labels are genes that passed common threshold</p></td>
     </tr>
     </table>
 

@@ -73,7 +73,7 @@ The input file should phased by Beagle 5.1." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HandyCNV</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -117,7 +117,7 @@ The input file should phased by Beagle 5.1." />
 The input file should phased by Beagle 5.1.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>prep_phased</span><span class='op'>(</span><span class='va'>phased_geno</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>prep_phased</span><span class='op'>(</span><span class='va'>phased_geno</span>, convert_letter <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -125,6 +125,10 @@ The input file should phased by Beagle 5.1.</p>
     <tr>
       <th>phased_geno</th>
       <td><p>phased genotype file from Beagle 5.1, the first nine columns contain basic information, the rest are genotype</p></td>
+    </tr>
+    <tr>
+      <th>convert_letter</th>
+      <td><p>convert allele from 0, 1 to letter in REF and ALF</p></td>
     </tr>
     </table>
 

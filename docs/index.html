@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">HandyCNV</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -68,7 +68,11 @@
 <a href="#welcome-to-handycnv" class="anchor"></a>Welcome to HandyCNV</h1></div>
 
 <p>An R package for Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH</p>
-<p><img src="https://github.com/JH-Zhou/HandyCNV/blob/master/man/figures/High_resolution_pipeline_HandyCNV.png" alt="Fig.1 Working Flow"></p>
+<p align="center">
+<img src="https://github.com/JH-Zhou/HandyCNV/blob/master/man/figures/High_resolution_pipeline_HandyCNV.jpg"></p>
+<p align="center">
+Main functions and outputs form HandyCNV
+</p>
 </div>
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
@@ -84,10 +88,21 @@
 <h1 class="hasAnchor">
 <a href="#installation-and-prerequisites" class="anchor"></a>Installation and Prerequisites</h1>
 <p>First, to run this package, we need to make sure that R (Version &gt;= 3.5.2) is installed in your computer (R download link: <a href="https://www.r-project.org/" class="uri">https://www.r-project.org/</a>). Once R is installed, the ‘HandyCNV’ package can be installed from Github repository by running the following script. If you rarely used R, it may take more time to install the ‘HandyCNV’ for the first time.</p>
-<pre class="{r}"><code>#install.packages("remotes")
-#library(remotes)
-#install_github(repo = "JH-Zhou/HandyCNV")</code></pre>
+<div id="1-method-one-install-from-github-repo-directly" class="section level2">
+<h2 class="hasAnchor">
+<a href="#1-method-one-install-from-github-repo-directly" class="anchor"></a>1. Method one, install from Github Repo directly</h2>
+<pre class="{r}"><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
+remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.5")</a></code></pre>
+</div>
+<div id="2-method-two-install-manually" class="section level2">
+<h2 class="hasAnchor">
+<a href="#2-method-two-install-manually" class="anchor"></a>2. Method two, install manually</h2>
+<p>If the first method cannnot work well for some reasons, we can manually download the ‘Source code (Zip)’ from the newly released tag at here: <a href="https://github.com/JH-Zhou/HandyCNV/releases/tag/v1.1.5">Download Source Code</a></p>
+<p>Then install the Source Code from the local path by following code:</p>
+<pre class="{r}"><code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
+remotes::install_local(path = "C:/Users/HandyCNV-1.1.5.zip") # Repalce 'C:/Users/' to your local path where you downloaded the Source Code</a></code></pre>
 <p>Then, we need to load the ‘HandyCNV’ package in order to run the following examples. This can be done using the <code>library</code> function as shown below. <code>{r setup} library(HandyCNV)</code></p>
+</div>
 </div>
 <div id="what-issues-can-this-package-solve" class="section level1">
 <h1 class="hasAnchor">
@@ -121,6 +136,132 @@
 <h1 class="hasAnchor">
 <a href="#bug-report" class="anchor"></a>Bug report</h1>
 <p>If you find any errors while using this package, please tell us via this link: <a href="https://github.com/JH-Zhou/HandyCNV/issues/new?assignees=&amp;labels=&amp;template=bug_report.md">Bug Report</a>, we will fix it as soon as possible.</p>
+</div>
+<div id="citation" class="section level1">
+<h1 class="hasAnchor">
+<a href="#citation" class="anchor"></a>Citation</h1>
+<p>If this tool is useful for your academic research, please cite our publication: <a href="https://www.biorxiv.org/content/10.1101/2021.04.05.438403v1">Browse publication</a></p>
+<p>J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH,” doi: 10.1101/2021.04.05.438403.</p>
+</div>
+<div id="current-release-handycnv-v115-release-date-20210829" class="section level1">
+<h1 class="hasAnchor">
+<a href="#current-release-handycnv-v115-release-date-20210829" class="anchor"></a>Current release: HandyCNV v1.1.5 Release Date: 2021/08/29</h1>
+</div>
+<div id="whats-news" class="section level1">
+<h1 class="hasAnchor">
+<a href="#whats-news" class="anchor"></a>What’s news</h1>
+<p>Minor modifications, such as unifying input file formats and correcting spelling errors.</p>
+</div>
+<div id="previous-release-handycnv-v114-release-date-20210723" class="section level1">
+<h1 class="hasAnchor">
+<a href="#previous-release-handycnv-v114-release-date-20210723" class="anchor"></a>Previous release: HandyCNV v1.1.4 Release Date: 2021/07/23</h1>
+</div>
+<div id="whats-news-1" class="section level1">
+<h1 class="hasAnchor">
+<a href="#whats-news-1" class="anchor"></a>What’s news</h1>
+<div id="major-improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#major-improvements" class="anchor"></a>Major improvements:</h2>
+<ol>
+<li><p>Most functions now support reading variable object as input files;</p></li>
+<li><p>Most functions now support returning the main output as object to R environment for the further operation;</p></li>
+<li>
+<p>New function ‘get_samples’ to extract samples ID by searching interested gene from CNV annotation list.</p>
+<h2 id="minor-changes">Minor changes:</h2>
+</li>
+<li><p>The ‘call_cnvr’ funtion now support generating CNVRs from CNV list that contains Chromosomes without CNVs information;</p></li>
+<li><p>Add links of Horse_quCab2.0 genome reference and sheep ‘oviAri3’ reference genome into ‘get_refgene’ function;</p></li>
+<li><p>Setup a standard table to support present comparison plot with empty group in ‘compare_cnvr’ function;</p></li>
+<li><p>Add ‘-’ as separator between the two recoded haplotypes in ‘get_haplotype’ function.</p></li>
+</ol>
+</div>
+</div>
+<div id="previous-release-handycnv-v113-release-date-20210526" class="section level1">
+<h1 class="hasAnchor">
+<a href="#previous-release-handycnv-v113-release-date-20210526" class="anchor"></a>Previous release: HandyCNV v1.1.3 Release Date: 2021/05/26</h1>
+</div>
+<div id="whats-news-2" class="section level1">
+<h1 class="hasAnchor">
+<a href="#whats-news-2" class="anchor"></a>What’s news</h1>
+<ol>
+<li><p>New function to plot SNP density from SNP genotyping map. <code>{r, warning=FALSE} plot_snp_density(map = "convert_map/target_plink.map",                   max_chr = 24, #optional                  top_density = 60, #optional                   low_density = 20, #optional                  color_top = "red", #optional                  color_low = "blue", #optional                  color_mid = "black", #optional                  legend_position = c(0.9, 0.1), #optional                   x_label = "Physical position\n物理位置", #optional                  y_label = "SNPs/Mb\n每1Mb区间的SNP数",#optional                  ncol_1 = 5)  #save the plot by 'ggsave' #ggsave(filename = "snp_density.png", width = 26, height = 18, units = "cm", dpi = 350)</code> <img src="https://github.com/JH-Zhou/HandyCNV/blob/master/vignettes/snp_density.png" alt="Fig.Demo SNP density distribution"></p></li>
+<li><p>Revised CNVs status distribution plot in ‘cnv_summary_plot’ function, force to appear the boxplot and line on chromosome that has no CNVs.</p></li>
+</ol>
+</div>
+<div id="previous-release-handycnv-v112-release-date-20210418" class="section level1">
+<h1 class="hasAnchor">
+<a href="#previous-release-handycnv-v112-release-date-20210418" class="anchor"></a>Previous release: HandyCNV v1.1.2 Release Date: 2021/04/18</h1>
+</div>
+<div id="whats-news-3" class="section level1">
+<h1 class="hasAnchor">
+<a href="#whats-news-3" class="anchor"></a>What’s news</h1>
+<p>Corrected the version number.</p>
+</div>
+<div id="released-version-handycnv-v111-release-date-20210414" class="section level1">
+<h1 class="hasAnchor">
+<a href="#released-version-handycnv-v111-release-date-20210414" class="anchor"></a>Released Version: HandyCNV v1.1.1 Release Date: 2021/04/14</h1>
+</div>
+<div id="whats-news-4" class="section level1">
+<h1 class="hasAnchor">
+<a href="#whats-news-4" class="anchor"></a>What’s news</h1>
+<div id="1-update-call_cnvrr-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#1-update-call_cnvrr-" class="anchor"></a>1. Update call_cnvr.R …</h2>
+<ol>
+<li>The CNV list could only be loaded from the local directory through a ‘Path’ before, now supports to read data from working environment by checking the type of input file;</li>
+<li>Support to return the CNVR list to working environment.</li>
+</ol>
+</div>
+<div id="2-update-cnv_cleanr-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#2-update-cnv_cleanr-" class="anchor"></a>2. Update cnv_clean.R …</h2>
+<ol>
+<li>Support to return Clean CNV List to working environment.</li>
+</ol>
+</div>
+<div id="3-update-cnv_visualisingr-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#3-update-cnv_visualisingr-" class="anchor"></a>3. Update cnv_visualising.R …</h2>
+<ol>
+<li>Support to load CNV List from working environment.</li>
+</ol>
+</div>
+<div id="4-update-compare_cnvrr-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#4-update-compare_cnvrr-" class="anchor"></a>4. Update compare_cnvr.R …</h2>
+<ol>
+<li>Add new function to generate the Unique and Mutual CNVRs by uniting the overlapped CNVRs between two results. There are two purposes of this work, one is to better understand the overlapping CNVRs, the other is to mark the common regions on CNVR distribution map in ‘cnvr_plot’ function;</li>
+</ol>
+</div>
+<div id="5-update-cnvr_plot-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#5-update-cnvr_plot-" class="anchor"></a>5. Update ‘cnvr_plot’ …</h2>
+<ol>
+<li>Add ‘overlap_cnvr’ argument to support to mark overlapped region on CNVR distribution map;</li>
+<li>Add ‘label_prop’ argument to show the proportion of CNVRs length to total length of relative chromosome on CNVR map;</li>
+<li>Add ‘chr_col’ argument to customize the color of Chromosome;</li>
+<li>Add ‘overlap_col’ argument to customize color of overlapped CNVRs</li>
+<li>Reduce the margin of final CNVR distribution map.</li>
+</ol>
+<div id="new-feature-demo" class="section level3">
+<h3 class="hasAnchor">
+<a href="#new-feature-demo" class="anchor"></a>New feature demo</h3>
+<pre class="{r}"><code><a href="reference/cnvr_plot.html"># Demo code:
+cnvr_plot(cnvr = "./cnvr_combine_part_penn_umd/cnvr.txt", assembly = "UMD", 
+          sample_size =  388, common_cnv_threshold = 0.05, 
+          overlap_cnvr = "./compare_cnvr_Penn_UMD_Vs_Part_UMD/common_cnvr.txt", 
+          gain_col = "deeppink1", loss_col = "deepskyblue3", mixed_col = "springgreen3", 
+          folder = "./cnvr_combine_part_penn_umd/cnvr_map_common")</a></code></pre>
+<p><img src="https://github.com/JH-Zhou/HandyCNV/blob/master/vignettes/cnvr_plot.png" alt="Fig.2 CNVR Map"></p>
+</div>
+</div>
+<div id="6-update-compare_gener-" class="section level2">
+<h2 class="hasAnchor">
+<a href="#6-update-compare_gener-" class="anchor"></a>6. Update compare_gene.R …</h2>
+<ol>
+<li>Add ‘color_label’ argument to display the color of genes that passed common threshold in the Heatmap;</li>
+</ol>
+</div>
 </div>
 
   </div>
