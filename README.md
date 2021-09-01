@@ -22,17 +22,17 @@ First, to run this package, we need to make sure that R (Version >= 3.5.2) is in
 ## 1. Method one, install from Github Repo directly
 ```{r}
 install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
-remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.5")
+remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.6")
 ```
 
 ## 2. Method two, install manually 
 
-If the first method cannnot work well for some reasons, we can manually download the 'Source code (Zip)' from the newly released tag at here: [Download Source Code](https://github.com/JH-Zhou/HandyCNV/releases/tag/v1.1.5)
+If the first method cannnot work well for some reasons, we can manually download the 'Source code (Zip)' from the newly released tag at here: [Download Source Code](https://github.com/JH-Zhou/HandyCNV/releases/tag/v1.1.6)
 
 Then install the Source Code from the local path by following code:
 ```{r}
 install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
-remotes::install_local(path = "C:/Users/HandyCNV-1.1.5.zip") # Repalce 'C:/Users/' to your local path where you downloaded the Source Code
+remotes::install_local(path = "C:/Users/HandyCNV-1.1.6.zip") # Repalce 'C:/Users/' to your local path where you downloaded the Source Code
 ```
 Then, we need to load the 'HandyCNV' package in order to run the following examples. This can be done using the `library` function as shown below.
 ```{r setup}
@@ -85,11 +85,18 @@ If you have any special requirements for this package, please feel free to sumbi
 If you find any errors while using this package, please tell us via this link: [Bug Report](https://github.com/JH-Zhou/HandyCNV/issues/new?assignees=&labels=&template=bug_report.md), we will fix it as soon as possible.
 
 # Citation
-If this tool is useful for your academic research, please cite our publication: [Browse publication](https://www.biorxiv.org/content/10.1101/2021.04.05.438403v1)
+If this tool is useful for your academic research, please cite our publication: [Browse publication](https://www.frontiersin.org/articles/10.3389/fgene.2021.731355/abstract)
 
-J. Zhou, L. Liu, T. J. Lopdell, D. J. Garrick, and Y. Shi, “HandyCNV: Standardized Summary, Annotation, Comparison, and Visualization of CNV, CNVR and ROH,” doi: 10.1101/2021.04.05.438403.
+Citation: Zhou J, Liu L, Lopdell TJ, Garrick DJ and Shi Y (2021). HandyCNV: Standardized Summary, Annotation, Comparison and Visualization of CNV, CNVR, and ROH. Front. Genet. 12:731355. doi: 10.3389/fgene.2021.731355
 
-# Current release: HandyCNV v1.1.5 Release Date: 2021/08/29
+# Current release: HandyCNV v1.1.6 Release Date: 2021/09/01
+
+# What's news
+1. Add autosomal boundary data for other species in 'cnvr_plot' function, which will be used to plot CNVR map. Now it support the hg38 and hg19 of human, UMD3.1 and ARS-UCD1.2 of cattle, Oar_v4.0 of sheep, Sscrofa11.1 of Pig, galGal6 of Chicken, EquCab3.0 of Horse and UMICH_Zoey_3.1 of Dog.
+2. Add conditions to automatically control the number of X axis labels that present in the figure of The Number of CNVs Detected per Individual.
+3. Update Github pages with Vignettes
+
+# Previous release: HandyCNV v1.1.5 Release Date: 2021/08/29
 
 # What's news
 Minor modifications, such as unifying input file formats and correcting spelling errors.
