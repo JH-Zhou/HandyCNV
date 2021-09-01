@@ -107,22 +107,21 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
   cat("Plotting...\n")
   png(res = 350, filename = paste0(folder, "/f1_cnv_distribution.png"), height = 3500, width = 4000, bg = "transparent")
 
-  adj_y <- max(cnv_input$Length)/max(chr_freq$Freq)
+    adj_y <- max(cnv_input$Length)/max(chr_freq$Freq)
 
-  cnv_distri <- ggplot(cnv_input) +
-    geom_boxplot(aes(x = as.factor(Chr), y = Length/adj_y,  fill = as.factor(CNV_Value)), outlier.shape = NA) +
-    scale_fill_manual(values = color_copy) +
-    geom_line(aes(group = 1, x = as.factor(Chr), color = as.factor(CNV_Value)), stat = 'count') +
-    scale_color_manual(values = color_copy) +
-    geom_text(aes(x = as.factor(Chr), label = ..count..), stat = 'count') +
-    scale_y_continuous(name = "Frequency of CNV (N)", sec.axis = sec_axis(~.*adj_y / 1000, name = "Length of CNV (Kb)")) +
-    scale_x_discrete(breaks = seq(from = 1, to = max_chr, by = 1), drop = FALSE) + # drop = F, force appear the boxplot and line on Chrs has no CNVs
-    theme_classic() +
-    theme(legend.position = "top",
-          strip.text.x = element_blank()) +
-    labs(x = "Chromosome", fill = "CNV Value", color = "Frequency of CNV") +
-    facet_wrap(~CNV_Value, ncol = 1, scales = "free")
-
+    cnv_distri <- ggplot(cnv_input) +
+      geom_boxplot(aes(x = as.factor(Chr), y = Length/adj_y,  fill = as.factor(CNV_Value)), outlier.shape = NA) +
+      scale_fill_manual(values = color_copy) +
+      geom_line(aes(group = 1, x = as.factor(Chr), color = as.factor(CNV_Value)), stat = 'count') +
+      scale_color_manual(values = color_copy) +
+      geom_text(aes(x = as.factor(Chr), label = ..count..), stat = 'count') +
+      scale_y_continuous(name = "Frequency of CNV (N)", sec.axis = sec_axis(~.*adj_y / 1000, name = "Length of CNV (Kb)")) +
+      scale_x_discrete(breaks = seq(from = 1, to = max_chr, by = 1), drop = FALSE) + # drop = F, force appear the boxplot and line on Chrs has no CNVs
+      theme_classic() +
+      theme(legend.position = "top",
+            strip.text.x = element_blank()) +
+      labs(x = "Chromosome", fill = "CNV Value", color = "Frequency of CNV") +
+      facet_wrap(~CNV_Value, ncol = 1, scales = "free")
 
   print(cnv_distri)
   dev.off()
@@ -164,7 +163,7 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
     warning("Failed to produce the CNV length plot, please check your input data format and parameters!")
   }
 
-  png(filename = paste0(folder, "/f3_lengthbox.png"), res = 350, width = 15, height = 14, units = "cm")
+  png(filename = paste0(folder, "/f3_lengthbox.png"), res = 350, width = 17, height = 14, units = "cm")
   #fig.1b CNV Vs Length
   f1b_lengthbox <- ggplot(cnv_input, aes(x = as.factor(CNV_Value), y = Length, color = as.factor(CNV_Value))) +
     geom_boxplot() +
@@ -187,7 +186,7 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
   #fig.1c the count of CNV number distribute on each Chr
   cnv_chr <- cnv_input %>% group_by(CNV_Value) %>% count(Chr)
   cnv_chr$Chr <- factor(cnv_chr$Chr, levels = c(1:max(cnv_chr$Chr)))
-  png(filename = paste0(folder, "/f4_chr.png"), res = 350, width = 15, height = 14, units = "cm")
+  png(filename = paste0(folder, "/f4_chr.png"), res = 350, width = 17, height = 14, units = "cm")
   f1c_chr<- ggplot(cnv_chr, aes(x = Chr, y = n, group = CNV_Value)) +
     geom_line(linetype = "dashed", aes(color = as.factor(CNV_Value))) +
     geom_point(aes(color = as.factor(CNV_Value))) +
@@ -212,13 +211,25 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
                group_by(Sample_ID) %>%
                count(Sample_ID, name = "n_CNV") %>%
                arrange(-n_CNV)
-  f1d_indiv <- ggplot(cnv_indiv, aes(x = as.factor(n_CNV))) +
-    geom_bar(stat = "count",fill = col_0, color = "black") +
-    #geom_text(stat = "count", aes(label = ..count..), vjust = -0.12) +
-    theme_classic() +
-    theme(axis.text.x = element_text(angle = 90)) +
-    #scale_x_discrete(breaks = seq(0, max(cnv_indiv$n_CNV), by = max(cnv_indiv$n_CNV)/10)) +
-    labs(x = "Number of CNVs per Sample", y = "Number of Samples")
+  if (length(unique(cnv_indiv$n_CNV)) > 41){
+    f1d_indiv <- ggplot(cnv_indiv, aes(x = as.integer(n_CNV))) +
+      geom_bar(stat = "count",fill = col_0, color = "black") +
+      #geom_text(stat = "count", aes(label = ..count..), vjust = -0.12) +
+      theme_classic() +
+      theme(axis.text.x = element_text(angle = 90)) +
+      #scale_x_continuous(breaks = seq(0, max(cnv_indiv$n_CNV), by = max(cnv_indiv$n_CNV)/10)) +
+      labs(x = "Number of CNVs per Sample", y = "Number of Samples")
+  } else {
+    f1d_indiv <- ggplot(cnv_indiv, aes(x = as.factor(n_CNV))) +
+      geom_bar(stat = "count",fill = col_0, color = "black") +
+      #geom_text(stat = "count", aes(label = ..count..), vjust = -0.12) +
+      theme_classic() +
+      theme(axis.text.x = element_text(angle = 90)) +
+      #scale_x_discrete(breaks = seq(0, max(cnv_indiv$n_CNV), by = max(cnv_indiv$n_CNV)/10)) +
+      labs(x = "Number of CNVs per Sample", y = "Number of Samples")
+  }
+
+
   print(f1d_indiv)
   dev.off()
   fwrite(cnv_indiv, file = paste0(folder, "/individual_cnv_count.txt"), sep = '\t', quote = FALSE)
@@ -260,7 +271,7 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
   }
 
   else {
-    cat("Task done. \nIf you want to combine all these plot together, try arguments in function with plot_sum_1 = 1 and plot_sum_2 = 1\n")
+    cat("Task done.")
   }
 }
 
