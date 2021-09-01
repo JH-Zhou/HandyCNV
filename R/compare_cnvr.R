@@ -69,8 +69,8 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
 
 
     golden_table_j[1,5] = golden_table_j[1,3] + golden_table_j[2,3] - golden_table_j[2,5]
-    golden_table_j[3,5] = golden_table_j[3,3] + golden_table_j[4,3] - golden_table_j[4,3]
-    golden_table_j[5,5] = golden_table_j[5,3] + golden_table_j[6,3] - golden_table_j[6,3]
+    golden_table_j[3,5] = golden_table_j[3,3] + golden_table_j[4,3] - golden_table_j[4,5]
+    golden_table_j[5,5] = golden_table_j[5,3] + golden_table_j[6,3] - golden_table_j[6,5]
 
     #cnvr_cal <- merge(cnvr_cal, cnvr_over, by = c("Type", "Check_overlap"), all.x = TRUE)
 
