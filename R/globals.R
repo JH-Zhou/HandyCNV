@@ -12,4 +12,4 @@ utils::globalVariables(c(".", "..count..", "ARS_Density", "B Allele Freq", "CNVR
                          "End_def", "End_tar", "Start_def", "Start_tar", "converted_len", "length_diff", "original_len", "qc_check","Freq","Haplotype",
                          "Re_code","Recode_Type", "Length_def", "Length_tar", "def_Density", "tar_Density", "Haploid", "n_Sample", "total_len", "Pos",
                          "bins", "max_edge", "sd", "group_color", "num_gene_2", "key", "POS", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT",
-                         "Length_group", "number_ROH", "Interval_ID", "legend_position"))
+                         "Length_group", "number_ROH", "Interval_ID", "legend_position", "reorder", "HapID", "Bases"))

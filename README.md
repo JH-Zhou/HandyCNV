@@ -92,13 +92,13 @@ Citation: Zhou J, Liu L, Lopdell TJ, Garrick DJ and Shi Y (2021). HandyCNV: Stan
 # Current release: HandyCNV v1.1.7 Release Date: 2021/09/24
 
 # What's news
-1. New feature to visualize haplotype that generate from get_haplotype()
+1. New feature to visualize the haplotype that generated from get_haplotype()
 ```{r}
 haplo_visual(haplotype = haplotype_letter, xlab_text = "BMP7 Gene ")
 ```
 ![Fig. Haplotype of BMP7 Gene](https://github.com/JH-Zhou/HandyCNV/blob/master/vignettes/BMP7.jpg)
 
-2. Unify format of some inputs and outputs
+2. Unify the format of some inputs and outputs
 
 # Current release: HandyCNV v1.1.6 Release Date: 2021/09/01
 
