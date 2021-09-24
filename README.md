@@ -22,17 +22,17 @@ First, to run this package, we need to make sure that R (Version >= 3.5.2) is in
 ## 1. Method one, install from Github Repo directly
 ```{r}
 install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
-remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.6")
+remotes::install_github(repo = "JH-Zhou/HandyCNV@v1.1.7")
 ```
 
 ## 2. Method two, install manually 
 
-If the first method cannnot work well for some reasons, we can manually download the 'Source code (Zip)' from the newly released tag at here: [Download Source Code](https://github.com/JH-Zhou/HandyCNV/releases/tag/v1.1.6)
+If the first method cannnot work well for some reasons, we can manually download the 'Source code (Zip)' from the newly released tag at here: [Download Source Code](https://github.com/JH-Zhou/HandyCNV/releases/tag/v1.1.7)
 
 Then install the Source Code from the local path by following code:
 ```{r}
 install.packages("remotes") # Run this code if you haven't install 'remotes' package before 
-remotes::install_local(path = "C:/Users/HandyCNV-1.1.6.zip") # Repalce 'C:/Users/' to your local path where you downloaded the Source Code
+remotes::install_local(path = "C:/Users/HandyCNV-1.1.7.zip") # Repalce 'C:/Users/' to your local path where you downloaded the Source Code
 ```
 Then, we need to load the 'HandyCNV' package in order to run the following examples. This can be done using the `library` function as shown below.
 ```{r setup}
@@ -88,6 +88,17 @@ If you find any errors while using this package, please tell us via this link: [
 If this tool is useful for your academic research, please cite our publication: [Browse publication](https://www.frontiersin.org/articles/10.3389/fgene.2021.731355/abstract)
 
 Citation: Zhou J, Liu L, Lopdell TJ, Garrick DJ and Shi Y (2021). HandyCNV: Standardized Summary, Annotation, Comparison and Visualization of CNV, CNVR, and ROH. Front. Genet. 12:731355. doi: 10.3389/fgene.2021.731355
+
+# Current release: HandyCNV v1.1.7 Release Date: 2021/09/24
+
+# What's news
+1. New feature to visualize haplotype that generate from get_haplotype()
+```{r}
+haplo_visual(haplotype = haplotype_letter, xlab_text = "BMP7 Gene ")
+```
+![Fig. Haplotype of BMP7 Gene](https://github.com/JH-Zhou/HandyCNV/blob/master/vignettes/BMP7.jpg)
+
+2. Unify format of some inputs and outputs
 
 # Current release: HandyCNV v1.1.6 Release Date: 2021/09/01
 
