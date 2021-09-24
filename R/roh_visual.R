@@ -110,6 +110,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
           theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
           labs(y = "Gene")
       } else {
+        png(filename = title_gene, width = width_1, height = height_1, res = 350, units = "cm")
         title_gene <- paste0("Chr", chr_id,"_", start,"_", end, ".png")
         ggplot() +
           geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
@@ -121,7 +122,7 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
           theme_bw() +
           theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
           labs(y = "Gene")
-        ggsave(filename = title_gene, width = width_1, height = height_1, dpi = 350, units = "cm")
+        dev.off()
       }
 
 
@@ -418,10 +419,10 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     cat("plotting gene....\n")
     gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = chr_id, start = start_position, end = end_position, show_name = show_name, gene_font_size = gene_font_size)
     #png(res = 300, filename = zoom_name, width = 3500, height = 2000)
+    png(filename = zoom_name, width = width_1, height = height_1, units = "cm", res = 350)
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
-    ggsave(filename = zoom_name, width = width_1, height = height_1, units = "cm", dpi = 350)
-    #dev.off()
+    dev.off()
     cat("Task done, plot was stored in working directory.\n")
     return(roh_gene)
   }
@@ -481,6 +482,7 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
     chr_title <- paste0("ROH on Chr", target_g$Chr_TAR, ":", target_region[2], "-", target_region[3], " with ", id_number, " Samples")
     #png(res = 350, filename = target_name, width = width_1, height = height_1, units = "cm")
     #png(res = 300, filename = "10_chr.png", width = 3500, height = 2000)
+    png(filename = target_name, width = width_1, height = height_1, units = "cm", res = 350)
     target_plot <- ggplot(target_roh, aes(xmin = Start/1000000, xmax = End/1000000, ymin = (Order-1)*5, ymax = (Order-1)*5 + 3)) +
       geom_rect(aes(fill = Length/1000000), show.legend = FALSE) +
       scale_fill_gradientn(colours = c(col_short, col_mid, col_long)) +
@@ -494,13 +496,16 @@ roh_visual <- function(clean_roh, max_chr = NULL, chr_id = NULL, chr_length = NU
 
     if(is.null(refgene) == "FALSE"){
       gene_plot <- HandyCNV::plot_gene(refgene = refgene, chr_id = target_g$Chr_TAR, start = target_g$Start_TAR/1000000, end = target_g$End_TAR/1000000, show_name = show_name, gene_font_size = gene_font_size)
+      png(filename = target_name, width = width_1, height = height_1, units = "cm", res = 350)
       roh_gene <- plot_grid(gene_plot, target_plot, ncol = 1, rel_heights = c(1, 3))
       print(roh_gene)
-      ggsave(filename = target_name, plot = roh_gene, width = width_1, height = height_1, units = "cm", dpi = 350)
+      dev.off()
       cat("Task done, plot was stored in working directory.\n")
       return(roh_gene)
     } else {
-      ggsave(filename = target_name, plot = target_plot, width = width_1, height = height_1, units = "cm", dpi = 350)
+      #ggsave(filename = target_name, plot = target_plot, width = width_1, height = height_1, units = "cm", dpi = 350)
+      print(target_plot)
+      dev.off()
       cat("Task done, plot was stored in working directory.\n")
       return(target_plot)
     }

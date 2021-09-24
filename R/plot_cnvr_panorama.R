@@ -269,6 +269,7 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
     dir <- paste( b, ".png", sep = "")
     #png(dir, res = 300, width = 2000, height = 5000, bg = "transparent")
     #plot_grid(zoom,zoom2, maf, baf, lrr, align = "v", axis = "t", ncol = 1, rel_heights = c(1,1,1,1,1))
+    png(filename = paste0(folder, "/",dir), width = width_1, height = height_1, res = 300, units = "cm")
 
     if(missing(intensity) & missing(map) & missing(prefix_bed)){
       final_plot <- zoom_plot
@@ -285,9 +286,9 @@ plot_cnvr_panorama <- function(cnvr, cnv_annotation, intensity = NULL, map = NUL
       }
     }
 
-    #print(final_plot)
-    #dev.off()
-    ggsave(plot = final_plot, path = paste0(folder, "/"), filename = dir, width = width_1, height = height_1, dpi = 300, units = "cm")
+    print(final_plot)
+    dev.off()
+    #ggsave(plot = final_plot, path = paste0(folder, "/"), filename = dir, width = width_1, height = height_1, dpi = 300, units = "cm")
     print(paste0("Plot ", i, " (", dir, ") was stored in the ", paste0(folder, "/"), " directory."))
   }
 }

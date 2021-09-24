@@ -124,6 +124,7 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "D
   #add manual color
   color_point <- c("Match" = col_1,
                    "Mismatch" = col_2)
+  png(filename = "convert_map/comparison_snp.png", height = height_c, width = width_c, units = "cm", res = 350)
   comparison_snp <- ggplot(def_tar_map, aes(x = Position_def, y = Position_tar, color = Match)) +
     geom_point() +
     scale_color_manual(values = color_point) +
@@ -137,7 +138,8 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "D
          y = paste0("Position on ", tarMap_title),
          color = NULL,
          caption = note)
-  ggsave(plot = comparison_snp, filename = "convert_map/comparison_snp.png", height = height_c, width = width_c, units = "cm")
+  print(comparison_snp)
+  dev.off()
 
   if (file.exists("convert_map/comparison_snp.png")) {
     print("Comparison of SNP by Chromosome plot was saved in working directory.")
@@ -187,6 +189,7 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "D
 
 
   print("Plotting the Difference of SNPs between two versions of map...")
+  png(filename = "convert_map/SNP_difference_by_chromosome.png", height = height_d, width = width_d, units = "cm", res = 350)
   snp_diff <- ggplot(snp_tar_def, aes(x = Chr)) +
     geom_bar(aes(y = SNP_Freq_tar, fill = tarMap_title), stat = "identity", position = "identity") +
     scale_fill_manual(values = col_3) +
@@ -195,7 +198,9 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "D
     theme_classic() +
     labs(x = "Chromosome", y = "Number of SNP", shape = NULL, fill = NULL, caption = "**The number represents the number of different SNPS between two maps") +
     theme(legend.position = c(0.9, 0.9)) # legend position - 0 is left/bottom, 1 is top/right
-  ggsave(plot = snp_diff, filename = "convert_map/SNP_difference_by_chromosome.png", height = height_d, width = width_d, units = "cm", dpi = 350)
+  print(snp_diff)
+  dev.off()
+
   if(file.exists("convert_map/SNP_difference_by_chromosome.png")){
     print("SNP difference plot was saved in working directory.")
   }
@@ -251,6 +256,7 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "D
   #add manual color for bar
   #bar_name = as.factor(tarMap_title)
   #color_bar <- c(bar_name = col_3)
+  png(filename = "convert_map/SNP_difference_density.png", height = height_d, width = width_d, units = "cm", res = 350)
   diff_density <- ggplot(snp_tar_def_density, aes(x = Chr)) +
     geom_bar(aes(y = SNP_Freq_tar, fill = as.factor(tarMap_title)), stat = "identity", position = "identity") +
     scale_fill_manual(values = col_3) +
@@ -266,8 +272,9 @@ convert_map <- function(default_map, target_map, chr_set = 29, defMap_title = "D
     theme(legend.position = legend_position,
           legend.margin=margin(0,0,0,0),
           legend.box.margin=margin(0,0,0,0)) # legend position - 0 is left/bottom, 1 is top/right
+  print(diff_density)
+  dev.off()
 
-  ggsave(plot = diff_density, filename = "convert_map/SNP_difference_density.png", height = height_d, width = width_d, units = "cm", dpi = 350)
 }
 
 

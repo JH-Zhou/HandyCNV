@@ -387,8 +387,7 @@ cnv_visual <- function(clean_cnv, max_chr = NULL, chr_id = NULL, species = NULL,
 
     roh_gene <- plot_grid(gene_plot, zoom_plot, ncol = 1, rel_heights = c(1, 3))
     print(roh_gene)
-    ggsave(filename = paste0(folder, "/", zoom_name), width = width_1, height = height_1, units = "cm", dpi = 350)
-
+    png(filename = paste0(folder, "/", zoom_name), width = width_1, height = height_1, units = "cm",  res = 350, bg = "transparent")
     print(zoom_plot)
     dev.off()
     cat("Task done, plot was stored in working directory.\n")

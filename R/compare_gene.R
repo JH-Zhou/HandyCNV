@@ -76,6 +76,7 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
                      "Common_Low" = col_2,
                      "High_Freq_list_1" = col_3,
                      "High_Freq_list_2" = col_4)
+    png(filename = paste0(folder, "/two_lists_comparison.png"), width = width_1, height = height_1, units = "cm", res = 350)
     compare_plot <- ggplot(data = two_list, aes(x = Frequency_1, y = Frequency_2, color = Common_Gene)) +
       geom_point(pch = 19, size = 3, position = position_jitter(height = 0.15, width = 0.15)) +
       scale_color_manual(values = color_point) +
@@ -83,7 +84,8 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
       theme_classic() +
       theme(legend.position = c(0.85, 0.85)) +
       labs( x = title_1, y = title_2, color = NULL)
-    ggsave(filename = paste0(folder, "/two_lists_comparison.png"), plot = compare_plot, width = width_1, height = height_1, units = "cm", dpi = 300)
+    print(compare_plot)
+    dev.off()
 
     if(file.exists(paste0(folder, "/two_lists_comparison_summary.txt")) & file.exists(paste0(folder, "/two_lists_comparison.txt")) & file.exists(paste0(folder, "/two_lists_comparison.png"))) {
       print("Gene comparison list, brife summary and comparison plot was saved in working directory.")
@@ -236,6 +238,7 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
       color_group <- ifelse(plot_data_desc$name2_1  %in% common_high_name$name2_1, yes = "red", no = "black")
     }
 
+    png(filename = paste0(folder, "/four_gene_heatmap.png"), res = 300, height = height_1, width = width_1, units = "cm")
     compare_plot <- ggplot(plot_data, aes(x = variable , y = name2_1, fill = value)) +
       geom_tile() +
       #scale_fill_gradientn(colours = c("yellow", "red"), na.value = "black") +
@@ -244,7 +247,8 @@ compare_gene <- function(gene_freq_1, gene_freq_2, gene_freq_3 = NULL, gene_freq
       scale_x_discrete(labels = c(title_1, title_2, title_3, title_4)) +
       {if(color_label == "TRUE")theme(axis.text.y = element_text(color = rev(color_group)))} +
       labs(x = NULL, y = "Gene", fill = "Quantity")
-    ggsave(plot = compare_plot, filename = paste0(folder, "/four_gene_heatmap.png"), dpi = 300, height = height_1, width = width_1, units = "cm")
+    print(compare_plot)
+    dev.off()
 
     fwrite(four_gene, file = paste0(folder, "/four_gene_comparison.txt"), sep = "\t", quote = FALSE)
     fwrite(four_gene_summary, file = paste0(folder, "/four_gene_comparison_summary.txt"), sep = "\t", quote = FALSE)
