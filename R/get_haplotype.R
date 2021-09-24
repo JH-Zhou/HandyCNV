@@ -157,6 +157,7 @@ get_haplotype <- function(geno, pos){
 #' @param xlab_text add additional text into X label, for example, plot haplotype for specific genes
 #' @importFrom stringr str_split
 #' @importFrom dplyr filter
+#' @importFrom stats reorder
 #' @import ggplot2
 #' @return haplotype plot
 #' @export haplo_visual
