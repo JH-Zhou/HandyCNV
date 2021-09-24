@@ -110,8 +110,8 @@ plot_gene <- function(refgene = NULL, chr_id, start, end, show_name = c(0,160), 
           theme(axis.text.y = element_blank(), axis.title.x = element_blank()) +
           labs(y = "Gene")
       } else {
-        png(filename = title_gene, width = width_1, height = height_1, res = 350, units = "cm")
         title_gene <- paste0("Chr", chr_id,"_", start,"_", end, ".png")
+        png(filename = title_gene, width = width_1, height = height_1, res = 350, units = "cm")
         ggplot() +
           geom_rect(data = gene_present, aes(xmin = Start/1000000, xmax = End/1000000, ymin = y_min, ymax = y_max, fill = as.character(name2)), show.legend = F) +
           #{if(nrow(gene_sub) < 50)geom_text_repel(aes(x = Start/1000000, y = y_max, label = name2))} +
