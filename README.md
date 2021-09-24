@@ -100,7 +100,7 @@ haplo_visual(haplotype = haplotype_letter, xlab_text = "BMP7 Gene ")
 
 2. Unify the format of some inputs and outputs
 
-# Current release: HandyCNV v1.1.6 Release Date: 2021/09/01
+# Previous release: HandyCNV v1.1.6 Release Date: 2021/09/01
 
 # What's news
 1. Add autosomal boundary data for other species in 'cnvr_plot' function, which will be used to plot CNVR map. Now it support the hg38 and hg19 of human, UMD3.1 and ARS-UCD1.2 of cattle, Oar_v4.0 of sheep, Sscrofa11.1 of Pig, galGal6 of Chicken, EquCab3.0 of Horse and UMICH_Zoey_3.1 of Dog.
