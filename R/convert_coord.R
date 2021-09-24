@@ -274,16 +274,31 @@ convert_coord <- function(input_tar = NULL, input_def = NULL, def_tar_map, proxy
 #' @export compare_interval
 #'
 compare_interval <- function(interval_1, interval_2, map = NULL){
-  cnvr_1 <- fread(interval_1)
-  cnvr_1$Chr <- as.factor(cnvr_1$Chr)
-  cnvr_2 <- fread(interval_2)
-  cnvr_2$Chr <- as.factor(cnvr_2$Chr)
-  #set key for cnvr_1
-  setkey(cnvr_1, Chr, Start, End)
-  names(cnvr_2) <- paste0(colnames(cnvr_2),"_2")
+  if(typeof(interval_1) == "character"){
+    interval_1 <- fread(file = interval_1, header = TRUE)
+  } else {
+    interval_1 = interval_1
+  }
+  interval_1$Chr <- as.factor(interval_1$Chr)
+  interval_1$Start <- as.integer(interval_1$Start)
+  interval_1$End <- as.integer(interval_1$End)
+  setDT(interval_1)
+
+  if(typeof(interval_2) == "character"){
+    interval_2 <- fread(file = interval_2, header = TRUE)
+  } else {
+    interval_2 = interval_2
+  }
+  interval_2$Chr <- as.factor(interval_2$Chr)
+  interval_2$Start <- as.integer(interval_2$Start)
+  interval_2$End <- as.integer(interval_2$End)
+  setDT(interval_2)
+  #set key for interval_1
+  setkey(interval_1, Chr, Start, End)
+  names(interval_2) <- paste0(colnames(interval_2),"_2")
 
   #find overlap
-  overlap <- data.table::foverlaps(x = cnvr_2, y = cnvr_1, by.x = c("Chr_2", "Start_2", "End_2"), type = "any")
+  overlap <- data.table::foverlaps(x = interval_2, y = interval_1, by.x = c("Chr_2", "Start_2", "End_2"), type = "any")
   overlap <- overlap %>%
     filter(Start > 0) %>%
     mutate(overlap_len = pmin(End_2, End) - pmax(Start, Start_2) + 1)

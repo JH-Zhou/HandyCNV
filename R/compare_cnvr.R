@@ -127,7 +127,8 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
 
     cnv_tar$version <- "Verision_TAR" # add version in dataframe
     colnames(cnv_tar) <- paste(colnames(cnv_tar), "TAR", sep = "_") #add suffix to all colnames
-    tar_colnames <- colnames(cnv_tar) #set original column names use for extarting columns after matching
+    tar_colnames <- colnames(cnv_tar) #set original column names use for extracting columns after matching
+    setDT(cnv_tar)
 
     if(typeof(cnvr_def) == "character"){
       cnv_def <- fread(file = cnvr_def, sep = "\t", header = TRUE)
@@ -139,6 +140,7 @@ compare_cnvr <- function(cnvr_def, cnvr_tar, def_tar_map = NULL, width_1 = 15, h
     cnv_def$version <- "Version_DEF"
     colnames(cnv_def) <- paste(colnames(cnv_def), "DEF", sep = "_")
     def_colnames <- colnames(cnv_def)
+    setDT(cnv_def)
 
     #find overlap on population level
     setkey(cnv_tar, Chr_TAR, Start_TAR, End_TAR)
