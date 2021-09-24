@@ -22,7 +22,7 @@ prep_phased <- function(phased_geno, convert_letter = FALSE){
     cat("Coverting haplotype from 0, 1 to Ref and ALT...\n")
     phased <- phased %>%
       gather(key, value, -c('#CHROM', POS, ID, REF, ALT, QUAL, FILTER, INFO, FORMAT)) %>%
-      rowwise %>%
+      rowwise() %>%
       mutate(value = gsub("0", REF, gsub("1", ALT, value))) %>%
       spread(key, value)
   }
@@ -144,5 +144,47 @@ get_haplotype <- function(geno, pos){
   my_list <- list("hap_type" = hap_type, "hap_index" = uniq_hap, "roh_map" = roh_map)
 
   return(my_list)
+}
+
+
+# Visualize haplotype
+#' The order of haplotype present in plot are start from high frequency to low from top to bottom
+#'
+#' @param haplotype a list of haplotype information that generate by get_haplotype function
+#' @param filter_freq used to filter haplotype by frequency, only the selected haplotype will present in plot
+#' @param letter_size integer number to adjust the letter size of GCTA etc
+#' @param show_letter assign "True" to present base pairs in plot, "False" to hide text, is useful on large plot
+#' @param xlab_text add additional text into X label, for example, plot haplotype for specific genes
+#' @importFrom stringr str_split
+#' @importFrom dplyr filter
+#' @import ggplot2
+#' @return haplotype plot
+#' @export haplo_visual
+#'
+haplo_visual <- function(haplotype, filter_freq = 0, letter_size = 2, show_letter = TRUE, xlab_text = ""){
+
+  haplo <- haplotype$hap_index %>% filter(Freq >= filter_freq)
+  map <- haplotype$roh_map
+
+  hap_heat_data <- data.frame()
+  for (i in 1:nrow(haplo)){
+    hap_b <- data.frame("Bases" = unlist(stringr::str_split(string = haplo$Haploid[i], pattern = "")),
+                        "Order" =  map$V2,
+                        #"Order" = seq(1, nchar(haplo$Haploid[i])),
+                        "HapID" = paste0("H", i))
+    hap_heat_data <- rbind(hap_heat_data, hap_b)
+  }
+
+  xlab = paste0(xlab_text,nrow(map), " SNPs from chr", map$V1[1], ":",map$V2[1], "-", map$V2[nrow(map)],"bp")
+  hap_plot <- ggplot(hap_heat_data, aes(as.factor(Order), reorder(HapID, desc(HapID)), fill= Bases)) +
+    geom_tile() +
+    {if(show_letter == "TRUE") geom_text(aes(label=Bases), size = letter_size)} +
+    #geom_vline(xintercept = gene_pos$Start[1], linetype = "dashed") +
+    scale_x_discrete(expand=c(0,0)) +
+    scale_y_discrete(expand=c(0,0)) +
+    theme(axis.ticks.x = element_blank(),
+          axis.text.x = element_blank()) +
+    labs(x = xlab, y = "Haplotype ID")
+  return(hap_plot)
 }
 
