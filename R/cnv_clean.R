@@ -75,8 +75,20 @@ cnv_clean <- function(cnvpartition = NULL, penncnv = NULL, standard_cnv = NULL, 
     penn <- separate(penn, V3, into = c("V3", "Length"), sep = "=")
     penn <- separate(penn, V4, into = c("V4", "CNV_Number"), sep = ",")
     penn <- separate(penn, CNV_Number, into = c("CNV_Number", "CNV_Value"), sep = "=")
-    penn <- separate(penn, V5, into = c("V5", "Sample_ID"), sep = penn_id_sep) # **this area need to define by user
-    penn <- separate(penn, Sample_ID, into = c("Sample_ID", "Format"), sep = ".txt")
+
+    ID_ck <- grep("/", x = penn$V5)
+    if(length(ID_ck) > 0){
+      if(length(grep(penn_id_sep, x = penn$V5)) == 0){
+        stop(paste0(penn_id_sep, " wasn't exist in ID column, please assign the unique pattern to penn_id_sep as the ID separator!"))
+      }
+      penn <- separate(penn, V5, into = c("V5", "Sample_ID"), sep = penn_id_sep) # **this area need to define by user
+    } else{
+      names(penn)[names(penn) == "V5"] <- "Sample_ID"
+    }
+    Format_ck <- grep(".txt", x = penn$Sample_ID)
+    if(length(Format_ck > 0)){
+      penn <- separate(penn, Sample_ID, into = c("Sample_ID", "Format"), sep = ".txt")
+    }
     penn <- separate(penn, V6, into = c("V6", "Start_SNP"), sep = "=")
     penn <- separate(penn, V7, into = c("V7", "End_SNP"), sep = "=")
     penn <- separate(penn, V1, into = c("V1", "Chr"), sep = "chr")
