@@ -28,7 +28,7 @@
 #' @return Some summary pictures
 #' @export cnv_summary_plot
 #'
-cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 1, 2, 5), plot_sum_1 = FALSE, plot_sum_2 = FALSE, folder = 'cnv_summary_plot', col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", height_sum1 = 26, width_sum1 = 20,height_sum2 = 20, width_sum2 = 27) {
+cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 1, 2, 5), plot_sum_1 = TRUE, plot_sum_2 = TRUE, folder = 'cnv_summary_plot', col_0 = "hotpink",  col_1 = "turquoise", col_2 = "gray", col_3 = "tomato", col_4= "deepskyblue", height_sum1 = 26, width_sum1 = 20,height_sum2 = 20, width_sum2 = 27) {
   if (!file.exists(folder)){
     dir.create(folder)
   }
@@ -74,22 +74,8 @@ cnv_summary_plot <- function(clean_cnv, length_group = c(0.05, 0.1, 0.2, 0.3, 0.
                                         Length > len_int_bp[8] & Length <= len_int_bp[9] ~ paste0(len_int[8], "-", len_int[9], "Mb"),
                                         Length > len_int_bp[9] & Length <= len_int_bp[10] ~ paste0(len_int[9], "-", len_int[10], "Mb"),
                                         Length > len_int_bp[10] & Length <= len_int_bp[11] ~ paste0(len_int[10], "-", len_int[11], "Mb"),
-                                        Length > len_int_bp[11] ~ paste0(">", len_int[11], "Mb")))
+                                        Length > len_int_bp[length(len_int_bp)] ~ paste0(len_int[length(len_int)], "Mb~")))
 
-
-  # cnv_input$group <- NA  #add a new column to make group of length
-  # cnv_input$group[cnv_input$Length <= 50000] <- "1-50kb"
-  # cnv_input$group[cnv_input$Length > 50000 & cnv_input$Length <= 100000] <- "50-100kb"
-  # cnv_input$group[cnv_input$Length > 100000 & cnv_input$Length <= 200000] <- "100-200kb"
-  # cnv_input$group[cnv_input$Length > 200000 & cnv_input$Length <= 300000] <- "200-300kb"
-  # cnv_input$group[cnv_input$Length > 300000 & cnv_input$Length <= 400000] <- "300-400kb"
-  # cnv_input$group[cnv_input$Length > 400000 & cnv_input$Length <= 500000] <- "400-500kb"
-  # cnv_input$group[cnv_input$Length > 500000 & cnv_input$Length <= 600000] <- "500-600kb"
-  # cnv_input$group[cnv_input$Length > 600000 & cnv_input$Length <= 700000] <- "600-700kb"
-  # cnv_input$group[cnv_input$Length > 700000 & cnv_input$Length <= 1000000] <- "700-1000kb"
-  # cnv_input$group[cnv_input$Length > 1000000 & cnv_input$Length <= 2000000] <- "1-2Mbp"
-  # cnv_input$group[cnv_input$Length > 2000000 & cnv_input$Length <= 5000000] <- "2-5Mbp"
-  # cnv_input$group[cnv_input$Length > 5000000] <- ">5Mbp"
 
   #customize color
   color_copy <- c("0" = col_0,
